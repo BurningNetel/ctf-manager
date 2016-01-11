@@ -40,6 +40,7 @@ class NewEventsPageTest(TestCase):
         request = HttpRequest()
         response = new_event_page(request)
         expected_html = render_to_string('add_event.html', {'form': EventForm()})
+        self.assertEqual(response.status_code, 200)
         self.assertMultiLineEqual(response.content.decode(), expected_html)
 
     def test_add_events_page_renders_add_events_template(self):
@@ -49,3 +50,22 @@ class NewEventsPageTest(TestCase):
     def test_add_events_page_renders_event_form(self):
         response = self.client.get('/events/new/')
         self.assertIsInstance(response.context['form'], EventForm)
+
+    def test_for_invalid_input_renders_add_events_page(self):
+        response = self.client.post(
+                '/events/new/',
+                data={'name': '', 'date': '2016-10-02'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'add_event.html')
+
+    def test_for_invalid_input_passes_event_form_to_template(self):
+        response = self.client.post(
+                '/events/new/',
+                data={'name': '', 'date': '2016-10-02'})
+        self.assertIsInstance(response.context['form'], EventForm)
+
+    def test_for_valid_input_renders_event_template(self):
+        response = self.client.post(
+                '/events/new/',
+                data={'name': 'hatstack', 'date': '2016-10-02'})
+        self.assertRedirects(response, '/events/')
