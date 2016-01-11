@@ -30,19 +30,19 @@ class NewEventTests(unittest.TestCase):
 
         # The users fills in all the mandatory data
         # The events name
-        tb_name = self.browser.find_element_by_id('tb_event_name')
+        tb_name = self.browser.find_element_by_id('id_name')
         tb_name.send_keys('Hacklu')
         self.assertEqual('Name', tb_name.get_attribute('placeholder'))
 
         # The date and time that the event starts
-        datetime = self.browser.find_element_by_id('datetime')
+        datetime = self.browser.find_element_by_id('id_date')
         datetime.send_keys('20-01-2016')
-        self.assertEqual('dd-mm-yyyy',datetime.get_attribute('placeholder'))
+        self.assertEqual('yyyy-mm-dd',datetime.get_attribute('placeholder'))
 
         # Then, the user clicks the 'confirm' button
         # When every necessary field has been filled
-        btn_confirm = self.browser.find_element_by_id('btn_confirm')
-        self.assertEqual('Confirm', btn_confirm.text)
+        btn_confirm = self.browser.find_element_by_id('btn_submit')
+        self.assertEqual('Save', btn_confirm.get_attribute('value'))
 
         # The browser redirects the user to the events page
         self.assertIn('/events/', self.browser.current_url)
