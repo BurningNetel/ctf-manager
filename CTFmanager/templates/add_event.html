@@ -5,6 +5,10 @@
     <title>CTFman - New Event</title>
 </head>
 <body>
-
+<form method="POST" action="{% url 'newEvent' %}">
+    {{ form }}
+    <input id="btn_submit" type="submit" value="Save"/>
+    {% csrf_token %}
+</form>
 </body>
 </html>

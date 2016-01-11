@@ -3,6 +3,7 @@ from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.test import TestCase
 
+from ..forms import EventForm
 from ..views import events_page
 from ..views import new_event_page
 
@@ -38,9 +39,13 @@ class NewEventsPageTest(TestCase):
     def test_add_events_page_returns_correct_html(self):
         request = HttpRequest()
         response = new_event_page(request)
-        expected_html = render_to_string('add_event.html')
-        self.assertEqual(response.content.decode(), expected_html)
+        expected_html = render_to_string('add_event.html', {'form': EventForm()})
+        self.assertMultiLineEqual(response.content.decode(), expected_html)
 
     def test_add_events_page_renders_add_events_template(self):
         response = self.client.get('/events/new/')
         self.assertTemplateUsed(response, 'add_event.html')
+
+    def test_add_events_page_renders_event_form(self):
+        response = self.client.get('/events/new/')
+        self.assertIsInstance(response.context['form'], EventForm)
