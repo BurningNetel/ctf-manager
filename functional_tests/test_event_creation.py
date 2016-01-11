@@ -17,7 +17,7 @@ class NewEventTests(unittest.TestCase):
 
         # He checks the pages' title is correct
         self.assertIn('CTFman - Events', self.browser.title)
-        self.assertIn(self.browser.current_url, '/events/')
+        self.assertIn('/events/', self.browser.current_url)
 
         # the user wants to add a new event,
         # so he clicks on the button to add a new event

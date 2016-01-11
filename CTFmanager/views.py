@@ -1,6 +1,6 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
-# Create your views here.
 
 def events_page(request):
-    return HttpResponse('<html><title>CTFman - Events</title></html>')
+
+    return render(request, 'events.html')
