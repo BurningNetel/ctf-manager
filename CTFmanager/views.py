@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.shortcuts import render
 
 
@@ -8,4 +7,4 @@ def events_page(request):
 
 def new_event_page(request):
 
-    return HttpResponse('<html><title>Add Event</title></html>')
+    return render(request, 'add_event.html')

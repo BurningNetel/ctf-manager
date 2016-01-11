@@ -43,5 +43,4 @@ class NewEventsPageTest(TestCase):
 
     def test_add_events_page_renders_add_events_template(self):
         response = self.client.get('/events/new/')
-        self.assertTemplateUsed(response, 'new_event.html')
-
+        self.assertTemplateUsed(response, 'add_event.html')
