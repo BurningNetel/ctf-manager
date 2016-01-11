@@ -26,27 +26,27 @@ class NewEventTests(unittest.TestCase):
         btn_add_event.click()
 
         # The browser redirects to a new page
-        self.assertIn(self.browser.current_url, '/events/new')
+        self.assertIn('/events/new/', self.browser.current_url)
 
         # The users fills in all the mandatory data
         # The events name
         tb_name = self.browser.find_element_by_id('tb_event_name')
         tb_name.send_keys('Hacklu')
-        self.assertEqual(tb_name.get_attribute('placeholder'), 'Name')
+        self.assertEqual('Name', tb_name.get_attribute('placeholder'))
 
         # The date and time that the event starts
         datetime = self.browser.find_element_by_id('datetime')
         datetime.send_keys('20-01-2016')
-        self.assertEqual(datetime.get_attribute('placeholder'),'dd-mm-yyyy')
+        self.assertEqual('dd-mm-yyyy',datetime.get_attribute('placeholder'))
 
         # Then, the user clicks the 'confirm' button
         # When every necessary field has been filled
         btn_confirm = self.browser.find_element_by_id('btn_confirm')
-        self.assertEqual(btn_confirm.text, 'Confirm')
+        self.assertEqual('Confirm', btn_confirm.text)
 
         # The browser redirects the user to the events page
-        self.assertIn(self.browser.current_url, '/events')
-        self.assertNotIn(self.browser.current_url, '/new')
+        self.assertIn('/events/', self.browser.current_url)
+        self.assertNotIn('/new/', self.browser.current_url)
 
         # The new event is now visible on the events page
         table = self.browser.find_element_by_id('table_events')
