@@ -6,5 +6,16 @@
 </head>
 <body>
 <a id="btn_add_event" href="{% url 'newEvent' %}">Add Event</a>
+<h1>Upcoming Events</h1>
+<table>
+{% if events.count != 0 %}
+    {% for event in events %}
+        <tr><td>{{ event.name }}</td></tr>
+        <tr><td>{{ event.date|date:"SHORT_DATETIME_FORMAT" }}</td></tr>
+    {% endfor %}
+{% else %}
+    <tr><td>No upcoming events!</td></tr>
+{% endif %}
+</table>
 </body>
 </html>

@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
+from django.utils import timezone
 
+from .models import Event
 from .forms import EventForm
 
 
 def events_page(request):
-    return render(request, 'events.html')
+    _events = Event.objects.filter(date__gt=timezone.now())
+    return render(request, 'events.html', {'events': _events})
 
 
 def new_event_page(request):

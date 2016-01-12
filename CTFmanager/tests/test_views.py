@@ -2,7 +2,7 @@ from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.test import TestCase
-from django.utils import timezone
+from django.utils import timezone, formats
 from django.utils.timezone import timedelta
 
 from ..forms import EventForm
@@ -43,26 +43,34 @@ class EventPageTest(TestCase):
                 name="HackLu 2015",
                 date=date2
         )
+        event_past.save()
 
         response = events_page(HttpRequest())
 
-        date_format = "%Y-%m-%d"
-        time_format = "%H:%M:%S"
         exp_name = '<tr><td>HackLu 2016</td></tr>'
-        exp_date = '<tr>' + \
-                   date.strftime("%s %s" % (date_format, time_format))\
-                   + '<td>'
+        exp_date = '<tr><td>' + \
+                   formats.date_format(date, "SHORT_DATETIME_FORMAT")\
+                   + '</td></tr>'
 
         unexp_name = '<tr><td>HackLu 2015</td></tr>'
-        unexp_date = '<tr>' + \
-                     date2.strftime("%s %s" % (date_format, time_format))\
-                     + '<td>'
+        unexp_date = '<tr><td>' + \
+                     formats.date_format(date2, "SHORT_DATETIME_FORMAT")\
+                     + '<t/d></tr>'
 
         self.assertIn(exp_date, response.content.decode())
         self.assertIn(exp_name, response.content.decode())
         self.assertNotIn(unexp_date, response.content.decode())
         self.assertNotIn(unexp_name, response.content.decode())
 
+    def test_events_page_has_correct_headers(self):
+        response = events_page(HttpRequest())
+        expected = '<h1>Upcoming Events</h1>'
+        self.assertIn(expected, response.content.decode())
+
+    def test_empty_events_set_shows_correct_message(self):
+        response = events_page(HttpRequest())
+        expected = '<tr><td>No upcoming events!</td></tr>'
+        self.assertIn(expected, response.content.decode())
 
 
 class NewEventsPageTest(TestCase):
