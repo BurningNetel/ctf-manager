@@ -9,3 +9,9 @@ class Event(models.Model):
     name = models.CharField(max_length=20, default='')
     date = models.DateTimeField(default=timezone.now)
 
+    @property
+    def is_upcoming(self):
+        if self.date > timezone.now():
+            return True
+        return False
+

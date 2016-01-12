@@ -2,10 +2,12 @@ from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.test import TestCase
+from django.utils import timezone
+from django.utils.timezone import timedelta
 
 from ..forms import EventForm
-from ..views import events_page
-from ..views import new_event_page
+from ..models import Event
+from ..views import events_page, new_event_page
 
 
 class EventPageTest(TestCase):
@@ -28,6 +30,39 @@ class EventPageTest(TestCase):
         response = events_page(HttpRequest())
         expected = '<a id="btn_add_event" href="/events/new/">Add Event</a>'
         self.assertIn(expected, response.content.decode())
+
+    def test_events_page_displays_only_upcoming_events(self):
+        date = timezone.now() + timedelta(days=1)
+        event_future = Event.objects.create(
+                name="HackLu 2016",
+                date=date
+        )
+        event_future.save()
+        date2 = date + timedelta(days=-2)
+        event_past = Event.objects.create(
+                name="HackLu 2015",
+                date=date2
+        )
+
+        response = events_page(HttpRequest())
+
+        date_format = "%Y-%m-%d"
+        time_format = "%H:%M:%S"
+        exp_name = '<tr><td>HackLu 2016</td></tr>'
+        exp_date = '<tr>' + \
+                   date.strftime("%s %s" % (date_format, time_format))\
+                   + '<td>'
+
+        unexp_name = '<tr><td>HackLu 2015</td></tr>'
+        unexp_date = '<tr>' + \
+                     date2.strftime("%s %s" % (date_format, time_format))\
+                     + '<td>'
+
+        self.assertIn(exp_date, response.content.decode())
+        self.assertIn(exp_name, response.content.decode())
+        self.assertNotIn(unexp_date, response.content.decode())
+        self.assertNotIn(unexp_name, response.content.decode())
+
 
 
 class NewEventsPageTest(TestCase):
