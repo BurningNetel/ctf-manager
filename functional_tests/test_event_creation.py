@@ -35,13 +35,13 @@ class NewEventTests(FunctionalTest):
         # The date of the upcoming event is filled in the date textbox
         datetime.clear()
 
-        date = timezone.now() + timedelta(days=1)
-        formatted_date = formats.date_format(date, "SHORT_DATETIME_FORMAT")
-        datetime.send_keys(str(date.year) + '-'+
-                           ('0' + str(date.month))[-2:] + '-'
-                           + ('0' + str(date.day))[-2:] + " "
-                           + str(date.hour) + ":"
-                           + str(date.minute)
+        _date = timezone.now() + timedelta(days=1)
+        formatted_date = formats.date_format(_date, "SHORT_DATETIME_FORMAT")
+        datetime.send_keys(str(_date.year) + '-'+
+                           ('0' + str(_date.month))[-2:] + '-'
+                           + ('0' + str(_date.day))[-2:] + " "
+                           + str(_date.hour) + ":"
+                           + str(_date.minute)
                            )
         # Then, the user clicks the 'confirm' button
         # When every necessary field has been filled
@@ -65,3 +65,13 @@ class NewEventTests(FunctionalTest):
         self.assertTrue(
             any(row.text == formatted_date for row in rows)
         )
+
+        # The users wants to view details about the event
+        # He clicks on the link that is the name of the event to go to the details page
+        rows[0].click()
+        url = self.browser.current_url
+        self.assertIn('/events/HackLu', url)
+        self.assertIn('CTFman - Hacklu ' + _date.year, self.browser.title)
+
+        # He goes back to the events page by clicking on the 'Home' button in the menu
+        self.browser.find_element_by_class_name('navbar-brand').click()
