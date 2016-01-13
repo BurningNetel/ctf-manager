@@ -9,7 +9,8 @@ class EventFormTest(TestCase):
         form = EventForm()
         p = form.as_p()
         self.assertIn('placeholder="Name"', p)
-        self.assertIn('placeholder="yyyy-mm-dd"', p)
+        self.assertIn('class="form-control"', p)
+        self.assertIn('placeholder="yyyy-mm-dd (h24-MM)"', p)
 
     def test_form_validation_for_blank_items(self):
         form = EventForm(data={'name': '',

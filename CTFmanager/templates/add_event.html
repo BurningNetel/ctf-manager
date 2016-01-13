@@ -5,7 +5,9 @@
 {% block content %}
 <form method="POST" action="{% url 'newEvent' %}">
     {{ form }}
-    <input id="btn_submit" type="submit" value="Save"/>
+    <button id="btn_submit" class="btn btn-default" type="submit">
+        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Save</span>
+    </button>
     {% csrf_token %}
 </form>
 {% endblock %}

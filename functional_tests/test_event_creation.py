@@ -31,7 +31,7 @@ class NewEventTests(FunctionalTest):
 
         # The date and time that the event starts
         datetime = self.browser.find_element_by_id('id_date')
-        self.assertEqual('yyyy-mm-dd',datetime.get_attribute('placeholder'))
+        self.assertEqual('yyyy-mm-dd (h24-MM)',datetime.get_attribute('placeholder'))
         # The date of the upcoming event is filled in the date textbox
         datetime.clear()
 
@@ -45,8 +45,10 @@ class NewEventTests(FunctionalTest):
                            )
         # Then, the user clicks the 'confirm' button
         # When every necessary field has been filled
-        btn_confirm = self.browser.find_element_by_id('btn_submit')
-        self.assertEqual('Save', btn_confirm.get_attribute('value'))
+        btn_confirm = self.browser.find_element_by_tag_name('button')
+        self.assertEqual('btn btn-default', btn_confirm.get_attribute('class'))
+        span = btn_confirm.find_element_by_tag_name('span')
+        self.assertEqual('Save', span.text)
 
         btn_confirm.click()
 
