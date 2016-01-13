@@ -7,7 +7,7 @@ from django.utils import timezone
 class Event(models.Model):
 
     name = models.CharField(max_length=20, default='')
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField(default='')
 
     @property
     def is_upcoming(self):
