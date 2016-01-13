@@ -3,7 +3,7 @@
 {% block title %}CTFman - Events{% endblock %}
 
 {% block content %}
-<a id="btn_add_event" href="{% url 'newEvent' %}">Add Event</a>
+<a class="btn btn-default" id="btn_add_event" href="{% url 'newEvent' %}">Add Event</a>
 <h1>Upcoming Events</h1>
 <table>
 {% if events.count != 0 %}
