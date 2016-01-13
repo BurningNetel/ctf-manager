@@ -1,9 +1,10 @@
 import unittest
 
 from selenium import webdriver
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 
-class NewEventTests(unittest.TestCase):
+class NewEventTests(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(3)
