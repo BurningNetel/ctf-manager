@@ -6,7 +6,18 @@ from django.utils.timezone import timedelta
 
 from ..forms import EventForm
 from ..models import Event
-from ..views import events_page, new_event_page
+from ..views import events_page, new_event_page, home_page
+
+
+class HomePageTest(TestCase):
+
+    def test_root_url_resolver_to_home_page(self):
+        response = resolve('/')
+        self.assertEqual(response.func, home_page)
+
+    def test_home_page_renders_home_template(self):
+        response = self.client.get('/')
+        self.assertTemplateUsed(response, 'home.html')
 
 
 class EventPageTest(TestCase):

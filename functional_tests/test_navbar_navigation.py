@@ -11,12 +11,12 @@ class NavigationTest(FunctionalTest):
 
         navbar = self.browser.find_element_by_tag_name('nav')
         self.assertAlmostEqual(
-                navbar.location['y'] + navbar.size['height'] /2,
-                1,
-                5
+                navbar.location['y'],
+                0,
+                2
         )
 
-    def test_navbar_links(self):
+    def test_navbar_links (self):
         # User goes to home page
         self.browser.get(self.live_server_url)
 
@@ -28,7 +28,7 @@ class NavigationTest(FunctionalTest):
         # User click on home page link
         home_button = links[0]
         url = home_button.get_attribute('href')
-        self.assertEqual('/',url)
+        self.assertEqual(self.live_server_url + '/',url)
 
 
 
