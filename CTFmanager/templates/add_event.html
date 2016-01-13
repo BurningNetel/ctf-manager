@@ -3,9 +3,14 @@
 {% block title %}CTFman - New Event{% endblock %}
 
 {% block content %}
-<form method="POST" action="{% url 'newEvent' %}">
-    {{ form }}
-    <button id="btn_submit" class="btn btn-default" type="submit">
+<form class ="form" method="POST" action="{% url 'newEvent' %}">
+    <div class="form-group">
+    {{ form.name }}
+    </div>
+    <div class="form-group">
+    {{ form.date }}
+    </div>
+    <button id="btn_submit" class="btn btn-primary" type="submit">
         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Save</span>
     </button>
     {% csrf_token %}

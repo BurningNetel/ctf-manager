@@ -46,7 +46,7 @@ class NewEventTests(FunctionalTest):
         # Then, the user clicks the 'confirm' button
         # When every necessary field has been filled
         btn_confirm = self.browser.find_element_by_tag_name('button')
-        self.assertEqual('btn btn-default', btn_confirm.get_attribute('class'))
+        self.assertEqual('btn btn-primary', btn_confirm.get_attribute('class'))
         span = btn_confirm.find_element_by_tag_name('span')
         self.assertEqual('Save', span.text)
 
