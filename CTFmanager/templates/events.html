@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>CTFman - Events</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}CTFman - Events{% endblock %}
+
+{% block content %}
 <a id="btn_add_event" href="{% url 'newEvent' %}">Add Event</a>
 <h1>Upcoming Events</h1>
 <table>
@@ -17,5 +15,4 @@
     <tr><td>No upcoming events!</td></tr>
 {% endif %}
 </table>
-</body>
-</html>
+{% endblock %}

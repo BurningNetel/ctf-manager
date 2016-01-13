@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>CTFman - New Event</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}CTFman - New Event{% endblock %}
+
+{% block content %}
 <form method="POST" action="{% url 'newEvent' %}">
     {{ form }}
     <input id="btn_submit" type="submit" value="Save"/>
     {% csrf_token %}
 </form>
-</body>
-</html>
+{% endblock %}
