@@ -1,20 +1,10 @@
-from django.test import LiveServerTestCase
 from django.utils import timezone, formats
 from django.utils.timezone import timedelta
-from selenium.webdriver.firefox.webdriver import WebDriver
+
+from .base import FunctionalTest
 
 
-class NewEventTests(LiveServerTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        super(NewEventTests,cls).setUpClass()
-        cls.browser = WebDriver()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.browser.quit()
-        super(NewEventTests, cls).tearDownClass()
+class NewEventTests(FunctionalTest):
 
     def test_can_create_an_event_from_event_page_and_retrieve_it_later(self):
         # a user goes to the events page
@@ -76,6 +66,3 @@ class NewEventTests(LiveServerTestCase):
 
         # another CTF is coming soon, the user wants to add it to the app
         # self.fail('Finish tests!')
-
-if __name__ == '__main__':
-    LiveServerTestCase.main(warnings='ignore')
