@@ -16,7 +16,7 @@ class NavigationTest(FunctionalTest):
                 2
         )
 
-    def test_navbar_links (self):
+    def test_navbar_links(self):
         # User goes to home page
         self.browser.get(self.live_server_url)
 
