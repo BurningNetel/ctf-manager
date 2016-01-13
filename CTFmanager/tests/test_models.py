@@ -8,10 +8,18 @@ from ..models import Event
 
 class EventModelTest(TestCase):
 
+    def create_event_object(self, _name, is_in_future):
+        if is_in_future:
+            _datetime = datetime.now() + timedelta(days=1)
+        else:
+            _datetime = datetime.now() - timedelta(days=1)
+        return Event.objects.create(name=_name, date=self.tz.localize(_datetime))
+
     def test_saving_and_retrieving_event(self):
 
         self.tz = pytz.timezone("Europe/Amsterdam")
 
+        # Not using create_event_object because exact date is asserted
         event = Event.objects.create(name="Hacklu", date=self.tz.localize(datetime(2016, 10, 20)))
         event.save()
         event2 = Event.objects.create(name="CTFStack", date=self.tz.localize(datetime(2016, 1, 2)))
@@ -29,19 +37,13 @@ class EventModelTest(TestCase):
         self.assertEqual(first_saved_item.date, first_expected_date)
         self.assertEqual(second_saved_item.date, second_expected_date)
 
-    def test_is_upcoming_event(self):
+    def test_event_is_upcoming(self):
         self.tz = pytz.timezone("Europe/Amsterdam")
 
-        future_event = Event.objects.create(
-                name="Hacklu",
-                date=self.tz.localize(datetime.now() + timedelta(days=1))
-        )
+        future_event = self.create_event_object("hatstack", True)
         future_event.save()
 
-        past_event = Event.objects.create(
-                name="CTFStack",
-                date=self.tz.localize(datetime.now() + timedelta(days=-1))
-        )
+        past_event = self.create_event_object("Hacklu", False)
         past_event.save()
 
         saved_items = Event.objects.all()

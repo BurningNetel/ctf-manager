@@ -32,7 +32,7 @@ class EventPageTest(TestCase):
 
     def test_events_page_contains_new_event_button(self):
         response = events_page(HttpRequest())
-        expected = '<a id="btn_add_event" href="/events/new/">Add Event</a>'
+        expected = 'id="btn_add_event" href="/events/new/">Add Event</a>'
         self.assertIn(expected, response.content.decode())
 
     def test_events_page_displays_only_upcoming_events(self):
