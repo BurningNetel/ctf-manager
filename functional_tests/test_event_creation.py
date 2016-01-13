@@ -65,6 +65,3 @@ class NewEventTests(FunctionalTest):
         self.assertTrue(
             any(row.text == formatted_date for row in rows)
         )
-
-        # another CTF is coming soon, the user wants to add it to the app
-        # self.fail('Finish tests!')
