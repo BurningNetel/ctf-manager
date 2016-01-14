@@ -3,9 +3,6 @@ from django.db import models
 from django.utils import timezone
 
 
-# Create your models here.
-
-
 class Event(models.Model):
 
     name = models.CharField(primary_key=True, max_length=20, default='')
@@ -20,3 +17,9 @@ class Event(models.Model):
             return True
         return False
 
+
+class Challenge(models.Model):
+
+    name = models.CharField(max_length=30, default='')
+    points = models.IntegerField(default=0)
+    event = models.ForeignKey(Event, default=None)

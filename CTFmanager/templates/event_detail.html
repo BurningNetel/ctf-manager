@@ -4,5 +4,5 @@
     <div class="page-header">
         <h1>{{ event.name }} <small>{{ event.date }}</small></h1>
     </div>
-    <button id="btn_add_challenge"><a href="/events/{{ event.name }}/new">Add Challenge</a></button>
+    <a class="btn btn-default" id="btn_add_challenge" href="{{ event.name }}/new">Add Challenge</a>
 {% endblock %}

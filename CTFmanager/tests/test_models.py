@@ -3,20 +3,22 @@ from django.test import TestCase
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import timedelta
 
-from ..models import Event
+from ..models import Event, Challenge
 
 
-class EventModelTest(TestCase):
-
-    def setUp(self):
-        self.tz = pytz.timezone("Europe/Amsterdam")
-
+class EventModelTestCase(TestCase):
     def create_event_object(self, _name, is_in_future):
         if is_in_future:
             _datetime = datetime.now() + timedelta(days=1)
         else:
             _datetime = datetime.now() - timedelta(days=1)
         return Event.objects.create(name=_name, date=self.tz.localize(_datetime))
+
+
+class EventModelTest(EventModelTestCase):
+
+    def setUp(self):
+        self.tz = pytz.timezone("Europe/Amsterdam")
 
     def test_saving_and_retrieving_event(self):
 
@@ -67,3 +69,17 @@ class EventModelTest(TestCase):
         event = self.create_event_object("ruCTF", True)
         url = event.get_absolute_url()
         self.assertIn('/events/ruCTF', url)
+
+
+class ChallengeModelTest(EventModelTestCase):
+
+    pass
+
+
+class EventAndChallengeTest(EventModelTest):
+
+    def test_challenge_is_related_to_event(self):
+        _event = self.create_event_object('test', True)
+        chal = Challenge.objects.create(name='chal', points=500, event=_event)
+        chal.save()
+        self.assertIn(chal, _event.challenge_set.all())

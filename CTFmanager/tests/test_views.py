@@ -149,3 +149,5 @@ class EventPageAddChallengeTest(ViewTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'add_challenge.html')
+
+
