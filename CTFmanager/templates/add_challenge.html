@@ -3,5 +3,18 @@
 {% block title %}CTFman - New Challenge{% endblock %}
 
 {% block content %}
-<h1>New Challenge</h1>
+    <h1>New Challenge</h1>
+    {% for field in form %}
+        <div class="form-group">
+            <div class="input-group">
+            <span class="input-group-addon">{{ field.name }}</span>
+            {{ field }}
+            </div>
+        </div>
+
+    {% endfor %}
+    <button id="btn_submit" class="btn btn-primary" type="submit">
+        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Save</span>
+    </button>
+    {% csrf_token %}
 {% endblock %}

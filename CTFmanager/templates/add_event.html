@@ -3,6 +3,7 @@
 {% block title %}CTFman - New Event{% endblock %}
 
 {% block content %}
+<h1>New Event</h1>
 <form class ="form" method="POST" action="{% url 'newEvent' %}">
     {% for field in form %}
         {% if field.errors %}

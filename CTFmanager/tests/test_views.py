@@ -137,6 +137,11 @@ class EventPageDetailTest(ViewTestCase):
 
 class EventPageAddChallengeTest(ViewTestCase):
 
+    def create_new_challenge_response(self):
+        _event = self.create_event('test', True)
+        response = self.client.get(_event.get_absolute_url() + '/new')
+        return response
+
     def test_add_challenge_resolves_to_correct_page(self):
         _event = self.create_event('test', True)
         response = resolve(_event.get_absolute_url() + '/new')
@@ -150,8 +155,15 @@ class EventPageAddChallengeTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'add_challenge.html')
 
-    def test_add_challenge_page_renders_correct_form(self):
-        _event = self.create_event('test', True)
-        response = self.client.get(_event.get_absolute_url() + '/new')
+    def test_add_challenge_page_renders_challenge_form(self):
+        response = self.create_new_challenge_response()
         self.assertIsInstance(response.context['form'], ChallengeForm)
 
+    def test_add_challenge_page_displays_challenge_form(self):
+        response = self.create_new_challenge_response()
+        self.assertContains(response, 'id="id_points')
+        self.assertContains(response,'id="id_name"')
+
+    def test_add_challenge_page_has_submit_button(self):
+        response = self.create_new_challenge_response()
+        self.assertContains(response, 'id="btn_submit"')
