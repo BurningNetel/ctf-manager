@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.utils import timezone, formats
 from django.utils.timezone import timedelta
 
@@ -75,3 +76,29 @@ class NewEventTests(FunctionalTest):
 
         # He goes back to the events page by clicking on the 'Home' button in the menu
         self.browser.find_element_by_class_name('navbar-brand').click()
+
+    def test_duplicate_item_creation_gives_error_message(self):
+        # A user wants to create an event for 2015 and for 2016,
+        # but uses the same name
+        self.browser.get(self.live_server_url + reverse('newEvent'))
+
+        self.assertIn('/events/new', self.browser.current_url)
+
+        self.browser.find_element_by_id('id_name').send_keys('CTF')
+        self.browser.find_element_by_id('id_date').send_keys('2016-01-01 18:00')
+        self.browser.find_element_by_tag_name('button').click()
+
+        self.assertNotIn('/new', self.browser.current_url)
+
+        self.browser.get(self.live_server_url + reverse('newEvent'))
+
+        self.assertIn('/events/new', self.browser.current_url)
+
+        self.browser.find_element_by_id('id_name').send_keys('CTF')
+        self.browser.find_element_by_id('id_date').send_keys('2015-01-01 18:00')
+        self.browser.find_element_by_tag_name('button').click()
+
+        self.assertIn('/events/new', self.browser.current_url)
+        self.browser.find_element_by_css_selector('.has-error')
+
+    # test for_invalid_input_gives_error_message
