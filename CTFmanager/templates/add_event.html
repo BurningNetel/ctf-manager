@@ -5,14 +5,16 @@
 {% block content %}
 <form class ="form" method="POST" action="{% url 'newEvent' %}">
     {% for field in form %}
+        {% if field.errors %}
+            <div class="has-error">
+                <div class="help-block">{{ field.errors.as_text }}</div>
+            </div>
+        {% endif %}
         <div class="form-group">
-            {% if field.errors %}
-                <div class="form-group has-error">
-                    <div class="help-block">{{ field.errors }}</div>
-                </div>
-            {% endif %}
-            {{ field.label_tag }}
+            <div class="input-group">
+            <span class="input-group-addon">{{ field.name }}</span>
             {{ field }}
+            </div>
         </div>
 
     {% endfor %}
