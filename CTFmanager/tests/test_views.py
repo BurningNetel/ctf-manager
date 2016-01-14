@@ -1,7 +1,8 @@
 from django.core.urlresolvers import resolve
+from django.core.urlresolvers import reverse
 from django.http import HttpRequest
 from django.test import TestCase
-from django.utils import timezone, formats
+from django.utils import timezone
 from django.utils.timezone import timedelta
 
 from ..forms import EventForm
@@ -9,7 +10,21 @@ from ..models import Event
 from ..views import events_page, new_event_page, home_page, view_event
 
 
-class HomePageTest(TestCase):
+class ViewTestCase(TestCase):
+    def create_event(self, _name, is_future):
+        _date = timezone.now()
+        if is_future:
+            _date += timedelta(days=1)
+        else:
+            _date -= timedelta(days=1)
+
+        return Event.objects.create(
+                name=_name,
+                date=_date
+        )
+
+
+class HomePageTest(ViewTestCase):
 
     def test_root_url_resolver_to_home_page(self):
         response = resolve('/')
@@ -20,7 +35,7 @@ class HomePageTest(TestCase):
         self.assertTemplateUsed(response, 'home.html')
 
 
-class EventPageTest(TestCase):
+class EventPageTest(ViewTestCase):
 
     def test_events_url_resolves_to_events_page(self):
         response = resolve('/events/')
@@ -36,35 +51,12 @@ class EventPageTest(TestCase):
         self.assertIn(expected, response.content.decode())
 
     def test_events_page_displays_only_upcoming_events(self):
-        date = timezone.now() + timedelta(days=1)
-        event_future = Event.objects.create(
-                name="HackLu 2016",
-                date=date
-        )
-        event_future.save()
-        date2 = date + timedelta(days=-2)
-        event_past = Event.objects.create(
-                name="HackLu 2015",
-                date=date2
-        )
-        event_past.save()
-
-        response = events_page(HttpRequest())
-
-        exp_name = '>HackLu 2016<'
-        exp_date = '<tr><td>' + \
-                   formats.date_format(date, "SHORT_DATETIME_FORMAT")\
-                   + '</td></tr>'
-
-        unexp_name = '<tr><td>HackLu 2015</td></tr>'
-        unexp_date = '<tr><td>' + \
-                     formats.date_format(date2, "SHORT_DATETIME_FORMAT")\
-                     + '<t/d></tr>'
-
-        self.assertIn(exp_date, response.content.decode())
-        self.assertIn(exp_name, response.content.decode())
-        self.assertNotIn(unexp_date, response.content.decode())
-        self.assertNotIn(unexp_name, response.content.decode())
+        event_future = self.create_event("hatCTF", True)
+        event_past = self.create_event("RuCTF 2015", False)
+        response = self.client.get(reverse('events'))
+        _event = response.context['events']
+        self.assertEqual(_event[0], event_future)
+        self.assertNotEqual(_event[0], event_past)
 
     def test_events_page_has_correct_headers(self):
         response = events_page(HttpRequest())
@@ -77,7 +69,7 @@ class EventPageTest(TestCase):
         self.assertIn(expected, response.content.decode())
 
 
-class NewEventsPageTest(TestCase):
+class NewEventsPageTest(ViewTestCase):
 
     def test_add_events_url_resolves_to_add_events_page(self):
         response = resolve('/events/new/')
@@ -111,7 +103,7 @@ class NewEventsPageTest(TestCase):
         self.assertRedirects(response, '/events/')
 
 
-class EventPageDetailTest(TestCase):
+class EventPageDetailTest(ViewTestCase):
 
     def test_event_detail_page_resolves_to_detail_page(self):
         _date = timezone.now() + timedelta(days=1)
@@ -122,6 +114,9 @@ class EventPageDetailTest(TestCase):
     def test_event_detail_page_uses_event_detail_template(self):
         _date = timezone.now() + timedelta(days=1)
         event = Event.objects.create(name="detailEvent", date=_date)
+        event.save()
         response = self.client.get(event.get_absolute_url())
+        event_on_page = response.context['event']
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'event_detail.html')
+        self.assertEqual(event, event_on_page)
