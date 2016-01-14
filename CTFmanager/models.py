@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class Event(models.Model):
 
-    name = models.CharField(max_length=20, default='')
+    name = models.CharField(primary_key=True, max_length=20, default='')
     date = models.DateTimeField(default='')
 
     @property

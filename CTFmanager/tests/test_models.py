@@ -8,6 +8,9 @@ from ..models import Event
 
 class EventModelTest(TestCase):
 
+    def setUp(self):
+        self.tz = pytz.timezone("Europe/Amsterdam")
+
     def create_event_object(self, _name, is_in_future):
         if is_in_future:
             _datetime = datetime.now() + timedelta(days=1)
@@ -16,8 +19,6 @@ class EventModelTest(TestCase):
         return Event.objects.create(name=_name, date=self.tz.localize(_datetime))
 
     def test_saving_and_retrieving_event(self):
-
-        self.tz = pytz.timezone("Europe/Amsterdam")
 
         # Not using create_event_object because exact date is asserted
         event = Event.objects.create(name="Hacklu", date=self.tz.localize(datetime(2016, 10, 20)))
@@ -54,3 +55,11 @@ class EventModelTest(TestCase):
         self.assertTrue(isfuture)
         self.assertFalse(ispast)
 
+    def test_event_uses_name_as_primary_key(self):
+        event = self.create_event_object("ruCTF", True)
+        event.save()
+
+        event_pk = Event.objects.get(pk="ruCTF")
+        self.assertEqual(event.name, event_pk.name)
+        self.assertEqual(event.date, event_pk.date)
+    # def test_event_reverses_to_detail_page(self):
