@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.utils.html import escape
 from django.utils.timezone import timedelta
 
-from ..forms import EventForm, EMPTY_FIELD_ERROR
+from ..forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
 from ..models import Event
 from ..views import events_page, new_event_page, home_page, view_event, new_challenge
 
@@ -150,4 +150,8 @@ class EventPageAddChallengeTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'add_challenge.html')
 
+    def test_add_challenge_page_renders_correct_form(self):
+        _event = self.create_event('test', True)
+        response = self.client.get(_event.get_absolute_url() + '/new')
+        self.assertIsInstance(response.context['form'], ChallengeForm)
 

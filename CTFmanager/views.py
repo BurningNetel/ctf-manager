@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
-from .forms import EventForm
+from .forms import EventForm, ChallengeForm
 from .models import Event
 
 
@@ -32,4 +32,4 @@ def view_event(request, event_id):
 
 def new_challenge(request, event_id):
     _event = Event.objects.get(pk=event_id)
-    return render(request, 'add_challenge.html', {'event': _event})
+    return render(request, 'add_challenge.html', {'form': ChallengeForm(), 'event': _event})
