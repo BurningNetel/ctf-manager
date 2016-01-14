@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from ..forms import EventForm, EMPTY_FIELD_ERROR
+from ..forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
 
 class EventFormTest(TestCase):
 
@@ -27,3 +27,12 @@ class EventFormTest(TestCase):
         form = EventForm(data={'name': 'HackCTF',
                                'date': '01-10-2015'})
         self.assertFalse(form.is_valid())
+
+class ChallengeFormTest(TestCase):
+
+    def test_form_renders_Challenge_inputs(self):
+        form = ChallengeForm()
+        p = form.as_p()
+        self.assertIn('placeholder=Name', p)
+        self.assertIn('placeholder=Points', p)
+        self.assertIn('class="form-control"', p)
