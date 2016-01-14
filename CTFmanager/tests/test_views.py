@@ -167,3 +167,9 @@ class EventPageAddChallengeTest(ViewTestCase):
     def test_add_challenge_page_has_submit_button(self):
         response = self.create_new_challenge_response()
         self.assertContains(response, 'id="btn_submit"')
+
+    def test_for_valid_input_renders_event_detail_template(self):
+        _event = self.create_event('test', True)
+        url = _event.get_absolute_url() + '/new'
+        response = self.client.post(url, data={'name': 'test', 'points': '200'})
+        self.assertRedirects(response, reverse('view_event', args={_event.name,}))

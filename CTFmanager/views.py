@@ -32,4 +32,7 @@ def view_event(request, event_id):
 
 def new_challenge(request, event_id):
     _event = Event.objects.get(pk=event_id)
+    form = ChallengeForm(data=request.POST)
+    if form.is_valid():
+        return redirect(_event.get_absolute_url())
     return render(request, 'add_challenge.html', {'form': ChallengeForm(), 'event': _event})
