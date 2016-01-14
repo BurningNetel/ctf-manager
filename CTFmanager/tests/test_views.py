@@ -6,7 +6,7 @@ from django.utils.timezone import timedelta
 
 from ..forms import EventForm
 from ..models import Event
-from ..views import events_page, new_event_page, home_page
+from ..views import events_page, new_event_page, home_page, view_event
 
 
 class HomePageTest(TestCase):
@@ -109,3 +109,19 @@ class NewEventsPageTest(TestCase):
                 '/events/new/',
                 data={'name': 'hatstack', 'date': '2016-10-02'})
         self.assertRedirects(response, '/events/')
+
+
+class EventPageDetailTest(TestCase):
+
+    def test_event_detail_page_resolves_to_detail_page(self):
+        _date = timezone.now() + timedelta(days=1)
+        event = Event.objects.create(name="detailEvent", date=_date)
+        response = resolve(event.get_absolute_url())
+        self.assertEqual(response.func, view_event)
+
+    def test_event_detail_page_uses_event_detail_template(self):
+        _date = timezone.now() + timedelta(days=1)
+        event = Event.objects.create(name="detailEvent", date=_date)
+        response = self.client.get(event.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'event_detail.html')

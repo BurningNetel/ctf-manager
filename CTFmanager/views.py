@@ -21,3 +21,8 @@ def new_event_page(request):
         return redirect('events')
     else:
         return render(request, 'add_event.html', {'form': EventForm()})
+
+
+def view_event(request, event_id):
+    _event = Event.objects.get(pk=event_id)
+    return render(request, 'event_detail.html', {'event': _event})

@@ -62,4 +62,8 @@ class EventModelTest(TestCase):
         event_pk = Event.objects.get(pk="ruCTF")
         self.assertEqual(event.name, event_pk.name)
         self.assertEqual(event.date, event_pk.date)
-    # def test_event_reverses_to_detail_page(self):
+
+    def test_event_reverses_to_detail_page(self):
+        event = self.create_event_object("ruCTF", True)
+        url = event.get_absolute_url()
+        self.assertIn('/events/ruCTF', url)
