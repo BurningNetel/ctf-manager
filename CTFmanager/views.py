@@ -28,3 +28,8 @@ def new_event_page(request):
 def view_event(request, event_id):
     _event = Event.objects.get(pk=event_id)
     return render(request, 'event_detail.html', {'event': _event})
+
+
+def new_challenge(request, event_id):
+    _event = Event.objects.get(pk=event_id)
+    return render(request, 'add_challenge.html', {'event': _event})

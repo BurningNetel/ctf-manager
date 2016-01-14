@@ -7,7 +7,7 @@ from django.utils.timezone import timedelta
 
 from ..forms import EventForm, EMPTY_FIELD_ERROR
 from ..models import Event
-from ..views import events_page, new_event_page, home_page, view_event
+from ..views import events_page, new_event_page, home_page, view_event, new_challenge
 
 
 class ViewTestCase(TestCase):
@@ -43,7 +43,7 @@ class EventPageTest(ViewTestCase):
 
     def test_events_page_renders_events_template(self):
         response = self.client.get(reverse('events'))
-        self.assertTemplateUsed(response,'events.html')
+        self.assertTemplateUsed(response, 'events.html')
 
     def test_events_page_contains_new_event_button(self):
         response = events_page(HttpRequest())
@@ -128,3 +128,24 @@ class EventPageDetailTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'event_detail.html')
         self.assertEqual(event, event_on_page)
+
+    def test_add_events_page_contains_add_challenge_button(self):
+        _event = self.create_event('challenge_test', True)
+        response = view_event(HttpRequest(), _event.name)
+        self.assertIn('id="btn_add_challenge"', response.content.decode())
+
+
+class EventPageAddChallengeTest(ViewTestCase):
+
+    def test_add_challenge_resolves_to_correct_page(self):
+        _event = self.create_event('test', True)
+        response = resolve(_event.get_absolute_url() + '/new')
+        self.assertEqual(response.func, new_challenge)
+
+    def test_add_challenge_uses_correct_template(self):
+        _event = self.create_event('test', True)
+        _event.save()
+        url = _event.get_absolute_url() + '/new'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'add_challenge.html')
