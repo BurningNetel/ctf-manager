@@ -6,7 +6,7 @@ from django.utils.html import escape
 from django.utils.timezone import timedelta
 
 from ..forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
-from ..models import Event
+from ..models import Event, Challenge
 from ..views import events_page, new_event_page, home_page, view_event, new_challenge
 
 
@@ -134,6 +134,14 @@ class EventPageDetailTest(ViewTestCase):
         response = view_event(HttpRequest(), _event.name)
         self.assertIn('id="btn_add_challenge"', response.content.decode())
 
+    def test_for_detail_page_shows_challenges(self):
+        _event = self.create_event('test', True)
+        chal = Challenge.objects.create(name='test', points=500,event=_event)
+        chal.save()
+        response = self.client.get(_event.get_absolute_url())
+        self.assertContains(response, chal.name)
+        self.assertContains(response, chal.points)
+
 
 class EventPageAddChallengeTest(ViewTestCase):
 
@@ -173,3 +181,10 @@ class EventPageAddChallengeTest(ViewTestCase):
         url = _event.get_absolute_url() + '/new'
         response = self.client.post(url, data={'name': 'test', 'points': '200'})
         self.assertRedirects(response, reverse('view_event', args={_event.name,}))
+
+    def test_for_valid_input_shows_challenge_on_event_detail_page(self):
+        _event = self.create_event('test', True)
+        url = _event.get_absolute_url() + '/new'
+        self.client.post(url, data={'name': 'test', 'points': '200'})
+        response = self.client.get(_event.get_absolute_url())
+        self.assertContains(response, '<td>test - 200')

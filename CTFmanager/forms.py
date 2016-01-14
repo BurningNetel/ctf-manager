@@ -28,6 +28,10 @@ class EventForm(forms.models.ModelForm):
 
 class ChallengeForm(forms.models.ModelForm):
 
+    def save(self, for_event):
+        self.instance.event = for_event
+        return super().save()
+
     class Meta:
         model = Challenge
         fields = {'name', 'points', }

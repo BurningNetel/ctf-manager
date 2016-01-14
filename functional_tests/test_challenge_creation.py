@@ -29,7 +29,7 @@ class CreatingChallengesTest(FunctionalTest):
         points_field.send_keys('500')
 
         # Finally, he click on the 'confirm' button
-        confirm_button = self.browser.find_element_by_id('btn_confirm')
+        confirm_button = self.browser.find_element_by_id('btn_submit')
         confirm_button.click()
 
         # The browser redirects him to the event page
@@ -39,6 +39,5 @@ class CreatingChallengesTest(FunctionalTest):
         table = self.browser.find_element_by_tag_name('table')
         rows = table.find_elements_by_tag_name('td')
         self.assertTrue(
-                any(row.text == 'cryptochal' for row in rows)
+                any(row.text == ('cryptochal - 500') for row in rows)
         )
-        self.assertTrue(any(row.text == '500' for row in rows))
