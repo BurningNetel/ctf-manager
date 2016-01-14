@@ -55,7 +55,7 @@ class NewEventTests(FunctionalTest):
 
         # The browser redirects the user to the events page
         self.assertIn(reverse('events'), self.browser.current_url)
-        self.assertNotIn('/new/', self.browser.current_url)
+        self.assertNotIn(reverse('newEvent'), self.browser.current_url)
 
         # The new event is now visible on the events page
         table = self.browser.find_element_by_tag_name('table')
