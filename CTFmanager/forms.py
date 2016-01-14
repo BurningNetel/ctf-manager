@@ -2,6 +2,7 @@ from django import forms
 
 from .models import Event
 
+EMPTY_FIELD_ERROR = "Required!"
 
 class EventForm(forms.models.ModelForm):
 
@@ -17,4 +18,8 @@ class EventForm(forms.models.ModelForm):
                 'placeholder': 'yyyy-mm-dd (h24-MM)',
                 'class': 'form-control',
             }),
+        }
+        error_messages = {
+            'name': {'required': EMPTY_FIELD_ERROR},
+            'date': {'required': EMPTY_FIELD_ERROR},
         }

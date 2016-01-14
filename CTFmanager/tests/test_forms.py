@@ -1,7 +1,6 @@
 from django.test import TestCase
 
-from ..forms import EventForm
-
+from ..forms import EventForm, EMPTY_FIELD_ERROR
 
 class EventFormTest(TestCase):
 
@@ -16,6 +15,8 @@ class EventFormTest(TestCase):
         form = EventForm(data={'name': '',
                                'date': ''})
         self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['name'], [EMPTY_FIELD_ERROR])
+        self.assertEqual(form.errors['date'], [EMPTY_FIELD_ERROR])
 
     def test_form_validation_for_correct_items(self):
         form = EventForm(data={'name': 'HackCTF',

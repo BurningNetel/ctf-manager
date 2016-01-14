@@ -100,5 +100,3 @@ class NewEventTests(FunctionalTest):
 
         self.assertIn('/events/new', self.browser.current_url)
         self.browser.find_element_by_css_selector('.has-error')
-
-    # test for_invalid_input_gives_error_message

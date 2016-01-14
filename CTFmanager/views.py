@@ -16,11 +16,13 @@ def events_page(request):
 
 def new_event_page(request):
     form = EventForm(data=request.POST)
-    if form.is_valid():
-        form.save()
-        return redirect('events')
-    else:
-        return render(request, 'add_event.html', {'form': EventForm()})
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('events')
+        else:
+            return render(request, 'add_event.html', {'form': form})
+    return render(request, 'add_event.html', {'form': EventForm()})
 
 
 def view_event(request, event_id):
