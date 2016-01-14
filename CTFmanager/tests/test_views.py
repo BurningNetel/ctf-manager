@@ -38,11 +38,11 @@ class HomePageTest(ViewTestCase):
 class EventPageTest(ViewTestCase):
 
     def test_events_url_resolves_to_events_page(self):
-        response = resolve('/events/')
+        response = resolve(reverse('events'))
         self.assertEqual(response.func, events_page)
 
     def test_events_page_renders_events_template(self):
-        response = self.client.get('/events/')
+        response = self.client.get(reverse('events'))
         self.assertTemplateUsed(response,'events.html')
 
     def test_events_page_contains_new_event_button(self):
@@ -76,15 +76,15 @@ class NewEventsPageTest(ViewTestCase):
                 data={'name': '', 'date': '2016-10-02'})
 
     def test_add_events_url_resolves_to_add_events_page(self):
-        response = resolve('/events/new/')
+        response = resolve(reverse('newEvent'))
         self.assertEqual(response.func, new_event_page)
 
     def test_add_events_page_renders_add_events_template(self):
-        response = self.client.get('/events/new/')
+        response = self.client.get(reverse('newEvent'))
         self.assertTemplateUsed(response, 'add_event.html')
 
     def test_add_events_page_renders_event_form(self):
-        response = self.client.get('/events/new/')
+        response = self.client.get(reverse('newEvent'))
         self.assertIsInstance(response.context['form'], EventForm)
 
     def test_for_invalid_input_renders_error_text(self):
@@ -106,9 +106,9 @@ class NewEventsPageTest(ViewTestCase):
 
     def test_for_valid_input_renders_event_template(self):
         response = self.client.post(
-                '/events/new/',
+                reverse('newEvent'),
                 data={'name': 'hatstack', 'date': '2016-10-02'})
-        self.assertRedirects(response, '/events/')
+        self.assertRedirects(response, reverse('events'))
 
 
 class EventPageDetailTest(ViewTestCase):

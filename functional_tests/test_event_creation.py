@@ -9,11 +9,11 @@ class NewEventTests(FunctionalTest):
 
     def test_can_create_an_event_from_event_page_and_retrieve_it_later(self):
         # a user goes to the events page
-        self.browser.get(self.live_server_url + '/events/')
+        self.browser.get(self.live_server_url + reverse('events'))
 
         # He checks the pages' title is correct
         self.assertIn('CTFman - Events', self.browser.title)
-        self.assertIn('/events/', self.browser.current_url)
+        self.assertIn(reverse('events'), self.browser.current_url)
 
         # the user wants to add a new event,
         # so he clicks on the button to add a new event
@@ -22,7 +22,7 @@ class NewEventTests(FunctionalTest):
         btn_add_event.click()
 
         # The browser redirects to a new page
-        self.assertIn('/events/new/', self.browser.current_url)
+        self.assertIn(reverse('newEvent'), self.browser.current_url)
 
         # The users fills in all the mandatory data
         # The events name
@@ -54,7 +54,7 @@ class NewEventTests(FunctionalTest):
         btn_confirm.click()
 
         # The browser redirects the user to the events page
-        self.assertIn('/events/', self.browser.current_url)
+        self.assertIn(reverse('events'), self.browser.current_url)
         self.assertNotIn('/new/', self.browser.current_url)
 
         # The new event is now visible on the events page
@@ -71,7 +71,7 @@ class NewEventTests(FunctionalTest):
         # He clicks on the link that is the name of the event to go to the details page
         rows[0].find_element_by_tag_name('a').click()
         url = self.browser.current_url
-        self.assertIn('/events/Hacklu', url)
+        self.assertIn(reverse('events') + 'Hacklu', url)
         self.assertIn('CTFman - Hacklu', self.browser.title)
 
         # He goes back to the events page by clicking on the 'Home' button in the menu
@@ -82,7 +82,7 @@ class NewEventTests(FunctionalTest):
         # but uses the same name
         self.browser.get(self.live_server_url + reverse('newEvent'))
 
-        self.assertIn('/events/new', self.browser.current_url)
+        self.assertIn(reverse('newEvent'), self.browser.current_url)
 
         self.browser.find_element_by_id('id_name').send_keys('CTF')
         self.browser.find_element_by_id('id_date').send_keys('2016-01-01 18:00')
@@ -92,11 +92,11 @@ class NewEventTests(FunctionalTest):
 
         self.browser.get(self.live_server_url + reverse('newEvent'))
 
-        self.assertIn('/events/new', self.browser.current_url)
+        self.assertIn(reverse('newEvent'), self.browser.current_url)
 
         self.browser.find_element_by_id('id_name').send_keys('CTF')
         self.browser.find_element_by_id('id_date').send_keys('2015-01-01 18:00')
         self.browser.find_element_by_tag_name('button').click()
 
-        self.assertIn('/events/new', self.browser.current_url)
+        self.assertIn(reverse('newEvent'), self.browser.current_url)
         self.browser.find_element_by_css_selector('.has-error')
