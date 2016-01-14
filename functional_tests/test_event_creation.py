@@ -68,10 +68,10 @@ class NewEventTests(FunctionalTest):
 
         # The users wants to view details about the event
         # He clicks on the link that is the name of the event to go to the details page
-        rows[0].click()
+        rows[0].find_element_by_tag_name('a').click()
         url = self.browser.current_url
-        self.assertIn('/events/HackLu', url)
-        self.assertIn('CTFman - Hacklu ' + _date.year, self.browser.title)
+        self.assertIn('/events/Hacklu', url)
+        self.assertIn('CTFman - Hacklu', self.browser.title)
 
         # He goes back to the events page by clicking on the 'Home' button in the menu
         self.browser.find_element_by_class_name('navbar-brand').click()

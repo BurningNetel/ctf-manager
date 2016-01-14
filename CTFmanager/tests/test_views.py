@@ -51,7 +51,7 @@ class EventPageTest(TestCase):
 
         response = events_page(HttpRequest())
 
-        exp_name = '<tr><td>HackLu 2016</td></tr>'
+        exp_name = '>HackLu 2016<'
         exp_date = '<tr><td>' + \
                    formats.date_format(date, "SHORT_DATETIME_FORMAT")\
                    + '</td></tr>'

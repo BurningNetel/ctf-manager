@@ -8,7 +8,7 @@
 <table>
 {% if events.count != 0 %}
     {% for event in events %}
-        <tr><td>{{ event.name }}</td></tr>
+        <tr><td><a href="{% url 'view_event' event.name%}">{{ event.name }}</a></td></tr>
         <tr><td>{{ event.date|date:"SHORT_DATETIME_FORMAT" }}</td></tr>
     {% endfor %}
 {% else %}
