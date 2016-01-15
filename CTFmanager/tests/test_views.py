@@ -145,6 +145,11 @@ class EventPageDetailTest(ViewTestCase):
 
 class EventPageAddChallengeTest(ViewTestCase):
 
+    def post_incorrect_form(self):
+        _event = self.create_event('test', True)
+        url = reverse('newChallenge', args=[_event.name])
+        return self.client.post(url, data={'name': '', 'points': '200'})
+
     def create_new_challenge_response(self):
         _event = self.create_event('test', True)
         response = self.client.get(reverse('newChallenge',args=[_event.name]))
@@ -179,3 +184,22 @@ class EventPageAddChallengeTest(ViewTestCase):
         self.client.post(url, data={'name': 'test', 'points': '200'})
         response = self.client.get(_event.get_absolute_url())
         self.assertContains(response, '<td>test - 200')
+
+    def test_for_invalid_input_redirects_to_new_challenge_page(self):
+        _event = self.create_event('test', True)
+        url = reverse('newChallenge', args=[_event.name])
+        response = self.client.post(url, data={'name': '', 'points': '200'})
+        self.assertRedirects(response, reverse('newChallenge', args=[_event.name]))
+
+    def test_for_invalid_input_redirect_uses_challenge_form(self):
+        response = self.post_incorrect_form()
+        self.assertIsInstance(response.context['form'], ChallengeForm)
+
+    def test_for_invalid_input_doesnt_save(self):
+        self.post_incorrect_form()
+        event = Event.objects.first()
+        self.assertEqual(0,len(event.challenge_set.all()))
+
+    def test_for_invalid_input_renders_error_text(self):
+        response = self.post_incorrect_form()
+        self.assertContains(response, escape(EMPTY_FIELD_ERROR))
