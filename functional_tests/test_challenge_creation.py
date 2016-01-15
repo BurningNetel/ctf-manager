@@ -6,11 +6,10 @@ from .base import FunctionalTest
 
 
 class CreatingChallengesTest(FunctionalTest):
-
     def test_can_add_a_new_challenge_to_event_page(self):
         # The user has added a new event and wants to add a new challenge to the event
         _date = timezone.now()
-        event = Event.objects.create(name="Test",date=_date)
+        event = Event.objects.create(name="Test", date=_date)
         self.browser.get(self.live_server_url + event.get_absolute_url())
 
         self.assertEqual(self.browser.title, 'CTFman - Test')
@@ -41,3 +40,29 @@ class CreatingChallengesTest(FunctionalTest):
         self.assertTrue(
                 any(row.text == ('cryptochal - 500') for row in rows)
         )
+
+    def test_invalid_input_in_new_challenge_shows_errors(self):
+        # The users adds a new event
+        _date = timezone.now()
+        event = Event.objects.create(name="Test", date=_date)
+        self.browser.get(self.live_server_url + reverse('newChallenge', args=[event.name]))
+        self.assertEqual(self.browser.title, 'CTFman - New Challenge')
+
+        # He clicks on the submit button without filling in any data
+        self.browser.find_element_by_id('btn_submit').click()
+        self.assertEqual(self.browser.title, 'CTFman - New Challenge')
+
+        # The page redirects him to the same page, but errors are shown that the fields are empty
+        error_messages = self.browser.find_elements_by_css_selector('.has-error')
+        self.assertEqual(len(error_messages), 2)
+
+        # Now, the user posts letters inside the points field, but correct info in the normal field
+        self.browser.find_element_by_id('id_points').send_keys('abc')
+        self.browser.find_element_by_id('id_name').send_keys('test')
+
+        self.browser.find_element_by_id('btn_submit').click()
+
+        # The page should show one error
+        self.assertEqual(self.browser.title, 'CTFman - New Challenge')
+        errors = self.browser.find_elements_by_css_selector('.has-error')
+        self.assertEqual(len(errors), 1)
