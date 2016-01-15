@@ -147,19 +147,16 @@ class EventPageAddChallengeTest(ViewTestCase):
 
     def create_new_challenge_response(self):
         _event = self.create_event('test', True)
-        response = self.client.get(_event.get_absolute_url() + '/new')
+        response = self.client.get(reverse('newChallenge',args=[_event.name]))
         return response
 
     def test_add_challenge_resolves_to_correct_page(self):
         _event = self.create_event('test', True)
-        response = resolve(_event.get_absolute_url() + '/new')
+        response = resolve(reverse('newChallenge',args=[_event.name]))
         self.assertEqual(response.func, new_challenge)
 
     def test_add_challenge_uses_correct_template(self):
-        _event = self.create_event('test', True)
-        _event.save()
-        url = _event.get_absolute_url() + '/new'
-        response = self.client.get(url)
+        response = self.create_new_challenge_response()
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'add_challenge.html')
 
@@ -176,15 +173,9 @@ class EventPageAddChallengeTest(ViewTestCase):
         response = self.create_new_challenge_response()
         self.assertContains(response, 'id="btn_submit"')
 
-    def test_for_valid_input_renders_event_detail_template(self):
-        _event = self.create_event('test', True)
-        url = _event.get_absolute_url() + '/new'
-        response = self.client.post(url, data={'name': 'test', 'points': '200'})
-        self.assertRedirects(response, reverse('view_event', args={_event.name,}))
-
     def test_for_valid_input_shows_challenge_on_event_detail_page(self):
         _event = self.create_event('test', True)
-        url = _event.get_absolute_url() + '/new'
+        url = reverse('newChallenge', args=[_event.name])
         self.client.post(url, data={'name': 'test', 'points': '200'})
         response = self.client.get(_event.get_absolute_url())
         self.assertContains(response, '<td>test - 200')

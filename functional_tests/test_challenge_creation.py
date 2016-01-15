@@ -17,7 +17,7 @@ class CreatingChallengesTest(FunctionalTest):
 
         # The user clicks on the add challenge button
         self.browser.find_element_by_id('btn_add_challenge').click()
-        self.assertIn(reverse('events') + 'Test/new', self.browser.current_url)
+        self.assertIn(reverse('newChallenge', args=[event.name]), self.browser.current_url)
         self.assertEqual(self.browser.title, 'CTFman - New Challenge')
 
         # Then, he fills in the required fields:

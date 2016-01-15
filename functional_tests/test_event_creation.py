@@ -71,7 +71,7 @@ class NewEventTests(FunctionalTest):
         # He clicks on the link that is the name of the event to go to the details page
         rows[0].find_element_by_tag_name('a').click()
         url = self.browser.current_url
-        self.assertIn(reverse('events') + 'Hacklu', url)
+        self.assertIn(reverse('view_event', args=['Hacklu']), url)
         self.assertIn('CTFman - Hacklu', self.browser.title)
 
         # He goes back to the events page by clicking on the 'Home' button in the menu
