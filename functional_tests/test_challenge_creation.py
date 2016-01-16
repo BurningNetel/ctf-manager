@@ -10,7 +10,7 @@ class CreatingChallengesTest(FunctionalTest):
         # The user has added a new event and wants to add a new challenge to the event
         _date = timezone.now()
         event = Event.objects.create(name="Test", date=_date)
-        self.browser.get(self.live_server_url + event.get_absolute_url())
+        self.browser.get(self.server_url + event.get_absolute_url())
 
         self.assertEqual(self.browser.title, 'CTFman - Test')
 
@@ -45,7 +45,7 @@ class CreatingChallengesTest(FunctionalTest):
         # The users adds a new event
         _date = timezone.now()
         event = Event.objects.create(name="Test", date=_date)
-        self.browser.get(self.live_server_url + reverse('newChallenge', args=[event.name]))
+        self.browser.get(self.server_url + reverse('newChallenge', args=[event.name]))
         self.assertEqual(self.browser.title, 'CTFman - New Challenge')
 
         # He removes the 0 that's default in the points field

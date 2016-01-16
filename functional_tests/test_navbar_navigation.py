@@ -7,7 +7,7 @@ class NavigationTest(FunctionalTest):
     def test_navbar_position(self):
         # The user goes to the home page and sees that
         # The navigation bar is located at the top of the page
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
         self.browser.set_window_size(1280, 720)
 
         navbar = self.browser.find_element_by_tag_name('nav')
@@ -24,7 +24,7 @@ class NavigationTest(FunctionalTest):
 
     def test_navbar_links_resolve_to_correct_page(self):
         # User goes to home page
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
 
         links = self.get_links_in_navbar()
 
@@ -32,7 +32,7 @@ class NavigationTest(FunctionalTest):
         # User click on home page link
         home_button = links[0]
         url = home_button.get_attribute('href')
-        self.assertEqual(self.live_server_url + '/', url)
+        self.assertEqual(self.server_url + '/', url)
         home_button.click()
         self.assertEqual(self.browser.title, 'CTFman - Home')
         # Then on the events page link
@@ -41,7 +41,7 @@ class NavigationTest(FunctionalTest):
 
         event_button = links[1]
         url = event_button.get_attribute('href')
-        self.assertEqual(self.live_server_url + reverse('events'), url)
+        self.assertEqual(self.server_url + reverse('events'), url)
         event_button.click()
         self.assertEqual(self.browser.title, 'CTFman - Events')
 

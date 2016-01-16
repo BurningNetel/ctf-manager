@@ -8,7 +8,7 @@ from .base import FunctionalTest
 class NewEventTests(FunctionalTest):
     def test_can_create_an_event_from_event_page_and_retrieve_it_later(self):
         # a user goes to the events page
-        self.browser.get(self.live_server_url + reverse('events'))
+        self.browser.get(self.server_url + reverse('events'))
 
         # He checks the pages' title is correct
         self.assertIn('CTFman - Events', self.browser.title)
@@ -79,7 +79,7 @@ class NewEventTests(FunctionalTest):
     def test_duplicate_item_creation_gives_error_message(self):
         # A user wants to create an event for 2015 and for 2016,
         # but uses the same name
-        self.browser.get(self.live_server_url + reverse('newEvent'))
+        self.browser.get(self.server_url + reverse('newEvent'))
 
         self.assertIn(reverse('newEvent'), self.browser.current_url)
 
@@ -91,7 +91,7 @@ class NewEventTests(FunctionalTest):
         self.assertNotIn('/new', self.browser.current_url)
 
         # The users adds another event
-        self.browser.get(self.live_server_url + reverse('newEvent'))
+        self.browser.get(self.server_url + reverse('newEvent'))
 
         self.assertIn(reverse('newEvent'), self.browser.current_url)
         # He uses the same name
