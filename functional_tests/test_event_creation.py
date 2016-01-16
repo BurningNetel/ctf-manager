@@ -3,7 +3,7 @@ from django.utils import timezone, formats
 from django.utils.timezone import timedelta
 
 from .base import FunctionalTest
-
+import time
 
 class NewEventTests(FunctionalTest):
     def test_can_create_an_event_from_event_page_and_retrieve_it_later(self):
@@ -26,7 +26,8 @@ class NewEventTests(FunctionalTest):
         # The users fills in all the mandatory data
         # The events name
         tb_name = self.browser.find_element_by_id('id_name')
-        tb_name.send_keys('Hacklu')
+        name = 'Hacklu' + str(round(time.time()))
+        tb_name.send_keys(name)
         self.assertEqual('Name', tb_name.get_attribute('placeholder'))
 
         # The date and time that the event starts
@@ -60,7 +61,7 @@ class NewEventTests(FunctionalTest):
         table = self.browser.find_element_by_tag_name('table')
         rows = table.find_elements_by_tag_name('td')
         self.assertTrue(
-                any(row.text == 'Hacklu' for row in rows)
+                any(row.text == name for row in rows)
         )
         self.assertTrue(
                 any(row.text == formatted_date for row in rows)
@@ -68,23 +69,23 @@ class NewEventTests(FunctionalTest):
 
         # The users wants to view details about the event
         # He clicks on the link that is the name of the event to go to the details page
-        rows[0].find_element_by_tag_name('a').click()
+        table.find_element_by_link_text(name).click()
         url = self.browser.current_url
-        self.assertIn(reverse('view_event', args=['Hacklu']), url)
-        self.assertIn('CTFman - Hacklu', self.browser.title)
+
+        self.assertIn('CTFman - ' + name, self.browser.title)
 
         # He goes back to the events page by clicking on the 'Home' button in the menu
         self.browser.find_element_by_class_name('navbar-brand').click()
 
-    def test_duplicate_item_creation_gives_error_message(self):
         # A user wants to create an event for 2015 and for 2016,
         # but uses the same name
         self.browser.get(self.server_url + reverse('newEvent'))
 
         self.assertIn(reverse('newEvent'), self.browser.current_url)
 
-        # The users creates the first challenge, it submits correctly.
-        self.browser.find_element_by_id('id_name').send_keys('CTF')
+        # The users creates the first event, it submits correctly.
+        name = 'CTF' + str(round(time.time()))
+        self.browser.find_element_by_id('id_name').send_keys(name)
         self.browser.find_element_by_id('id_date').send_keys('2016-01-01 18:00')
         self.browser.find_element_by_tag_name('button').click()
 
@@ -95,7 +96,7 @@ class NewEventTests(FunctionalTest):
 
         self.assertIn(reverse('newEvent'), self.browser.current_url)
         # He uses the same name
-        self.browser.find_element_by_id('id_name').send_keys('CTF')
+        self.browser.find_element_by_id('id_name').send_keys(name)
         self.browser.find_element_by_id('id_date').send_keys('2015-01-01 18:00')
         self.browser.find_element_by_tag_name('button').click()
 
