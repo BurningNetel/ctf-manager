@@ -32,7 +32,7 @@ class FunctionalTest(LiveServerTestCase):
         if self._test_has_failed():
             if not os.path.exists(SCREEN_DUMP_LOCATION):
                 os.makedirs(SCREEN_DUMP_LOCATION)
-            for ix, handle in enumerate(self.browser.window_handles):
+            for ix, handle in self.browser.current_window_handle:
                 self._windowid = ix
                 self.browser.switch_to.window(handle)
                 self.take_screenshot()
