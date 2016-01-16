@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from CTFmanager.models import Event
 from .base import FunctionalTest
-import time
+
 
 class CreatingChallengesTest(FunctionalTest):
     def test_can_add_a_new_challenge_to_event_page(self):

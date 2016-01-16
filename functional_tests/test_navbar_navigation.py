@@ -1,4 +1,5 @@
-from .base import  FunctionalTest
+from .base import FunctionalTest
+from django.core.urlresolvers import reverse
 
 
 class NavigationTest(FunctionalTest):
@@ -16,19 +17,33 @@ class NavigationTest(FunctionalTest):
                 2
         )
 
-    def test_navbar_links(self):
+    def get_links_in_navbar(self):
+        navbar = self.browser.find_element_by_tag_name('nav')
+        link_list = navbar.find_element_by_tag_name('ul')
+        return link_list.find_elements_by_tag_name('a')
+
+    def test_navbar_links_resolve_to_correct_page(self):
         # User goes to home page
         self.browser.get(self.live_server_url)
 
-        navbar = self.browser.find_element_by_tag_name('nav')
-        link_list = navbar.find_element_by_tag_name('ul')
-        links = link_list.find_elements_by_tag_name('a')
+        links = self.get_links_in_navbar()
 
         # there are 6 links - home - events - scoreboard - profile - analyse - groups
         # User click on home page link
         home_button = links[0]
         url = home_button.get_attribute('href')
-        self.assertEqual(self.live_server_url + '/',url)
+        self.assertEqual(self.live_server_url + '/', url)
+        home_button.click()
+        self.assertEqual(self.browser.title, 'CTFman - Home')
+        # Then on the events page link
+
+        links = self.get_links_in_navbar()
+
+        event_button = links[1]
+        url = event_button.get_attribute('href')
+        self.assertEqual(self.live_server_url + reverse('events'), url)
+        event_button.click()
+        self.assertEqual(self.browser.title, 'CTFman - Events')
 
 
 

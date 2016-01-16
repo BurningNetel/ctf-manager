@@ -6,7 +6,6 @@ from .base import FunctionalTest
 
 
 class NewEventTests(FunctionalTest):
-
     def test_can_create_an_event_from_event_page_and_retrieve_it_later(self):
         # a user goes to the events page
         self.browser.get(self.live_server_url + reverse('events'))
@@ -32,17 +31,17 @@ class NewEventTests(FunctionalTest):
 
         # The date and time that the event starts
         datetime = self.browser.find_element_by_id('id_date')
-        self.assertEqual('yyyy-mm-dd (h24-MM)',datetime.get_attribute('placeholder'))
+        self.assertEqual('yyyy-mm-dd (h24-MM)', datetime.get_attribute('placeholder'))
         # The date of the upcoming event is filled in the date textbox
         datetime.clear()
 
         _date = timezone.now() + timedelta(days=1)
         formatted_date = formats.date_format(_date, "SHORT_DATETIME_FORMAT")
-        datetime.send_keys(str(_date.year) + '-'+
-                           ('0' + str(_date.month))[-2:] + '-'
-                           + ('0' + str(_date.day))[-2:] + " "
-                           + str(_date.hour) + ":"
-                           + str(_date.minute)
+        datetime.send_keys(str(_date.year) + '-' +
+                           ('0' + str(_date.month))[-2:] + '-' +
+                           ('0' + str(_date.day))[-2:] + " " +
+                           str(_date.hour) + ":" +
+                           str(_date.minute)
                            )
         # Then, the user clicks the 'confirm' button
         # When every necessary field has been filled
@@ -64,7 +63,7 @@ class NewEventTests(FunctionalTest):
                 any(row.text == 'Hacklu' for row in rows)
         )
         self.assertTrue(
-            any(row.text == formatted_date for row in rows)
+                any(row.text == formatted_date for row in rows)
         )
 
         # The users wants to view details about the event
@@ -84,19 +83,22 @@ class NewEventTests(FunctionalTest):
 
         self.assertIn(reverse('newEvent'), self.browser.current_url)
 
+        # The users creates the first challenge, it submits correctly.
         self.browser.find_element_by_id('id_name').send_keys('CTF')
         self.browser.find_element_by_id('id_date').send_keys('2016-01-01 18:00')
         self.browser.find_element_by_tag_name('button').click()
 
         self.assertNotIn('/new', self.browser.current_url)
 
+        # The users adds another event
         self.browser.get(self.live_server_url + reverse('newEvent'))
 
         self.assertIn(reverse('newEvent'), self.browser.current_url)
-
+        # He uses the same name
         self.browser.find_element_by_id('id_name').send_keys('CTF')
         self.browser.find_element_by_id('id_date').send_keys('2015-01-01 18:00')
         self.browser.find_element_by_tag_name('button').click()
 
+        # The form now shows a error
         self.assertIn(reverse('newEvent'), self.browser.current_url)
         self.browser.find_element_by_css_selector('.has-error')
