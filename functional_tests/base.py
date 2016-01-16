@@ -24,7 +24,7 @@ class FunctionalTest(LiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.browser.quit()
+        #cls.browser.quit()
         if cls.server_url == cls.live_server_url:
             super(FunctionalTest, cls).tearDownClass()
 
@@ -34,7 +34,7 @@ class FunctionalTest(LiveServerTestCase):
                 os.makedirs(SCREEN_DUMP_LOCATION)
             for ix, handle in enumerate(self.browser.window_handles):
                 self._windowid = ix
-                self.browser.switch_to_window(handle)
+                self.browser.switch_to.window(handle)
                 self.take_screenshot()
                 self.dump_html()
         self.browser.quit()
