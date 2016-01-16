@@ -3,26 +3,70 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from django.core.urlresolvers import reverse
 from django.utils import timezone, formats
 from django.utils.timezone import timedelta
-import sys, time
+import sys, time, os
+from datetime import datetime
+
+SCREEN_DUMP_LOCATION = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'screendumps'
+)
 
 
 class FunctionalTest(LiveServerTestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.browser = WebDriver()
         for arg in sys.argv:
             if 'liveserver' in arg:
-                cls.server_url = 'http://' +arg.split('=')[1]
+                cls.server_url = 'http://' + arg.split('=')[1]
                 return
-        super(FunctionalTest,cls).setUpClass()
+        super(FunctionalTest, cls).setUpClass()
         cls.server_url = cls.live_server_url
 
     @classmethod
     def tearDownClass(cls):
         cls.browser.quit()
         if cls.server_url == cls.live_server_url:
-            super(FunctionalTest,cls).tearDownClass()
+            super(FunctionalTest, cls).tearDownClass()
+
+    def tearDown(self):
+        if self._test_has_failed():
+            if not os.path.exists(SCREEN_DUMP_LOCATION):
+                os.makedirs(SCREEN_DUMP_LOCATION)
+            for ix, handle in enumerate(self.browser.window_handles):
+                self._windowid = ix
+                self.browser.switch_to_window(handle)
+                self.take_screenshot()
+                self.dump_html()
+        self.browser.quit()
+        super().tearDown()
+
+    def _get_filename(self):
+        timestamp = datetime.now().isoformat().replace(':', '.')[:19]
+        return '{folder}/{classname}.{method}-window{windowid}-{timestamp}'.format(
+            folder=SCREEN_DUMP_LOCATION,
+            classname=self.__class__.__name__,
+            method=self._testMethodName,
+            windowid=self._windowid,
+            timestamp=timestamp
+        )
+
+    def _test_has_failed(self):
+        # for 3.4. In 3.3, can just use self._outcomeForDoCleanups.success:
+        for method, error in self._outcome.errors:
+            if error:
+                return True
+        return False
+
+    def take_screenshot(self):
+        filename = self._get_filename() + '.png'
+        print('screenshotting to', filename)
+        self.browser.get_screenshot_as_file(filename)
+
+    def dump_html(self):
+        filename = self._get_filename() + '.html'
+        print('dumping page HTML to', filename)
+        with open(filename, 'w') as f:
+            f.write(self.browser.page_source)
 
     def add_event_and_browse_to_add_challenge(self):
         self.browser.get(self.server_url + reverse('newEvent'))
