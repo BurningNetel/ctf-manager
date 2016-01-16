@@ -4,7 +4,6 @@ from ..forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
 
 
 class EventFormTest(TestCase):
-
     def test_form_renders_Event_inputs(self):
         form = EventForm()
         p = form.as_p()
@@ -31,10 +30,27 @@ class EventFormTest(TestCase):
 
 
 class ChallengeFormTest(TestCase):
-
     def test_form_renders_Challenge_inputs(self):
         form = ChallengeForm()
         p = form.as_p()
         self.assertIn('placeholder="Name"', p)
         self.assertIn('placeholder="Points"', p)
         self.assertIn('class="form-control"', p)
+
+    def test_form_validation_for_correct_items(self):
+        form = ChallengeForm(data={'name': 'test',
+                                   'points': '2015'})
+        self.assertTrue(form.is_valid())
+
+    def test_form_validation_for_letters_in_points_field(self):
+        form = ChallengeForm(data={'name': 'test',
+                                   'points': 'test'})
+        self.assertFalse(form.is_valid())
+
+    def test_form_validation_for_blank_items(self):
+        form = ChallengeForm(data={'name': '',
+                                   'points': ''})
+
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['name'], [EMPTY_FIELD_ERROR])
+        self.assertEqual(form.errors['points'], [EMPTY_FIELD_ERROR])

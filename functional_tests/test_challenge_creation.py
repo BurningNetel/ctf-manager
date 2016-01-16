@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from CTFmanager.models import Event
 from .base import FunctionalTest
-
+import time
 
 class CreatingChallengesTest(FunctionalTest):
     def test_can_add_a_new_challenge_to_event_page(self):
@@ -48,6 +48,10 @@ class CreatingChallengesTest(FunctionalTest):
         self.browser.get(self.live_server_url + reverse('newChallenge', args=[event.name]))
         self.assertEqual(self.browser.title, 'CTFman - New Challenge')
 
+        # He removes the 0 that's default in the points field
+        self.browser.find_element_by_id('id_points').click()
+        self.browser.find_element_by_id('id_points').send_keys('\b')
+
         # He clicks on the submit button without filling in any data
         self.browser.find_element_by_id('btn_submit').click()
         self.assertEqual(self.browser.title, 'CTFman - New Challenge')
@@ -56,13 +60,13 @@ class CreatingChallengesTest(FunctionalTest):
         error_messages = self.browser.find_elements_by_css_selector('.has-error')
         self.assertEqual(len(error_messages), 2)
 
-        # Now, the user posts letters inside the points field, but correct info in the normal field
-        self.browser.find_element_by_id('id_points').send_keys('abc')
+        # Now, the user posts invalid info inside the points field, but correct info in the normal field
+        self.browser.find_element_by_id('id_points').send_keys('')
         self.browser.find_element_by_id('id_name').send_keys('test')
 
         self.browser.find_element_by_id('btn_submit').click()
-
         # The page should show one error
         self.assertEqual(self.browser.title, 'CTFman - New Challenge')
         errors = self.browser.find_elements_by_css_selector('.has-error')
         self.assertEqual(len(errors), 1)
+

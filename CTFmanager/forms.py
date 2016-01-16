@@ -45,3 +45,8 @@ class ChallengeForm(forms.models.ModelForm):
                 'class': 'form-control',
             }),
         }
+
+        error_messages = {
+            'name': {'required': EMPTY_FIELD_ERROR},
+            'points': {'required': EMPTY_FIELD_ERROR},
+        }
