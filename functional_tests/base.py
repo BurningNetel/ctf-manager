@@ -14,7 +14,6 @@ SCREEN_DUMP_LOCATION = os.path.join(
 class FunctionalTest(LiveServerTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.browser = WebDriver()
         for arg in sys.argv:
             if 'liveserver' in arg:
                 cls.server_url = 'http://' + arg.split('=')[1]
@@ -28,13 +27,15 @@ class FunctionalTest(LiveServerTestCase):
         if cls.server_url == cls.live_server_url:
             super(FunctionalTest, cls).tearDownClass()
 
+    def setUp(self):
+        self.browser = WebDriver()
+        self.browser.implicitly_wait(5)
+
+
     def tearDown(self):
         if self._test_has_failed():
             if not os.path.exists(SCREEN_DUMP_LOCATION):
                 os.makedirs(SCREEN_DUMP_LOCATION)
-            for ix, handle in self.browser.current_window_handle:
-                self._windowid = ix
-                self.browser.switch_to.window(handle)
                 self.take_screenshot()
                 self.dump_html()
         self.browser.quit()
