@@ -8,15 +8,8 @@ from .base import FunctionalTest
 class CreatingChallengesTest(FunctionalTest):
     def test_can_add_a_new_challenge_to_event_page(self):
         # The user has added a new event and wants to add a new challenge to the event
-        _date = timezone.now()
-        event = Event.objects.create(name="Test", date=_date)
-        self.browser.get(self.server_url + event.get_absolute_url())
+        name = self.add_event_and_browse_to_add_challenge()
 
-        self.assertEqual(self.browser.title, 'CTFman - Test')
-
-        # The user clicks on the add challenge button
-        self.browser.find_element_by_id('btn_add_challenge').click()
-        self.assertIn(reverse('newChallenge', args=[event.name]), self.browser.current_url)
         self.assertEqual(self.browser.title, 'CTFman - New Challenge')
 
         # Then, he fills in the required fields:
@@ -32,7 +25,7 @@ class CreatingChallengesTest(FunctionalTest):
         confirm_button.click()
 
         # The browser redirects him to the event page
-        self.assertEqual(self.browser.title, 'CTFman - Test')
+        self.assertEqual(self.browser.title, 'CTFman - ' + name)
 
         # He sees his new challenge on the page!
         table = self.browser.find_element_by_tag_name('table')
@@ -43,9 +36,8 @@ class CreatingChallengesTest(FunctionalTest):
 
     def test_invalid_input_in_new_challenge_shows_errors(self):
         # The users adds a new event
-        _date = timezone.now()
-        event = Event.objects.create(name="Test", date=_date)
-        self.browser.get(self.server_url + reverse('newChallenge', args=[event.name]))
+        self.add_event_and_browse_to_add_challenge()
+
         self.assertEqual(self.browser.title, 'CTFman - New Challenge')
 
         # He removes the 0 that's default in the points field
