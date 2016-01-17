@@ -1,5 +1,5 @@
-from invoke import run, env, task
-
+from invoke import run, task
+import os.path
 
 def _get_manage_dot_py(host):
     return '{path}/virtualenv/bin/python {path}/source/manage.py'.format(
@@ -9,6 +9,8 @@ def _get_manage_dot_py(host):
 
 @task
 def reset_database(host):
-    run('{manage_dot_py} flush --noinput'.format(
-            manage_dot_py=_get_manage_dot_py(host)
-    ))
+    _path = _get_manage_dot_py(host)
+    if os.path.exists(_path):
+        run('{manage_dot_py} flush --noinput'.format(
+                manage_dot_py=_path
+        ))
