@@ -1,4 +1,4 @@
-from invoke import run, env
+from invoke import run, env, task
 
 
 def _get_manage_dot_py(host):
@@ -7,7 +7,8 @@ def _get_manage_dot_py(host):
     )
 
 
-def reset_database():
+@task
+def reset_database(host):
     run('{manage_dot_py} flush --noinput'.format(
-            manage_dot_py=_get_manage_dot_py(env.host)
+            manage_dot_py=_get_manage_dot_py(host)
     ))
