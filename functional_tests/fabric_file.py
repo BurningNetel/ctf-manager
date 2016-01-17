@@ -1,4 +1,4 @@
-from fabric.api import env, run
+from invoke import run, env
 
 
 def _get_manage_dot_py(host):
