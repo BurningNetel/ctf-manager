@@ -15,4 +15,15 @@
     <tr><td>No upcoming events!</td></tr>
 {% endif %}
 </table>
+    <h1>Archive</h1>
+    <table id="table_archive" class="table table-striped">
+        {% for event in archive %}
+            <tr>
+                <td><a href="{% url 'view_event' event.name %}">{{ event.name }}</a></td>
+            </tr>
+            <tr>
+                <td>{{ event.date|date:"SHORT_DATETIME_FORMAT" }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

@@ -61,12 +61,22 @@ class EventPageTest(ViewTestCase):
     def test_events_page_has_correct_headers(self):
         response = events_page(HttpRequest())
         expected = '<h1>Upcoming Events</h1>'
+        expected2 = '<h1>Archive</h1>'
         self.assertIn(expected, response.content.decode())
+        self.assertIn(expected2, response.content.decode())
 
     def test_empty_events_set_shows_correct_message(self):
         response = events_page(HttpRequest())
         expected = '<tr><td>No upcoming events!</td></tr>'
         self.assertIn(expected, response.content.decode())
+
+    def test_events_page_display_archive(self):
+        event_past = self.create_event('past_event', False)
+        response = self.client.get(reverse('events'))
+        archive = response.context['archive']
+        self.assertContains(response, '<table id="table_archive"')
+        self.assertContains(response, event_past.name)
+        self.assertEqual(archive[0], event_past)
 
 
 class NewEventsPageTest(ViewTestCase):

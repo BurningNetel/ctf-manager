@@ -11,7 +11,9 @@ def home_page(request):
 
 def events_page(request):
     _events = Event.objects.filter(date__gt=timezone.now())
-    return render(request, 'events.html', {'events': _events})
+    archive = Event.objects.filter(date__lte=timezone.now())
+    return render(request, 'events.html', {'events': _events,
+                                           'archive': archive})
 
 
 def new_event_page(request):
