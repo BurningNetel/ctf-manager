@@ -91,10 +91,10 @@ class FunctionalTest(LiveServerTestCase):
                             str(_date.hour) + ":" +
                             str(_date.minute)
                             )
+        self.browser.find_element_by_tag_name('button').click()
         return name
 
     def add_event_and_browse_to_add_challenge(self):
         name = self.add_event(True)
-        self.browser.find_element_by_tag_name('button').click()
         self.browser.get(self.server_url + '/events/' + name + '/new')
         return name
