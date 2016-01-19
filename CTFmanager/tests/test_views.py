@@ -52,10 +52,11 @@ class EventPageTest(ViewTestCase):
 
     def test_events_page_displays_only_upcoming_events(self):
         event_future = self.create_event("hatCTF", True)
-        event_past = self.create_event("RuCTF 2015", False)
+        event_past = self.create_event("RuCTF_2015", False)
         response = self.client.get(reverse('events'))
         _event = response.context['events']
         self.assertEqual(_event[0], event_future)
+        self.assertEqual(len(_event), 1)
         self.assertNotEqual(_event[0], event_past)
 
     def test_events_page_has_correct_headers(self):
@@ -77,6 +78,12 @@ class EventPageTest(ViewTestCase):
         self.assertContains(response, '<table id="table_archive"')
         self.assertContains(response, event_past.name)
         self.assertEqual(archive[0], event_past)
+
+    def test_events_page_displays_error_message_when_nothing_in_archive(self):
+        response = self.client.get(reverse('events'))
+        archive = response.context['archive']
+        self.assertEqual(len(archive), 0)
+        self.assertContains(response, 'No past events!')
 
 
 class NewEventsPageTest(ViewTestCase):
