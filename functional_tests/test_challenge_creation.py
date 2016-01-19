@@ -1,7 +1,3 @@
-from django.core.urlresolvers import reverse
-from django.utils import timezone
-
-from CTFmanager.models import Event
 from .base import FunctionalTest
 
 

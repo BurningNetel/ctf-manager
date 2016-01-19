@@ -74,19 +74,27 @@ class FunctionalTest(LiveServerTestCase):
         with open(filename, 'w') as f:
             f.write(self.browser.page_source)
 
-    def add_event_and_browse_to_add_challenge(self):
+    def add_event(self, isFuture):
         self.browser.get(self.server_url + reverse('newEvent'))
         tb_name = self.browser.find_element_by_id('id_name')
         name = 'TestLu' + str(round(time.time()))
         tb_name.send_keys(name)
         _datetime = self.browser.find_element_by_id('id_date')
-        _date = timezone.now() + timedelta(days=1)
+        _date = timezone.now()
+        if isFuture:
+            _date += timedelta(days=1)
+        else:
+            _date -= timedelta(days=1)
         _datetime.send_keys(str(_date.year) + '-' +
                            ('0' + str(_date.month))[-2:] + '-' +
                            ('0' + str(_date.day))[-2:] + " " +
                             str(_date.hour) + ":" +
                             str(_date.minute)
                             )
+        return name
+
+    def add_event_and_browse_to_add_challenge(self):
+        name = self.add_event(True)
         self.browser.find_element_by_tag_name('button').click()
         self.browser.get(self.server_url + '/events/' + name + '/new')
         return name
