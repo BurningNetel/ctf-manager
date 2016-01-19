@@ -5,7 +5,7 @@
 {% block content %}
 <a class="btn btn-default" id="btn_add_event" href="{% url 'newEvent' %}">Add Event</a>
 <h1>Upcoming Events</h1>
-<table class="table table-striped ">
+    <table id="table_upcoming" class="table table-striped ">
 {% if events.count != 0 %}
     {% for event in events %}
         <tr><td><a href="{% url 'view_event' event.name%}">{{ event.name }}</a></td></tr>
