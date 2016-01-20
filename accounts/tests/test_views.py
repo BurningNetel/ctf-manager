@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.urlresolvers import resolve, reverse
 from django.test import TestCase
 
@@ -64,3 +64,8 @@ class LoginTest(TestCase):
     def test_login_uses_login_template(self):
         response = self.client.get(reverse('login'))
         self.assertTemplateUsed(response, 'login.html')
+
+    def test_login_uses_authentication_form(self):
+        response = self.client.get(reverse('login'))
+        form = response.context['form']
+        self.assertIsInstance(form, AuthenticationForm)

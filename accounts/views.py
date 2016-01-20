@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
@@ -12,4 +12,5 @@ def register_page(request):
 
 
 def login_page(request):
-    return render(request, 'login.html')
+    form = AuthenticationForm
+    return render(request, 'login.html', {'form': AuthenticationForm()})

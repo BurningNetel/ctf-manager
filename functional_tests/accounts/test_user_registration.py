@@ -1,6 +1,5 @@
 from functional_tests.base import FunctionalTest
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 
 
 class RegistrationTest(FunctionalTest):
