@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>CTFman - Register</title>
-</head>
-<body>
-<form class="form" method="POST" action="{% url 'register' %}">
+{% extends 'base.html' %}
+
+{% block title %}CTFman - Register{% endblock %}
+
+{% block url %}{% url 'register' %}{% endblock %}
+
+{% block form %}
 {{ form }}
-<button id="btn_submit" type="submit">register</button>
-    {% csrf_token %}
-</form>
-</body>
-</html>
+{% endblock %}
+
+{% block button %}Register{% endblock %}

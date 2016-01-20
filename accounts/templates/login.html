@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>CTFman - Login</title>
-</head>
-<body>
-<form method="POST" action="{% url 'login' %}">
-    {{ form }}
-    <button id="btn_submit" type="submit">Login</button>
-    {% csrf_token %}
-</form>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}CTFman - Login{% endblock %}
+
+{% block url %}{% url 'login' %}{% endblock %}
+
+{% block form %}
+    {{ form.username.label }}
+    {{ form.username }}
+    {{ form.password.label }}
+    {{ form.password }}
+{% endblock %}
+
+{% block button %}Login{% endblock %}
