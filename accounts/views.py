@@ -7,7 +7,7 @@ def register_page(request):
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('login')
     return render(request, 'register.html', {'form': UserCreationForm()})
 
 
