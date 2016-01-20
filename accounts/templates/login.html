@@ -5,6 +5,10 @@
     <title>CTFman - Login</title>
 </head>
 <body>
-
+<form>
+    {{ form }}
+    <button type="submit">Login</button>
+    {% csrf_token %}
+</form>
 </body>
 </html>

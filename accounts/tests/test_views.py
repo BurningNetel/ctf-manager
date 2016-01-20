@@ -69,3 +69,13 @@ class LoginTest(TestCase):
         response = self.client.get(reverse('login'))
         form = response.context['form']
         self.assertIsInstance(form, AuthenticationForm)
+
+    def test_login_template_displays_authentication_form(self):
+        response = self.client.get(reverse('login'))
+        self.assertContains(response, '<form')
+        self.assertContains(response, 'id_username')
+        self.assertContains(response, 'id_password')
+
+    def test_login_template_has_submit_button(self):
+        response = self.client.get(reverse('login'))
+        self.assertContains(response, 'btn_submit')
