@@ -1,3 +1,4 @@
+from django.contrib.auth.forms import UserCreationForm
 from django.core.urlresolvers import resolve, reverse
 from django.test import TestCase
 
@@ -13,3 +14,8 @@ class RegistrationTest(TestCase):
         response = self.client.get(reverse('register'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'register.html')
+
+    def test_registration_uses_register_form(self):
+        response = self.client.get(reverse('register'))
+        registration_form = response.context['form']
+        self.assertIsInstance(registration_form, UserCreationForm)
