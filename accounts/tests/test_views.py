@@ -19,3 +19,9 @@ class RegistrationTest(TestCase):
         response = self.client.get(reverse('register'))
         registration_form = response.context['form']
         self.assertIsInstance(registration_form, UserCreationForm)
+
+    def test_registration_displays_registration_form(self):
+        response = self.client.get(reverse('register'))
+        self.assertContains(response, 'id_username')
+        self.assertContains(response, 'id_password1')
+        self.assertContains(response, 'id_password2')
