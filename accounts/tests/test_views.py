@@ -1,8 +1,11 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.urlresolvers import resolve, reverse
 from django.test import TestCase
 
 from ..views import register_page
+
+User = get_user_model()
 
 
 class RegistrationTest(TestCase):
@@ -29,3 +32,11 @@ class RegistrationTest(TestCase):
     def test_registration_form_has_submit_button(self):
         response = self.client.get(reverse('register'))
         self.assertContains(response, 'btn_submit')
+
+    def test_registration_form_valid_input_saves_new_user(self):
+        self.client.post(reverse('register'),
+                         data={'username': 'tester',
+                               'password1': 's3cur3p4ssw0rd',
+                               'password2': 's3cur3p4ssw0rd'})
+        count = User.objects.count()
+        self.assertEqual(count, 1)
