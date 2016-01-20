@@ -3,7 +3,8 @@ from django.shortcuts import render
 
 
 def register_page(request):
-    ucf = UserCreationForm(data=request.POST)
+    form = UserCreationForm(data=request.POST)
     if request.method == 'POST':
-        ucf.save()
+        if form.is_valid():
+            form.save()
     return render(request, 'register.html', {'form': UserCreationForm()})

@@ -40,3 +40,10 @@ class RegistrationTest(TestCase):
                                'password2': 's3cur3p4ssw0rd'})
         count = User.objects.count()
         self.assertEqual(count, 1)
+
+    def test_registration_form_invalid_input_does_not_save_user(self):
+        self.client.post(reverse('register'),
+                         data={'username': '',
+                               'password1': 's3cur3p4ssw0rd',
+                               'password2': 's3cur3p4ssw0frd'})
+        count = User.objects.count()
