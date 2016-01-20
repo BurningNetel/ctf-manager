@@ -25,3 +25,7 @@ class RegistrationTest(TestCase):
         self.assertContains(response, 'id_username')
         self.assertContains(response, 'id_password1')
         self.assertContains(response, 'id_password2')
+
+    def test_registration_form_has_submit_button(self):
+        response = self.client.get(reverse('register'))
+        self.assertContains(response, 'btn_submit')
