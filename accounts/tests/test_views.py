@@ -48,12 +48,12 @@ class RegistrationTest(TestCase):
                                'password2': 's3cur3p4ssw0frd'})
         count = User.objects.count()
 
-    def test_valid_input_renders_home_page(self):
+    def test_valid_input_redirects_to_login_page(self):
         response = self.client.post(reverse('register'),
                                     data={'username': 'tester',
                                           'password1': 's3cur3p4ssw0rd',
                                           'password2': 's3cur3p4ssw0rd'})
-        self.assertRedirects(response, reverse('home'))
+        self.assertRedirects(response, reverse('login'))
 
 
 class LoginTest(TestCase):
