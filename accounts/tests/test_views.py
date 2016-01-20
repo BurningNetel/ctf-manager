@@ -60,3 +60,7 @@ class LoginTest(TestCase):
     def test_login_url_resolves_to_login_view(self):
         response = resolve(reverse('login'))
         self.assertEqual(response.func, login_page)
+
+    def test_login_uses_login_template(self):
+        response = self.client.get(reverse('login'))
+        self.assertTemplateUsed(response, 'login.html')

@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-
+from django.http import HttpResponse
 
 def register_page(request):
     form = UserCreationForm(data=request.POST)
@@ -12,4 +12,4 @@ def register_page(request):
 
 
 def login_page(request):
-    None
+    return render(request, 'login.html')
