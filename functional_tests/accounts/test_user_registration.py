@@ -22,7 +22,7 @@ class RegistrationTest(FunctionalTest):
 
         # User is redirected to login page and logs in with username and password
         username_login = self.browser.find_element_by_id('id_username')
-        password_login = self.browser.find_element_by_id('id_password2')
+        password_login = self.browser.find_element_by_id('id_password')
         username_login.send_keys(name)
         password_login.send_keys(password)
         # user submits form
