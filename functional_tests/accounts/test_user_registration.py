@@ -1,11 +1,12 @@
-from .base import FunctionalTest
+from functional_tests.base import FunctionalTest
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 
 class RegistrationTest(FunctionalTest):
     def test_registration_of_normal_user_and_logging_in(self):
         # User is at registration page
-        self.browser.get('/auth/register')
+        self.browser.get(self.server_url + reverse('register'))
         self.assertEqual(self.browser.title, 'CTFman - Register')
         username = self.browser.find_element_by_id('id_username')
         password1 = self.browser.find_element_by_id('id_password1')
