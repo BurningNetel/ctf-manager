@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.signals import user_logged_in
 from django.core.urlresolvers import resolve, reverse
 from django.test import TestCase
+from unittest.mock import MagicMock
 
 from ..views import register_page, login_page
 
@@ -47,6 +49,7 @@ class RegistrationTest(TestCase):
                                'password1': 's3cur3p4ssw0rd',
                                'password2': 's3cur3p4ssw0frd'})
         count = User.objects.count()
+        self.assertEqual(count, 0)
 
     def test_valid_input_redirects_to_login_page(self):
         response = self.client.post(reverse('register'),
@@ -79,3 +82,24 @@ class LoginTest(TestCase):
     def test_login_template_has_submit_button(self):
         response = self.client.get(reverse('login'))
         self.assertContains(response, 'btn_submit')
+
+    def test_valid_POST_input_authenticates_user(self):
+        handler = MagicMock()
+        user_logged_in.connect(handler)
+        User.objects.create_user('hans',
+                                 'jimmy@hendrx.cm',
+                                 'ihaveapassword')
+
+        self.client.post(reverse('login'),
+                         data={'username': 'hans',
+                               'password': 'ihaveapassword'})
+        self.assertEqual(handler.call_count, 1)
+
+    def test_valid_POST_redirects_to_home_page(self):
+        User.objects.create_user('hans',
+                                 'jimmy@hendrx.cm',
+                                 'ihaveapassword')
+        response = self.client.post(reverse('login'),
+                                    data={'username': 'hans',
+                                          'password': 'ihaveapassword'})
+        self.assertRedirects(response, reverse('home'))
