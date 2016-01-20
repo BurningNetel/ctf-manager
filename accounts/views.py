@@ -9,3 +9,7 @@ def register_page(request):
             form.save()
             return redirect('home')
     return render(request, 'register.html', {'form': UserCreationForm()})
+
+
+def login_page(request):
+    None

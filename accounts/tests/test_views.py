@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.urlresolvers import resolve, reverse
 from django.test import TestCase
 
-from ..views import register_page
+from ..views import register_page, login_page
 
 User = get_user_model()
 
@@ -54,3 +54,9 @@ class RegistrationTest(TestCase):
                                           'password1': 's3cur3p4ssw0rd',
                                           'password2': 's3cur3p4ssw0rd'})
         self.assertRedirects(response, reverse('home'))
+
+
+class LoginTest(TestCase):
+    def test_login_url_resolves_to_login_view(self):
+        response = resolve(reverse('login'))
+        self.assertEqual(response.func, login_page)
