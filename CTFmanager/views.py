@@ -12,7 +12,7 @@ def home_page(request):
 def events_page(request):
     _events = Event.objects.filter(date__gt=timezone.now())
     archive = Event.objects.filter(date__lte=timezone.now())
-    return render(request, 'events.html', {'events': _events,
+    return render(request, 'event/events.html', {'events': _events,
                                            'archive': archive})
 
 
@@ -23,13 +23,13 @@ def new_event_page(request):
             form.save()
             return redirect('events')
         else:
-            return render(request, 'add_event.html', {'form': form})
-    return render(request, 'add_event.html', {'form': EventForm()})
+            return render(request, 'event/add_event.html', {'form': form})
+    return render(request, 'event/add_event.html', {'form': EventForm()})
 
 
 def view_event(request, event_id):
     _event = Event.objects.get(pk=event_id)
-    return render(request, 'event_detail.html', {'event': _event})
+    return render(request, 'event/event_detail.html', {'event': _event})
 
 
 def new_challenge(request, event_id):
@@ -40,5 +40,5 @@ def new_challenge(request, event_id):
             form.save(for_event=_event)
             return redirect(_event.get_absolute_url())
         else:
-            return render(request, 'add_challenge.html', {'form': form, 'event': _event})
-    return render(request, 'add_challenge.html', {'form': ChallengeForm(), 'event': _event})
+            return render(request, 'event/add_challenge.html', {'form': form, 'event': _event})
+    return render(request, 'event/add_challenge.html', {'form': ChallengeForm(), 'event': _event})
