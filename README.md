@@ -2,6 +2,8 @@
 
 Uses Etherpad to create a powerfull tool to manage and play with a CTF team
 
+Written in Django.
+
 # Features
 
 - User Stat Tracking
