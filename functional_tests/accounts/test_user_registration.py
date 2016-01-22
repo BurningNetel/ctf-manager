@@ -29,3 +29,9 @@ class RegistrationTest(FunctionalTest):
         self.browser.find_element_by_id('btn_submit').click()
         # User is redirected to home page
         self.assertEqual(self.browser.title, 'CTFman - Home')
+
+        # Finally he logs out by pressing the log out button
+
+        self.browser.find_element_by_id('btn_logout').click()
+
+        self.assertEqual(self.browser.title, 'CTFman - Login')

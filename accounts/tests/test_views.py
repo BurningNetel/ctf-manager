@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, SESSION_KEY
 from django.contrib.auth.views import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.signals import user_logged_in
@@ -76,20 +76,30 @@ class LoginTest(TestCase):
     def test_valid_POST_input_authenticates_user(self):
         handler = MagicMock()
         user_logged_in.connect(handler)
-        User.objects.create_user('hans',
-                                 'jimmy@hendrx.cm',
-                                 'ihaveapassword')
+        user = self.create_valid_user()
 
         self.client.post(reverse('login'),
                          data={'username': 'hans',
                                'password': 'ihaveapassword'})
         self.assertEqual(handler.call_count, 1)
+        self.assertEqual(self.client.session[SESSION_KEY], str(user.pk))
+
+    def create_valid_user(self):
+        user = User.objects.create_user('hans',
+                                        'jimmy@hendrx.cm',
+                                        'ihaveapassword')
+        return user
 
     def test_valid_POST_redirects_to_home_page(self):
-        User.objects.create_user('hans',
-                                 'jimmy@hendrx.cm',
-                                 'ihaveapassword')
+        self.create_valid_user()
         response = self.client.post(reverse('login'),
                                     data={'username': 'hans',
                                           'password': 'ihaveapassword'})
         self.assertRedirects(response, reverse('home'))
+
+    def test_logout_view(self):
+        user = self.create_valid_user()
+        self.assertTrue(self.client.login(username=user.username,
+                                          password='ihaveapassword'))
+        self.client.logout()
+        self.assertNotIn(SESSION_KEY, self.client.session)
