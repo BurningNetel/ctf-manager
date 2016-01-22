@@ -18,13 +18,13 @@
     </div>
 </nav>
 <main class="container">
-    {% block content %}
         <form class="form" method="POST" action="{% block url %}{% endblock %}">
             {% block form %}
             {% endblock %}
             {% csrf_token %}
             <button class="btn btn-primary" type="submit" id="btn_submit">{% block button %}{% endblock %}</button>
         </form>
+    {% block content %}
     {% endblock %}
 </main>
 

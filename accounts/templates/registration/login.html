@@ -7,6 +7,10 @@
 <h1>Login</h1>
 {% block url %}{% url 'django.contrib.auth.views.login' %}{% endblock %}
 {% block form %}
+
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
     <div class="form-group">
         <div class="input-group">
             {{ form.username.label_tag }}
@@ -20,8 +24,8 @@
         </div>
     </div>
 {% endblock %}
-
-
-
+{% block content %}
+    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+{% endblock %}
 {% block button %}Login{% endblock %}
 
