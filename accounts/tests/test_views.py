@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.views import login
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.signals import user_logged_in
 from django.core.urlresolvers import resolve, reverse
 from django.test import TestCase
 from unittest.mock import MagicMock
 
-from ..views import register_page, login_page
+from ..views import register_page
 
 User = get_user_model()
 
@@ -18,7 +19,7 @@ class RegistrationTest(TestCase):
     def test_registration_uses_registration_template(self):
         response = self.client.get(reverse('register'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'register.html')
+        self.assertTemplateUsed(response, 'registration/register.html')
 
     def test_registration_uses_register_form(self):
         response = self.client.get(reverse('register'))
@@ -62,11 +63,11 @@ class RegistrationTest(TestCase):
 class LoginTest(TestCase):
     def test_login_url_resolves_to_login_view(self):
         response = resolve(reverse('login'))
-        self.assertEqual(response.func, login_page)
+        self.assertEqual(response.func, login)
 
     def test_login_uses_login_template(self):
         response = self.client.get(reverse('login'))
-        self.assertTemplateUsed(response, 'login.html')
+        self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_login_template_has_submit_button(self):
         response = self.client.get(reverse('login'))

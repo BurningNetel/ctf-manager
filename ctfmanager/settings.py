@@ -108,4 +108,6 @@ STATIC_DIRS = [
     os.path.join(BASE_DIR, 'ctfmanager', 'static'),
 ]
 
+# authentication settings
 
+LOGIN_REDIRECT_URL = '/'
