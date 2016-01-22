@@ -1,38 +1,13 @@
 from django.core.urlresolvers import resolve, reverse
 from django.http import HttpRequest
-from django.test import TestCase
 from django.utils import timezone
 from django.utils.html import escape
 from django.utils.timezone import timedelta
 
-from ..forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
-from ..models import Event, Challenge
-from ..views import events_page, new_event_page, home_page, view_event, new_challenge
-
-
-class ViewTestCase(TestCase):
-    def create_event(self, _name, is_future):
-        _date = timezone.now()
-        if is_future:
-            _date += timedelta(days=1)
-        else:
-            _date -= timedelta(days=1)
-
-        return Event.objects.create(
-                name=_name,
-                date=_date
-        )
-
-
-class HomePageTest(ViewTestCase):
-
-    def test_root_url_resolver_to_home_page(self):
-        response = resolve('/')
-        self.assertEqual(response.func, home_page)
-
-    def test_home_page_renders_home_template(self):
-        response = self.client.get('/')
-        self.assertTemplateUsed(response, 'home.html')
+from .base import ViewTestCase
+from CTFmanager.forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
+from CTFmanager.models import Event, Challenge
+from CTFmanager.views import events_page, new_event_page, home_page, view_event, new_challenge
 
 
 class EventPageTest(ViewTestCase):
