@@ -25,9 +25,9 @@ class EventPageTest(ViewTestCase):
         self.assertTemplateUsed(response, 'event/events.html')
 
     def test_events_page_contains_new_event_button(self):
-        response = events_page(HttpRequest())
+        response = self.client.get(reverse('events'))
         expected = 'id="btn_add_event" href="/events/new/">Add Event</a>'
-        self.assertIn(expected, response.content.decode())
+        self.assertContains(response, expected)
 
     def test_events_page_displays_only_upcoming_events(self):
         event_future = self.create_event("hatCTF", True)
@@ -39,16 +39,16 @@ class EventPageTest(ViewTestCase):
         self.assertNotEqual(_event[0], event_past)
 
     def test_events_page_has_correct_headers(self):
-        response = events_page(HttpRequest())
+        response = self.client.get(reverse('events'))
         expected = '<h1>Upcoming Events</h1>'
         expected2 = '<h1>Archive</h1>'
-        self.assertIn(expected, response.content.decode())
-        self.assertIn(expected2, response.content.decode())
+        self.assertContains(response, expected)
+        self.assertContains(response, expected2)
 
     def test_empty_events_set_shows_correct_message(self):
-        response = events_page(HttpRequest())
+        response = self.client.get(reverse('events'))
         expected = '<tr><td>No upcoming events!</td></tr>'
-        self.assertIn(expected, response.content.decode())
+        self.assertContains(response, expected)
 
     def test_events_page_display_archive(self):
         event_past = self.create_event('past_event', False)
