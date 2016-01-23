@@ -71,6 +71,11 @@ class NewEventsPageTest(ViewTestCase):
                 '/events/new/',
                 data={'name': '', 'date': '2016-10-02'})
 
+    def test_login_required(self):
+        self.client.logout()
+        response = self.client.get(reverse('newEvent'))
+        self.assertRedirects(response, reverse('login') + '?next=' + reverse('newEvent'))
+
     def test_add_events_url_resolves_to_add_events_page(self):
         response = resolve(reverse('newEvent'))
         self.assertEqual(response.func, new_event_page)

@@ -19,6 +19,7 @@ def events_page(request):
                                            'archive': archive})
 
 
+@login_required
 def new_event_page(request):
     form = EventForm(data=request.POST)
     if request.method == 'POST':
