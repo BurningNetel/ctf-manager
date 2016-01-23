@@ -1,7 +1,8 @@
 from django.test import LiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 from django.core.urlresolvers import reverse
-from django.utils import timezone, formats
+from django.utils import timezone
+from django.contrib.auth.models import User
 from django.utils.timezone import timedelta
 import sys, time, os
 from datetime import datetime
@@ -98,3 +99,10 @@ class FunctionalTest(LiveServerTestCase):
         name = self.add_event(True)
         self.browser.get(self.server_url + '/events/' + name + '/new')
         return name
+
+    def create_and_login_user(self):
+        self.user = User.objects.create_user('test', 'test@test.nl', 'test')
+        self.browser.get(self.server_url + reverse('login'))
+        self.browser.find_element_by_id('id_username').send_keys('test')
+        self.browser.find_element_by_id('id_password').send_keys('test')
+        self.browser.find_element_by_tag_name('button').click()
