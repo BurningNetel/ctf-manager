@@ -30,7 +30,7 @@ def new_event_page(request):
             return render(request, 'event/add_event.html', {'form': form})
     return render(request, 'event/add_event.html', {'form': EventForm()})
 
-
+@login_required
 def view_event(request, event_id):
     _event = Event.objects.get(pk=event_id)
     return render(request, 'event/event_detail.html', {'event': _event})

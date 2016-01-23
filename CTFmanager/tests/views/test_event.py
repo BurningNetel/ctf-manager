@@ -114,6 +114,12 @@ class NewEventsPageTest(ViewTestCase):
 
 class EventPageDetailTest(ViewTestCase):
 
+    def test_requires_login(self):
+        self.client.logout()
+        _event = self.create_event('challenge_test', True)
+        response = self.client.get(_event.get_absolute_url())
+        self.assertRedirects(response, reverse('login') + '?next=' + _event.get_absolute_url())
+
     def test_event_detail_page_resolves_to_detail_page(self):
         _date = timezone.now() + timedelta(days=1)
         event = Event.objects.create(name="detailEvent", date=_date)
@@ -132,8 +138,8 @@ class EventPageDetailTest(ViewTestCase):
 
     def test_add_events_page_contains_add_challenge_button(self):
         _event = self.create_event('challenge_test', True)
-        response = view_event(HttpRequest(), _event.name)
-        self.assertIn('id="btn_add_challenge"', response.content.decode())
+        response = self.client.get(_event.get_absolute_url())
+        self.assertContains(response, 'id="btn_add_challenge"')
 
     def test_for_detail_page_shows_challenges(self):
         _event = self.create_event('test', True)
