@@ -11,6 +11,10 @@ from CTFmanager.views import events_page, new_event_page, home_page, view_event,
 
 
 class EventPageTest(ViewTestCase):
+    def test_events_page_requires_authentication(self):
+        self.client.logout()
+        response = self.client.get(reverse('events'))
+        self.assertRedirects(response, reverse('login') + '?next=' + reverse('events'))
 
     def test_events_url_resolves_to_events_page(self):
         response = resolve(reverse('events'))

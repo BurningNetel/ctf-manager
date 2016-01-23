@@ -11,6 +11,7 @@ def home_page(request):
     return render(request, 'home.html')
 
 
+@login_required
 def events_page(request):
     _events = Event.objects.filter(date__gt=timezone.now())
     archive = Event.objects.filter(date__lte=timezone.now())
