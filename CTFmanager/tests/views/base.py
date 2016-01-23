@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.utils import timezone
 from django.utils.timezone import timedelta
 from CTFmanager.models import Event
+from django.contrib.auth.models import User
 
 
 class ViewTestCase(TestCase):
@@ -16,3 +17,7 @@ class ViewTestCase(TestCase):
                 name=_name,
                 date=_date
         )
+
+    def setUp(self):
+        self.user = User.objects.create_user('test', 'test@test.nl', 'test')
+        self.client.login(username=self.user.username, password='test')

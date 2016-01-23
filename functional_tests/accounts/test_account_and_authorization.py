@@ -1,11 +1,12 @@
 from functional_tests.base import FunctionalTest
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 
 
 class RegistrationTest(FunctionalTest):
     def test_registration_of_normal_user_and_logging_in(self):
         # User goes to the website
-        self.browser.get('/')
+        self.browser.get(self.server_url + '/')
         self.browser.find_element_by_id('id_register').click()
 
         # User is at registration page
@@ -43,3 +44,18 @@ class RegistrationTest(FunctionalTest):
         self.browser.find_element_by_tag_name('main').find_element_by_tag_name('a').click()
 
         self.assertEqual(self.browser.title, 'CTFman - Login')
+
+
+class AuthorizationTest(FunctionalTest):
+    def test_home_page_requires_log_in(self):
+        user = User.objects.create_user('test', 'test@test.nl', 'test')
+        # User goes to home page without logging in
+        self.browser.get(self.server_url + reverse('home'))
+        # He gets redirected to login page
+        self.assertEqual(self.browser.title, 'CTFman - Login')
+        # The user logs in
+        self.browser.find_element_by_id('id_username').send_keys(user.username)
+        self.browser.find_element_by_id('id_password').send_keys('test')
+        self.browser.find_element_by_tag_name('button').click()
+        # The user is redirected back to the home page
+        self.assertEqual(self.browser.title, 'CTFman - Home')
