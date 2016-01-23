@@ -152,6 +152,12 @@ class EventPageDetailTest(ViewTestCase):
 
 class EventPageAddChallengeTest(ViewTestCase):
 
+    def test_requires_login(self):
+        self.client.logout()
+        _event = self.create_event('challenge_test', True)
+        response = self.client.get(reverse('newChallenge', args=[_event.name]))
+        self.assertRedirects(response, reverse('login') + '?next=' + reverse('newChallenge',args=[_event.name]))
+
     def post_incorrect_form(self):
         _event = self.create_event('test', True)
         url = reverse('newChallenge', args=[_event.name])

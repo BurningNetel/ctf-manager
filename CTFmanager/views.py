@@ -35,7 +35,7 @@ def view_event(request, event_id):
     _event = Event.objects.get(pk=event_id)
     return render(request, 'event/event_detail.html', {'event': _event})
 
-
+@login_required
 def new_challenge(request, event_id):
     _event = Event.objects.get(pk=event_id)
     form = ChallengeForm(data=request.POST)
