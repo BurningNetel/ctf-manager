@@ -5,7 +5,7 @@ from .base import ViewTestCase
 
 
 class HomePageTest(ViewTestCase):
-    def test_root_url_resolver_to_home_page(self):
+    def test_home_name_resolves_to_home_page(self):
         response = resolve(reverse('home'))
         self.assertEqual(response.func, home_page)
 
