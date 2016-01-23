@@ -31,9 +31,10 @@ class RegistrationTest(FunctionalTest):
         password_login.send_keys(password)
         # user submits form
         self.browser.find_element_by_id('btn_submit').click()
-        # User is redirected to home page
+        # User is redirected to home page, his username is shown on the page
         self.assertEqual(self.browser.title, 'CTFman - Home')
-
+        username = self.browser.find_element_by_id('username')
+        self.assertEqual(username.text, name)
         # Finally he logs out by pressing the log out button
 
         self.browser.find_element_by_id('btn_logout').click()

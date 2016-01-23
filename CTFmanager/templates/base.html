@@ -22,6 +22,11 @@
         <li><a href="/">Groups</a></li>
     </ul>
         <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+            <li id="username"><a href="#">{{ user.get_username }}</a></li>
+            {% else %}
+            <li>You shouldn't be here</li>
+            {% endif %}
             <li><a id="btn_logout" href="{% url 'logout' %}">logout</a></li>
         </ul>
     </div>
