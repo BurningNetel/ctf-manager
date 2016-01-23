@@ -8,6 +8,7 @@ import time
 
 class EventArchiveTest(FunctionalTest):
     def test_events_page_shows_archive(self):
+        self.create_and_login_user()
         # Browse to the add events page
         # Add an Event that is in the past
         event_name = self.add_event(False)

@@ -3,6 +3,7 @@ from .base import FunctionalTest
 
 class CreatingChallengesTest(FunctionalTest):
     def test_can_add_a_new_challenge_to_event_page(self):
+        self.create_and_login_user()
         # The user has added a new event and wants to add a new challenge to the event
         name = self.add_event_and_browse_to_add_challenge()
 
@@ -31,6 +32,7 @@ class CreatingChallengesTest(FunctionalTest):
         )
 
     def test_invalid_input_in_new_challenge_shows_errors(self):
+        self.create_and_login_user()
         # The users adds a new event
         self.add_event_and_browse_to_add_challenge()
 
