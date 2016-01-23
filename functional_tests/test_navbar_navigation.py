@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 class NavigationTest(FunctionalTest):
 
     def test_navbar_position(self):
+        self.create_and_login_user()
         # The user goes to the home page and sees that
         # The navigation bar is located at the top of the page
         self.browser.get(self.server_url + reverse('home'))
