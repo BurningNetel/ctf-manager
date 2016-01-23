@@ -4,8 +4,11 @@ from django.core.urlresolvers import reverse
 
 class RegistrationTest(FunctionalTest):
     def test_registration_of_normal_user_and_logging_in(self):
+        # User click on the register button on the login page
+        self.browser.get(self.server_url + reverse('login'))
+        self.browser.find_element_by_id('id_register').click()
+
         # User is at registration page
-        self.browser.get(self.server_url + reverse('register'))
         self.assertEqual(self.browser.title, 'CTFman - Register')
         username = self.browser.find_element_by_id('id_username')
         password1 = self.browser.find_element_by_id('id_password1')
@@ -34,4 +37,4 @@ class RegistrationTest(FunctionalTest):
 
         self.browser.find_element_by_id('btn_logout').click()
 
-        self.assertEqual(self.browser.title, 'CTFman - Login')
+        self.assertEqual(self.browser.title, 'CTFman - Logout')

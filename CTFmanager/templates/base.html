@@ -9,6 +9,7 @@
 </head>
 <body>
 <nav class="navbar navbar-default">
+    <div class="container-fluid">
     <div class="navbar-header">
         <a class="navbar-brand" href="/">CTFmanager</a>
     </div>
@@ -20,6 +21,10 @@
         <li><a href="/">Analysis</a></li>
         <li><a href="/">Groups</a></li>
     </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a id="btn_logout" href="{% url 'logout' %}">logout</a></li>
+        </ul>
+    </div>
 </nav>
 <main class="container">
 {% block content %}

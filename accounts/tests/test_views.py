@@ -97,9 +97,22 @@ class LoginTest(TestCase):
                                           'password': 'ihaveapassword'})
         self.assertRedirects(response, reverse('home'))
 
+
+class LogoutTest(TestCase):
+    def create_valid_user_logged_in(self):
+        user = User.objects.create_user('hans',
+                                        'jimmy@hendrx.cm',
+                                        'ihaveapassword')
+        self.client.login(username=user.username,
+                          password='ihaveapassword')
+        return user
+
     def test_logout_view(self):
-        user = self.create_valid_user()
-        self.assertTrue(self.client.login(username=user.username,
-                                          password='ihaveapassword'))
+        self.create_valid_user_logged_in()
         self.client.logout()
         self.assertNotIn(SESSION_KEY, self.client.session)
+
+    def test_logout_view_resolves_to_logout_page(self):
+        self.create_valid_user_logged_in()
+        response = self.client.get(reverse('logout'))
+        self.assertTemplateUsed(response, 'registration/logged_out.html')
