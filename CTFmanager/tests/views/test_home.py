@@ -12,9 +12,3 @@ class HomePageTest(ViewTestCase):
     def test_home_page_renders_home_template(self):
         response = self.client.get(reverse('home'))
         self.assertTemplateUsed(response, 'home.html')
-
-
-class NavBarTest(ViewTestCase):
-    def test_navbar_contains_logout_button(self):
-        response = self.client.get(reverse('home'))
-        self.assertContains(response, 'btn_logout')
