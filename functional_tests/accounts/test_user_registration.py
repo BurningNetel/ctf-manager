@@ -38,3 +38,8 @@ class RegistrationTest(FunctionalTest):
         self.browser.find_element_by_id('btn_logout').click()
 
         self.assertEqual(self.browser.title, 'CTFman - Logout')
+
+        # He goes back to the login page by clicking a button on the page
+        self.browser.find_element_by_tag_name('main').find_element_by_tag_name('a').click()
+
+        self.assertEqual(self.browser.title, 'CTFman - Login')
