@@ -4,8 +4,8 @@ from django.core.urlresolvers import reverse
 
 class RegistrationTest(FunctionalTest):
     def test_registration_of_normal_user_and_logging_in(self):
-        # User click on the register button on the login page
-        self.browser.get(self.server_url + reverse('login'))
+        # User goes to the website
+        self.browser.get('/')
         self.browser.find_element_by_id('id_register').click()
 
         # User is at registration page
