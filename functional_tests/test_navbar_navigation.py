@@ -2,7 +2,7 @@ from .base import FunctionalTest
 from django.core.urlresolvers import reverse
 
 
-class NavigationTest(FunctionalTest):
+class NavbarTest(FunctionalTest):
 
     def test_navbar_position(self):
         self.create_and_login_user()
