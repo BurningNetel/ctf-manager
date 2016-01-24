@@ -232,27 +232,27 @@ class ChallengeTest(ViewTestCase):
 
         response = self.client.get(event.get_absolute_url())
 
-        url = chal.get_pad_url()
+        url = chal.get_local_pad_url()
         self.assertContains(response, '<a href="' + url + '"')
 
     def test_challenge_name_resolves_to_correct_page(self):
         chal, event = self.create_event_challenge()
 
-        response = resolve(chal.get_pad_url())
+        response = resolve(chal.get_local_pad_url())
 
         self.assertEqual(response.func, challenge_pad)
 
     def test_challenge_pad_view_uses_correct_template(self):
         chal, event = self.create_event_challenge()
 
-        response = self.client.get(chal.get_pad_url())
+        response = self.client.get(chal.get_local_pad_url())
 
         self.assertTemplateUsed(response, 'event/challenge_pad.html')
 
     def test_challenge_pad_view_passes_challenge_to_context(self):
         chal, event = self.create_event_challenge()
 
-        response = self.client.get(chal.get_pad_url())
+        response = self.client.get(chal.get_local_pad_url())
         challenge = response.context['challenge']
         self.assertEqual(chal, challenge)
 
@@ -262,9 +262,14 @@ class ChallengeTest(ViewTestCase):
 
         self.assertFalse(chal.get_pad_created)
 
-        self.client.get(chal.get_pad_url())
+        self.client.get(chal.get_local_pad_url())
 
         chal = Challenge.objects.get(name=chal.name)
         self.assertTrue(chal.get_pad_created)
 
+    def test_challenge_pad_template_displays_etherpad(self):
+        _time = str(round(time.time() * 1000))
+        chal, event = self.create_event_challenge(name='testChallenge%s' % _time)
 
+        response = self.client.get(chal.get_local_pad_url())
+        self.assertContains(response, 'readwrite')

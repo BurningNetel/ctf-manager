@@ -25,11 +25,17 @@ class Challenge(models.Model):
     event = models.ForeignKey(Event, default=None)
     _pad_created = models.BooleanField(default=False)
 
+    def _get_padname(self):
+        return '%s_%s' % (self.event.name, self.name)
+
     @property
     def get_pad_created(self):
         return self._pad_created
 
-    def get_pad_url(self):
+    def get_absolute_etherpad_url(self):
+        return settings.ETHERPAD_PAD_URL + self._get_padname()
+
+    def get_local_pad_url(self):
         return reverse('challenge_pad', args=[self.event.name, self.name])
 
     def create_pad(self):
@@ -37,12 +43,11 @@ class Challenge(models.Model):
         :return: Succes, json response
         """
         if settings.ETHERPAD_API_KEY is not None and settings.ETHERPAD_DEFAULT_TEXT is not None \
-                and settings.ETHERPAD_BASE_URL is not None:
-            padname = self.event.name + '_' + self.name
+                and settings.ETHERPAD_API_URL is not None:
             payload = {'apikey': settings.ETHERPAD_API_KEY,
-                       'padID': padname,
+                       'padID': self._get_padname(),
                        'text': settings.ETHERPAD_DEFAULT_TEXT}
-            r = get(settings.ETHERPAD_BASE_URL + 'createPad', params=payload)
+            r = get(settings.ETHERPAD_API_URL + 'createPad', params=payload)
 
             rj = r.json()
 

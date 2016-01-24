@@ -79,7 +79,7 @@ class ChallengeModelTest(EventModelTestCase):
         chal = Challenge.objects.create(name='test',
                                         points='500',
                                         event=event)
-        url = chal.get_pad_url()
+        url = chal.get_local_pad_url()
         self.assertEqual(url, '/events/%s/%s' % (event.name, chal.name))
 
     def test_create_pad_new_challenge(self):

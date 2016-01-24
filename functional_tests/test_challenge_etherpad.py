@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from CTFmanager.models import Event, Challenge
@@ -16,7 +17,7 @@ class EtherpadCreationTest(FunctionalTest):
         event = Event.objects.first()
         challenge = Challenge.objects.create(name='ctfchallenge', points='500', event=event)
         # The user added a challenge, and wants to view it's pad
-        self.browser.get(reverse('view_event', args=[event.name]))
+        self.browser.get(self.server_url + reverse('view_event', args=[event.name]))
         # He clicks on the challenges name to go to the etherpad
         main = self.browser.find_element_by_tag_name('main')
         table = main.find_element_by_tag_name('table')
@@ -24,8 +25,7 @@ class EtherpadCreationTest(FunctionalTest):
         url.click()
         # The application redirects him to a view with the etherpad included.
         self.assertEqual(self.browser.title, 'CTFman - %s' % challenge.name)
-        # Etherpad has a class named 'readwrite'. To verify etherpad loaded, search for this class
-        self.browser.find_element_by_class_name('readwrite')
-        # Funky way to test if etherpad loaded the right pad..
-        links = self.browser.find_elements_by_partial_link_text(challenge.name)
-        self.assertTrue(len(links) > 3)  # A normal page wouldnt show this many urls to challenge name
+        # Check if the correct pad is framed
+        frame = self.browser.find_element_by_tag_name('iframe')
+        src = frame.get_attribute('src')
+        self.assertEqual(src, '%s%s_%s' %(settings.ETHERPAD_PAD_URL, event.name, challenge.name))
