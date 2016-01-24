@@ -7,7 +7,10 @@ from ..models import Event, Challenge
 
 
 class EventModelTestCase(TestCase):
-    def create_event_object(self, _name, is_in_future):
+
+    tz = pytz.timezone('Europe/Amsterdam')
+
+    def create_event_object(self, _name, is_in_future=True):
         if is_in_future:
             _datetime = datetime.now() + timedelta(days=1)
         else:
@@ -73,8 +76,13 @@ class EventModelTest(EventModelTestCase):
 
 class ChallengeModelTest(EventModelTestCase):
 
-    pass
-
+    def test_challenges_reverses_to_challenge_pad_page(self):
+        event = self.create_event_object('test')
+        chal = Challenge.objects.create(name='test',
+                                         points='500',
+                                         event=event)
+        url = chal.get_pad_url()
+        self.assertEqual(url, '/events/%s/%s' % (event.name, chal.name))
 
 class EventAndChallengeTest(EventModelTest):
 
