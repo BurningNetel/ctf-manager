@@ -5,7 +5,7 @@ from django.utils.timezone import timedelta
 
 from CTFmanager.forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
 from CTFmanager.models import Event, Challenge
-from CTFmanager.views import events_page, new_event_page, view_event, new_challenge
+from CTFmanager.views import events_page, new_event_page, view_event, new_challenge, challenge_pad
 from .base import ViewTestCase
 
 
@@ -193,7 +193,7 @@ class EventPageAddChallengeTest(ViewTestCase):
         url = reverse('newChallenge', args=[_event.name])
         self.client.post(url, data={'name': 'test', 'points': '200'})
         response = self.client.get(_event.get_absolute_url())
-        self.assertContains(response, 'test - 200')
+        self.assertContains(response, 'test</a> - 200')
 
     def test_for_invalid_input_renders_to_new_challenge_page(self):
         _event = self.create_event('test', True)
@@ -218,13 +218,26 @@ class EventPageAddChallengeTest(ViewTestCase):
 
 class ChallengeTest(ViewTestCase):
 
-    def test_challenge_name_is_link_to_etherpad_page(self):
+    def create_event_challenge(self):
         event = self.create_event('testEvent', True)
         chal = Challenge.objects.create(name='testChallenge',
                                         points='500',
                                         event=event)
+        return chal, event
+
+    def test_challenge_name_is_link_to_etherpad_page(self):
+        chal, event = self.create_event_challenge()
 
         response = self.client.get(event.get_absolute_url())
 
         url = reverse('challenge_pad', args=[event.name, chal.name])
         self.assertContains(response, '<a href="' + url + '"')
+
+    def test_challenge_name_resolves_to_correct_page(self):
+        chal, event = self.create_event_challenge()
+
+        response = resolve(reverse('challenge_pad', args=[event.name, chal.name]))
+
+        self.assertEqual(response.func, challenge_pad)
+
+

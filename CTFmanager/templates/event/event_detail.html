@@ -9,7 +9,7 @@
     <h2>Challenges</h2>
     <table class="table table-striped">
     {% for challenge in event.challenge_set.all %}
-        <tr><td>{{ challenge.name }} - {{ challenge.points }}</td></tr>
+        <tr><td><a href="{% url 'challenge_pad' event.name challenge.name %}">{{ challenge.name }}</a> - {{ challenge.points }}</td></tr>
     {% endfor %}
     </table>
 {% endblock %}
