@@ -23,7 +23,7 @@ class Challenge(models.Model):
     name = models.CharField(max_length=30, default='')
     points = models.IntegerField(default=0)
     event = models.ForeignKey(Event, default=None)
-    _pad_created = False
+    _pad_created = models.BooleanField(default=False)
 
     @property
     def get_pad_created(self):

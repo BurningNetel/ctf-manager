@@ -49,7 +49,12 @@ def new_challenge(request, event_id):
             return render(request, 'event/add_challenge.html', {'form': form, 'event': _event})
     return render(request, 'event/add_challenge.html', {'form': ChallengeForm(), 'event': _event})
 
-
+@login_required
 def challenge_pad(request, event_id, challenge_name):
     _challenge = Challenge.objects.get(name=challenge_name)
+    if not _challenge.get_pad_created:
+        result, json = _challenge.create_pad()
+        if result:
+            _challenge.save()
+
     return render(request, 'event/challenge_pad.html', {'challenge': _challenge})

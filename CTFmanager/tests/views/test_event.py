@@ -1,3 +1,5 @@
+import time
+
 from django.core.urlresolvers import resolve, reverse
 from django.utils import timezone
 from django.utils.html import escape
@@ -218,9 +220,9 @@ class EventPageAddChallengeTest(ViewTestCase):
 
 class ChallengeTest(ViewTestCase):
 
-    def create_event_challenge(self):
+    def create_event_challenge(self, name='testEvent'):
         event = self.create_event('testEvent', True)
-        chal = Challenge.objects.create(name='testChallenge',
+        chal = Challenge.objects.create(name=name,
                                         points='500',
                                         event=event)
         return chal, event
@@ -253,5 +255,16 @@ class ChallengeTest(ViewTestCase):
         response = self.client.get(chal.get_pad_url())
         challenge = response.context['challenge']
         self.assertEqual(chal, challenge)
+
+    def test_new_challenge_creates_new_pad_on_first_visit(self):
+        _time = str(round(time.time() * 1000))
+        chal, event = self.create_event_challenge(name='testChallenge%s' % _time)
+
+        self.assertFalse(chal.get_pad_created)
+
+        self.client.get(chal.get_pad_url())
+
+        chal = Challenge.objects.get(name=chal.name)
+        self.assertTrue(chal.get_pad_created)
 
 
