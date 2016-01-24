@@ -1,13 +1,12 @@
 from django.core.urlresolvers import resolve, reverse
-from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.html import escape
 from django.utils.timezone import timedelta
 
-from .base import ViewTestCase
 from CTFmanager.forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
 from CTFmanager.models import Event, Challenge
-from CTFmanager.views import events_page, new_event_page, home_page, view_event, new_challenge
+from CTFmanager.views import events_page, new_event_page, view_event, new_challenge
+from .base import ViewTestCase
 
 
 class EventPageTest(ViewTestCase):
@@ -113,7 +112,6 @@ class NewEventsPageTest(ViewTestCase):
 
 
 class EventPageDetailTest(ViewTestCase):
-
     def test_requires_login(self):
         self.client.logout()
         _event = self.create_event('challenge_test', True)
@@ -143,7 +141,7 @@ class EventPageDetailTest(ViewTestCase):
 
     def test_for_detail_page_shows_challenges(self):
         _event = self.create_event('test', True)
-        chal = Challenge.objects.create(name='test', points=500,event=_event)
+        chal = Challenge.objects.create(name='test', points=500, event=_event)
         chal.save()
         response = self.client.get(_event.get_absolute_url())
         self.assertContains(response, chal.name)
@@ -151,12 +149,11 @@ class EventPageDetailTest(ViewTestCase):
 
 
 class EventPageAddChallengeTest(ViewTestCase):
-
     def test_requires_login(self):
         self.client.logout()
         _event = self.create_event('challenge_test', True)
         response = self.client.get(reverse('newChallenge', args=[_event.name]))
-        self.assertRedirects(response, reverse('login') + '?next=' + reverse('newChallenge',args=[_event.name]))
+        self.assertRedirects(response, reverse('login') + '?next=' + reverse('newChallenge', args=[_event.name]))
 
     def post_incorrect_form(self):
         _event = self.create_event('test', True)
@@ -165,12 +162,12 @@ class EventPageAddChallengeTest(ViewTestCase):
 
     def create_new_challenge_response(self):
         _event = self.create_event('test', True)
-        response = self.client.get(reverse('newChallenge',args=[_event.name]))
+        response = self.client.get(reverse('newChallenge', args=[_event.name]))
         return response
 
     def test_add_challenge_resolves_to_correct_page(self):
         _event = self.create_event('test', True)
-        response = resolve(reverse('newChallenge',args=[_event.name]))
+        response = resolve(reverse('newChallenge', args=[_event.name]))
         self.assertEqual(response.func, new_challenge)
 
     def test_add_challenge_uses_correct_template(self):
@@ -185,7 +182,7 @@ class EventPageAddChallengeTest(ViewTestCase):
     def test_add_challenge_page_displays_challenge_form(self):
         response = self.create_new_challenge_response()
         self.assertContains(response, 'id="id_points')
-        self.assertContains(response,'id="id_name"')
+        self.assertContains(response, 'id="id_name"')
 
     def test_add_challenge_page_has_submit_button(self):
         response = self.create_new_challenge_response()
@@ -196,7 +193,7 @@ class EventPageAddChallengeTest(ViewTestCase):
         url = reverse('newChallenge', args=[_event.name])
         self.client.post(url, data={'name': 'test', 'points': '200'})
         response = self.client.get(_event.get_absolute_url())
-        self.assertContains(response, '<td>test - 200')
+        self.assertContains(response, 'test - 200')
 
     def test_for_invalid_input_renders_to_new_challenge_page(self):
         _event = self.create_event('test', True)
@@ -212,8 +209,22 @@ class EventPageAddChallengeTest(ViewTestCase):
     def test_for_invalid_input_doesnt_save(self):
         self.post_incorrect_form()
         event = Event.objects.first()
-        self.assertEqual(0,len(event.challenge_set.all()))
+        self.assertEqual(0, len(event.challenge_set.all()))
 
     def test_for_invalid_input_renders_error_text(self):
         response = self.post_incorrect_form()
         self.assertContains(response, escape(EMPTY_FIELD_ERROR))
+
+
+class ChallengeTest(ViewTestCase):
+
+    def test_challenge_name_is_link_to_etherpad_page(self):
+        event = self.create_event('testEvent', True)
+        chal = Challenge.objects.create(name='testChallenge',
+                                        points='500',
+                                        event=event)
+
+        response = self.client.get(event.get_absolute_url())
+
+        url = reverse('challenge_pad', args=[event.name, chal.name])
+        self.assertContains(response, '<a href="' + url + '"')

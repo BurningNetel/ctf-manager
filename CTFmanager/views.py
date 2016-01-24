@@ -1,6 +1,6 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 
 from .forms import EventForm, ChallengeForm
 from .models import Event
@@ -30,10 +30,12 @@ def new_event_page(request):
             return render(request, 'event/add_event.html', {'form': form})
     return render(request, 'event/add_event.html', {'form': EventForm()})
 
+
 @login_required
 def view_event(request, event_id):
     _event = Event.objects.get(pk=event_id)
     return render(request, 'event/event_detail.html', {'event': _event})
+
 
 @login_required
 def new_challenge(request, event_id):
@@ -46,3 +48,7 @@ def new_challenge(request, event_id):
         else:
             return render(request, 'event/add_challenge.html', {'form': form, 'event': _event})
     return render(request, 'event/add_challenge.html', {'form': ChallengeForm(), 'event': _event})
+
+
+def challenge_pad(request, event_id, challenge_name):
+    pass
