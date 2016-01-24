@@ -272,4 +272,4 @@ class ChallengeTest(ViewTestCase):
         chal, event = self.create_event_challenge(name='testChallenge%s' % _time)
 
         response = self.client.get(chal.get_local_pad_url())
-        self.assertContains(response, 'readwrite')
+        self.assertContains(response, 'iframe')
