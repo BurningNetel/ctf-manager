@@ -15,11 +15,14 @@ class EtherpadCreationTest(FunctionalTest):
         self.add_event(True)
         event = Event.objects.first()
         challenge = Challenge.objects.create(name='ctfchallenge', points='500', event=event)
+        # The user added a challenge, and wants to view it's pad
         self.browser.get(reverse('view_event', args=[event.name]))
+        # He clicks on the challenges name to go to the etherpad
         main = self.browser.find_element_by_tag_name('main')
         table = main.find_element_by_tag_name('table')
         url = table.find_element_by_tag_name('a')
         url.click()
+        # The application redirects him to a view with the etherpad included.
         self.assertEqual(self.browser.title, 'CTFman - %s' % challenge.name)
         # Etherpad has a class named 'readwrite'. To verify etherpad loaded, search for this class
         self.browser.find_element_by_class_name('readwrite')
