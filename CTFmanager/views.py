@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from .forms import EventForm, ChallengeForm
-from .models import Event
+from .models import Event, Challenge
 
 
 @login_required
@@ -51,4 +51,5 @@ def new_challenge(request, event_id):
 
 
 def challenge_pad(request, event_id, challenge_name):
-    pass
+    _challenge = Challenge.objects.get(name=challenge_name)
+    return render(request, 'event/challenge_pad.html', {'challenge': _challenge})
