@@ -1,4 +1,5 @@
 import time
+from unittest.mock import patch, Mock
 
 import pytz
 from django.test import TestCase
@@ -82,29 +83,42 @@ class ChallengeModelTest(EventModelTestCase):
         url = chal.get_local_pad_url()
         self.assertEqual(url, '/events/%s/%s' % (event.name, chal.name))
 
-    def test_create_pad_new_challenge(self):
+    @patch('CTFmanager.models.get')
+    def test_create_pad_new_challenge(self, get_mock):
         event = self.create_event_object('testEvent')
         _time = str(round(time.time() * 1000))
         chal = Challenge.objects.create(name='testChallenge-%s' % _time,
                                         points='500',
                                         event=event)
+        request_mock = Mock()
+        get_mock.return_value = request_mock
+        request_mock.json.return_value = {'code':0, 'message':'ok', 'data': None}
+
         result, json = chal.create_pad()
         self.assertTrue(result)
         self.assertEqual('ok', json['message'])
         self.assertEqual(0, json['code'])
+        self.assertEqual(1, get_mock.call_count)
+        self.assertEqual(1, request_mock.json.call_count)
 
-    def test_pad_created_boolean(self):
+    @patch('CTFmanager.models.get')
+    def test_pad_created_boolean(self, get_mock):
         event = self.create_event_object('testEvent')
         _time = str(round(time.time() * 1000))
         chal = Challenge.objects.create(name='testChallenge-%s' % _time,
                                         points='500',
                                         event=event)
         self.assertFalse(chal.get_pad_created)
+
+        request_mock = Mock()
+        get_mock.return_value = request_mock
+        request_mock.json.return_value = {'code':0, 'message':'ok', 'data': None}
+
         result, json = chal.create_pad()
         self.assertTrue(result)
         result2 = chal.get_pad_created
         self.assertTrue(result2)
-
+        self.assertEqual(1, get_mock.call_count)
 
 
 class EventAndChallengeTest(EventModelTest):
