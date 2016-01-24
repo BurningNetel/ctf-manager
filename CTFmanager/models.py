@@ -23,11 +23,16 @@ class Challenge(models.Model):
     name = models.CharField(max_length=30, default='')
     points = models.IntegerField(default=0)
     event = models.ForeignKey(Event, default=None)
+    _pad_created = False
+
+    @property
+    def get_pad_created(self):
+        return self._pad_created
 
     def get_pad_url(self):
         return reverse('challenge_pad', args=[self.event.name, self.name])
 
-    def _create_pad(self):
+    def create_pad(self):
         """ Creates a new pad using the etherpad API running on the base_url server
         :return: Succes, json response
         """
@@ -38,6 +43,9 @@ class Challenge(models.Model):
                        'padID': padname,
                        'text': settings.ETHERPAD_DEFAULT_TEXT}
             r = get(settings.ETHERPAD_BASE_URL + 'createPad', params=payload)
+
             rj = r.json()
+
+            self._pad_created = rj['code'] is 0
             return rj['code'] is 0, rj
 

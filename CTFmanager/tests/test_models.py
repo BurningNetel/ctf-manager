@@ -84,14 +84,27 @@ class ChallengeModelTest(EventModelTestCase):
 
     def test_create_pad_new_challenge(self):
         event = self.create_event_object('testEvent')
-        _time = str(round(time.time()))
+        _time = str(round(time.time() * 1000))
         chal = Challenge.objects.create(name='testChallenge-%s' % _time,
                                         points='500',
                                         event=event)
-        result, json = chal._create_pad()
+        result, json = chal.create_pad()
         self.assertTrue(result)
         self.assertEqual('ok', json['message'])
         self.assertEqual(0, json['code'])
+
+    def test_pad_created_boolean(self):
+        event = self.create_event_object('testEvent')
+        _time = str(round(time.time() * 1000))
+        chal = Challenge.objects.create(name='testChallenge-%s' % _time,
+                                        points='500',
+                                        event=event)
+        self.assertFalse(chal.get_pad_created)
+        result, json = chal.create_pad()
+        self.assertTrue(result)
+        result2 = chal.get_pad_created
+        self.assertTrue(result2)
+
 
 
 class EventAndChallengeTest(EventModelTest):
