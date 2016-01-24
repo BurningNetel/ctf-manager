@@ -3,11 +3,14 @@
 {% block title %}CTFman - {{ challenge.name }}{% endblock %}
 
 {% block content %}
+
+
     <div class="panel panel-default">
-  <div class="panel-body">
-    <div class="embed-responsive embed-responsive-4by3">
-        <iframe src="{{ challenge.get_absolute_etherpad_url }}"></iframe>
-    </div>
+        <div class="panel-heading">{{ challenge.name }}</div>
+        <div class="panel-body">
+            <div class="embed-responsive embed-responsive-4by3">
+                <iframe src="{{ challenge.get_absolute_etherpad_url }}"></iframe>
+            </div>
       </div>
     </div>
 {% endblock %}
