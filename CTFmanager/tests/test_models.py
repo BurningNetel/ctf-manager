@@ -1,3 +1,5 @@
+import time
+
 import pytz
 from django.test import TestCase
 from django.utils.datetime_safe import datetime
@@ -7,7 +9,6 @@ from ..models import Event, Challenge
 
 
 class EventModelTestCase(TestCase):
-
     tz = pytz.timezone('Europe/Amsterdam')
 
     def create_event_object(self, _name, is_in_future=True):
@@ -19,12 +20,10 @@ class EventModelTestCase(TestCase):
 
 
 class EventModelTest(EventModelTestCase):
-
     def setUp(self):
         self.tz = pytz.timezone("Europe/Amsterdam")
 
     def test_saving_and_retrieving_event(self):
-
         # Not using create_event_object because exact date is asserted
         event = Event.objects.create(name="Hacklu", date=self.tz.localize(datetime(2016, 10, 20)))
         event.save()
@@ -75,17 +74,27 @@ class EventModelTest(EventModelTestCase):
 
 
 class ChallengeModelTest(EventModelTestCase):
-
     def test_challenges_reverses_to_challenge_pad_page(self):
         event = self.create_event_object('test')
         chal = Challenge.objects.create(name='test',
-                                         points='500',
-                                         event=event)
+                                        points='500',
+                                        event=event)
         url = chal.get_pad_url()
         self.assertEqual(url, '/events/%s/%s' % (event.name, chal.name))
 
-class EventAndChallengeTest(EventModelTest):
+    def test_create_pad_new_challenge(self):
+        event = self.create_event_object('testEvent')
+        _time = str(round(time.time()))
+        chal = Challenge.objects.create(name='testChallenge-%s' % _time,
+                                        points='500',
+                                        event=event)
+        result, json = chal._create_pad()
+        self.assertTrue(result)
+        self.assertEqual('ok', json['message'])
+        self.assertEqual(0, json['code'])
 
+
+class EventAndChallengeTest(EventModelTest):
     def test_challenge_is_related_to_event(self):
         _event = self.create_event_object('test', True)
         chal = Challenge.objects.create(name='chal', points=500, event=_event)
