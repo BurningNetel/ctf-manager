@@ -30,6 +30,12 @@ class EventFormTest(TestCase):
                                'date': '01-10-2015'})
         self.assertFalse(form.is_valid())
 
+    def test_form_validation_invalid_character_in_name(self):
+        form_whitespace = EventForm(data={'name': 'white-_ space', 'date': '01-01-2016'})
+        form_strange_chars = EventForm(data={'name': 'a1~!@#$%^&*()', 'date': '01-01-2016'})
+        self.assertFalse(form_whitespace.is_valid())
+        self.assertFalse(form_strange_chars.is_valid())
+
 
 class ChallengeFormTest(TestCase):
     def test_form_renders_Challenge_inputs(self):
@@ -65,3 +71,10 @@ class ChallengeFormTest(TestCase):
         form.set_event(_event)
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['name'], [DUPLICATE_ERROR])
+
+    def test_form_validation_invalid_character_in_name(self):
+        form_whitespace = ChallengeForm(data={'name': 'white-_ space', 'points': '50'})
+        form_strange_chars = ChallengeForm(data={'name': 'a1~!@#$%^&*()', 'points': '50'})
+        self.assertFalse(form_whitespace.is_valid())
+        self.assertFalse(form_strange_chars.is_valid())
+

@@ -6,7 +6,7 @@ from requests import get
 
 
 class Event(models.Model):
-    name = models.CharField(primary_key=True, max_length=20, default='')
+    name = models.SlugField(primary_key=True, max_length=20, default='')
     date = models.DateTimeField(default='')
 
     def get_absolute_url(self):
@@ -20,7 +20,7 @@ class Event(models.Model):
 
 
 class Challenge(models.Model):
-    name = models.CharField(max_length=30, default='')
+    name = models.SlugField(max_length=30, default='')
     points = models.IntegerField(default=0)
     event = models.ForeignKey(Event, default=None)
     _pad_created = models.BooleanField(default=False)
