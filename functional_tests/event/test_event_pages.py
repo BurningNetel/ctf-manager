@@ -91,9 +91,7 @@ class NewEventTests(FunctionalTest):
 
         self.assertIn('CTFman - ' + name, self.browser.title)
 
-        # He goes back to the events page by clicking on the 'Home' button in the menu
-        self.browser.find_element_by_class_name('navbar-brand').click()
-
+    def duplicate_event_test(self):
         # A user wants to create an event for 2015 and for 2016,
         # but uses the same name
         self.browser.get(self.server_url + reverse('newEvent'))
