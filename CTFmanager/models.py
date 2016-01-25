@@ -25,6 +25,9 @@ class Challenge(models.Model):
     event = models.ForeignKey(Event, default=None)
     _pad_created = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = ('name', 'event')
+
     def _get_padname(self):
         return '%s_%s' % (self.event.name, self.name)
 

@@ -1,6 +1,7 @@
 from unittest.mock import patch, Mock
 
 import pytz
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import timedelta
@@ -124,3 +125,13 @@ class EventAndChallengeTest(EventModelTest):
         chal = Challenge.objects.create(name='chal', points=500, event=_event)
         chal.save()
         self.assertIn(chal, _event.challenge_set.all())
+
+    def test_event_challenge_is_unique(self):
+        _event = self.create_event_object('test', True)
+        chal = Challenge.objects.create(name='chal', points=500, event=_event)
+        self.assertEqual(1, _event.challenge_set.count())
+        with self.assertRaises(ValidationError):
+            chal1 = Challenge(name=chal.name, points=chal.points, event=_event)
+            chal1.full_clean()
+
+        self.assertEqual(1, _event.challenge_set.count())
