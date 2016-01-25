@@ -1,6 +1,8 @@
 import pytz
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import timedelta
 
@@ -70,6 +72,37 @@ class EventModelTest(EventModelTestCase):
         event = self.create_event_object("ruCTF", True)
         url = event.get_absolute_url()
         self.assertIn('/events/ruCTF', url)
+
+    def test_optional_fields_saving_and_retrieving(self):
+        """ Seperate test because these fields are all optional
+        The optional fields are: Description, Location, End_Date, Credentials, URL
+        (hidden fields): Creation_Date, Created_By
+        """
+        _user = User.objects.create_user('testUser')
+        _date = self.tz.localize(2018, 1, 1)
+        _end_date = self.tz.localize(2018, 1, 2)
+        _now = timezone.now()
+        _event = Event.objects.create(name='testEvent',
+                                     date=_date,
+                                     description="test" * 20,
+                                     location="Eindhoven",
+                                     end_date=_end_date,
+                                     username="Us3rn4me",
+                                     password="_-1aB.,",
+                                     url="test",
+                                     creation_date=_now,
+                                     created_by=_user)
+        _event.save()
+
+        event = Event.objects.first()
+        self.assertEqual(event.description, "test" * 20)
+        self.assertEqual(event.location,"Eindhoven")
+        self.assertEqual(event.end_date, _end_date)
+        self.assertEqual(event.username, "us3rn4me")
+        self.assertEqual(event.password, "_-1aB.,")
+        self.assertEqual(event.url, "test")
+        self.assertEqual(event.creation_date, _now)
+        self.assertEqual(event.created_by, _user)
 
 
 class EventAndChallengeTest(EventModelTest):
