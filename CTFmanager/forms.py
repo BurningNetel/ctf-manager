@@ -10,7 +10,7 @@ class EventForm(forms.models.ModelForm):
 
     class Meta:
         model = Event
-        fields = '__all__'
+        exclude = ['creation_date', 'created_by']
         widgets = {
             'name': forms.fields.TextInput(attrs={
                 'placeholder': 'Name',

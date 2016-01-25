@@ -2,7 +2,6 @@ import pytz
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.utils.timezone import timedelta
 
@@ -79,9 +78,8 @@ class EventModelTest(EventModelTestCase):
         (hidden fields): Creation_Date, Created_By
         """
         _user = User.objects.create_user('testUser')
-        _date = self.tz.localize(2018, 1, 1)
-        _end_date = self.tz.localize(2018, 1, 2)
-        _now = timezone.now()
+        _date = self.tz.localize(datetime(2018, 1, 1))
+        _end_date = self.tz.localize(datetime(2018, 1, 2))
         _event = Event.objects.create(name='testEvent',
                                      date=_date,
                                      description="test" * 20,
@@ -90,19 +88,17 @@ class EventModelTest(EventModelTestCase):
                                      username="Us3rn4me",
                                      password="_-1aB.,",
                                      url="test",
-                                     creation_date=_now,
-                                     created_by=_user)
+                                     created_by=_user.username)
         _event.save()
 
         event = Event.objects.first()
         self.assertEqual(event.description, "test" * 20)
         self.assertEqual(event.location,"Eindhoven")
         self.assertEqual(event.end_date, _end_date)
-        self.assertEqual(event.username, "us3rn4me")
+        self.assertEqual(event.username, "Us3rn4me")
         self.assertEqual(event.password, "_-1aB.,")
         self.assertEqual(event.url, "test")
-        self.assertEqual(event.creation_date, _now)
-        self.assertEqual(event.created_by, _user)
+        self.assertEqual(event.created_by, _user.username)
 
 
 class EventAndChallengeTest(EventModelTest):

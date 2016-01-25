@@ -137,12 +137,12 @@ class NewEventTests(FunctionalTest):
         self.browser.find_element_by_id('id_date').send_keys('01-01-%s' % next_year)
         self.browser.find_element_by_id('id_description').send_keys('test ' * 30)
         self.browser.find_element_by_id('id_location').send_keys('Eindhoven')
-        self.browser.find_element_by_id('id_end_date').send_keys('02-01%s' % next_year)
+        self.browser.find_element_by_id('id_end_date').send_keys('02-01-%s' % next_year)
         self.browser.find_element_by_id('id_username').send_keys('CTF_TEAM_NAME')
         self.browser.find_element_by_id('id_password').send_keys('SECURE_PASSWORD')
         self.browser.find_element_by_id('id_url').send_keys('hatstack.nl')
         self.browser.find_element_by_tag_name('button').click()
-
+        time.sleep(5)
         # The user is now at the events overview page.
         # He now goes to it's detail page
         _event = Event.objects.first()
