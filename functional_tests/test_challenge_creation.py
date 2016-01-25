@@ -1,3 +1,4 @@
+from CTFmanager.models import Event, Challenge
 from .base import FunctionalTest
 
 
@@ -34,7 +35,7 @@ class CreatingChallengesTest(FunctionalTest):
     def test_invalid_input_in_new_challenge_shows_errors(self):
         self.create_and_login_user()
         # The users adds a new event
-        self.add_event_and_browse_to_add_challenge()
+        event_name = self.add_event_and_browse_to_add_challenge()
 
         self.assertEqual(self.browser.title, 'CTFman - New Challenge')
 
@@ -60,3 +61,21 @@ class CreatingChallengesTest(FunctionalTest):
         errors = self.browser.find_elements_by_css_selector('.has-error')
         self.assertEqual(len(errors), 1)
 
+        # Finally, the user creates a challenge that already exists.
+        event = Event.objects.get(pk=event_name)
+        chal = Challenge.objects.create(name='testChal',
+                                 points='10',
+                                 event=event)
+        chal.save()
+        event.save()
+        id_name = self.browser.find_element_by_id('id_name')
+        id_name.clear()
+        id_name.send_keys(chal.name)
+        id_points = self.browser.find_element_by_id('id_points')
+        id_points.clear()
+        id_points.send_keys(str(chal.points))
+        self.browser.find_element_by_id('btn_submit').click()
+        # The Challenge should not save, and the form should show an error.
+        self.assertEqual(self.browser.title, 'CTFman - New Challenge')
+        errors = self.browser.find_elements_by_css_selector('.has-error')
+        self.assertTrue(len(errors) > 0)
