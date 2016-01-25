@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from CTFmanager.models import Event, Challenge
-from .base import FunctionalTest
+from functional_tests.base import FunctionalTest
 
 
 class EtherpadCreationTest(FunctionalTest):

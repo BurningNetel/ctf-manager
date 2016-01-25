@@ -1,5 +1,6 @@
-from .base import FunctionalTest
 from django.core.urlresolvers import reverse
+
+from functional_tests.base import FunctionalTest
 
 
 class NavbarTest(FunctionalTest):

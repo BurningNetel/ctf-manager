@@ -1,9 +1,10 @@
+import time
+
 from django.core.urlresolvers import reverse
 from django.utils import timezone, formats
 from django.utils.timezone import timedelta
 
-from .base import FunctionalTest
-import time
+from functional_tests.base import FunctionalTest
 
 
 class EventArchiveTest(FunctionalTest):

@@ -1,5 +1,5 @@
 from CTFmanager.models import Event, Challenge
-from .base import FunctionalTest
+from functional_tests.base import FunctionalTest
 
 
 class CreatingChallengesTest(FunctionalTest):
