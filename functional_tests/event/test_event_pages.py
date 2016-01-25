@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.utils import timezone, formats
 from django.utils.timezone import timedelta
 
+from CTFmanager.models import Event
 from functional_tests.base import FunctionalTest
 
 
@@ -91,7 +92,8 @@ class NewEventTests(FunctionalTest):
 
         self.assertIn('CTFman - ' + name, self.browser.title)
 
-    def duplicate_event_test(self):
+    def test_duplicate_event_test(self):
+        self.create_and_login_user()
         # A user wants to create an event for 2015 and for 2016,
         # but uses the same name
         self.browser.get(self.server_url + reverse('newEvent'))
@@ -118,3 +120,33 @@ class NewEventTests(FunctionalTest):
         # The form now shows a error
         self.assertIn(reverse('newEvent'), self.browser.current_url)
         self.browser.find_element_by_css_selector('.has-error')
+
+    def test_new_event_with_optional_fields_filled(self):
+        """ This tests tests the add_event form, and the event detail page for optional fields
+        The user is going to add a new event,
+        He knows a lot about the event, so he is able to fill in all optional fields too
+        At the end of this test, he check if the optional fields are displayed on the events detail page.
+        The optional fields are: Description, Location, End_Date, Credentials, URL
+        (hidden fields): Creation_Date, Created_By
+        """
+        self.create_and_login_user()
+        # browse to new event page
+        self.browser.get(self.server_url + reverse('newEvent'))
+        self.browser.find_element_by_id('id_name').send_keys('optionalEvent')
+        next_year = (timezone.now() + timedelta(days=365)).year
+        self.browser.find_element_by_id('id_date').send_keys('01-01-%s' % next_year)
+        self.browser.find_element_by_id('id_description').send_keys('test ' * 30)
+        self.browser.find_element_by_id('id_location').send_keys('Eindhoven')
+        self.browser.find_element_by_id('id_end_date').send_keys('02-01%s' % next_year)
+        self.browser.find_element_by_id('id_username').send_keys('CTF_TEAM_NAME')
+        self.browser.find_element_by_id('id_password').send_keys('SECURE_PASSWORD')
+        self.browser.find_element_by_id('id_url').send_keys('hatstack.nl')
+        self.browser.find_element_by_tag_name('button').click()
+
+        # The user is now at the events overview page.
+        # He now goes to it's detail page
+        _event = Event.objects.first()
+        self.browser.get('view_event', args=[_event.name])
+
+        # He checks if all the information is correct
+        # TODO: Implement this
