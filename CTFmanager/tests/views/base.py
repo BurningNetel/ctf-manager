@@ -1,12 +1,13 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 from django.utils.timezone import timedelta
+
 from CTFmanager.models import Event
-from django.contrib.auth.models import User
 
 
 class ViewTestCase(TestCase):
-    def create_event(self, _name, is_future):
+    def create_event(self, _name, is_future=True):
         _date = timezone.now()
         if is_future:
             _date += timedelta(days=1)

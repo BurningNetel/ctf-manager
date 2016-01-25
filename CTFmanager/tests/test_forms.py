@@ -1,6 +1,8 @@
 from django.test import TestCase
+from django.utils import timezone
 
-from ..forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
+from CTFmanager.models import Event, Challenge
+from ..forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR, DUPLICATE_ERROR
 
 
 class EventFormTest(TestCase):
@@ -54,3 +56,12 @@ class ChallengeFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['name'], [EMPTY_FIELD_ERROR])
         self.assertEqual(form.errors['points'], [EMPTY_FIELD_ERROR])
+
+    def test_form_validation_for_duplicate_items(self):
+        _date = timezone.now()
+        _event = Event.objects.create(name='test', date=_date)
+        Challenge.objects.create(name='test', points=50, event=_event)
+        form = ChallengeForm(data={'name': 'test', 'points': '50'})
+        form.set_event(_event)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['name'], [DUPLICATE_ERROR])

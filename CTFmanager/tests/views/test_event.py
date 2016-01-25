@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.utils.html import escape
 from django.utils.timezone import timedelta
 
-from CTFmanager.forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR
+from CTFmanager.forms import EventForm, ChallengeForm, EMPTY_FIELD_ERROR, DUPLICATE_ERROR
 from CTFmanager.models import Event, Challenge
 from CTFmanager.views import events_page, new_event_page, view_event, new_challenge, challenge_pad
 from .base import ViewTestCase
@@ -217,9 +217,15 @@ class EventPageAddChallengeTest(ViewTestCase):
         response = self.post_incorrect_form()
         self.assertContains(response, escape(EMPTY_FIELD_ERROR))
 
+    def test_duplicate_challenge_displays_error_text(self):
+        _event = self.create_event('testEvent')
+        chal = Challenge.objects.create(name='testDuplicate', points=1, event=_event)
+        url = reverse('newChallenge', args=[_event.name])
+        response = self.client.post(url, data={'name': chal.name, 'points': chal.points})
+        self.assertContains(response, escape(DUPLICATE_ERROR))
+
 
 class ChallengeTest(ViewTestCase):
-
     def create_event_challenge(self, name='testEvent'):
         event = self.create_event('testEvent', True)
         chal = Challenge.objects.create(name=name,

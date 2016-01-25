@@ -42,8 +42,9 @@ def new_challenge(request, event_id):
     _event = Event.objects.get(pk=event_id)
     form = ChallengeForm(data=request.POST)
     if request.method == 'POST':
+        form.set_event(_event)
         if form.is_valid():
-            form.save(for_event=_event)
+            form.save()
             return redirect(_event.get_absolute_url())
         else:
             return render(request, 'event/add_challenge.html', {'form': form, 'event': _event})
