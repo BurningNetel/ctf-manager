@@ -97,3 +97,16 @@ class EventPageDetailTest(ViewTestCase):
         response = self.client.get(_event.get_absolute_url())
         self.assertContains(response, chal.name)
         self.assertContains(response, chal.points)
+
+    def test_for_detail_page_shows_description(self):
+        _event = self.create_event()
+        description = "This CTF is a test, please ignore"
+
+        response = self.client.get(_event.get_absolute_url())
+        self.assertContains(response, "No description provided")
+
+        _event.description = description
+        _event.save()
+
+        response = self.client.get(_event.get_absolute_url())
+        self.assertContains(response, description)

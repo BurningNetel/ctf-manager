@@ -7,7 +7,7 @@ from CTFmanager.models import Event
 
 
 class ViewTestCase(TestCase):
-    def create_event(self, _name, is_future=True):
+    def create_event(self, _name="testEvent", is_future=True):
         _date = timezone.now()
         if is_future:
             _date += timedelta(days=1)
