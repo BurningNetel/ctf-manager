@@ -149,18 +149,19 @@ class NewEventTests(FunctionalTest):
 
         # He checks if all the information is correct
         description = self.browser.find_element_by_id('p_description')
-        location = description.find_element_by_id('p_location')
-        url = description.find_element_by_id('p_url')
+        location = description.find_element_by_id('id_location')
+        url = description.find_element_by_id('id_url')
+        credentials = description.find_element_by_id('id_username')
+        password = description.find_element_by_id('id_password')
         # The header contains the events title, date, end date
         header = self.browser.find_element_by_css_selector('h1')
         # This p wil hold the credentials
-        credentials = description.find_element_by_id('p_credentials')
 
         self.assertIn(description.text, 'test ' * 30)
         self.assertIn(location.text, 'Eindhoven')
         self.assertIn(url.text, 'hatstack.nl')
         self.assertIn(credentials.text, 'CTF_TEAM_NAME')
-        self.assertIn(credentials.text, 'SECURE_PASSWORD')
+        self.assertIn(password.text, 'SECURE_PASSWORD')
         self.assertIn(header.text, 'Jan. 1, %s' % next_year)
         self.assertIn(header.text, ' - ')
         self.assertIn(header.text, 'Jan. 2, %s' % next_year)

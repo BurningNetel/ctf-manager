@@ -136,3 +136,19 @@ class EventPageDetailTest(ViewTestCase):
 
         self.assertContains(response, url)
 
+    def test_for_detail_page_shows_credentials(self):
+        _event = self.create_event()
+        username = "user_name"
+        password = "pass_word"
+
+        response = self.client.get(_event.get_absolute_url())
+        self.assertNotContains(response, username)
+        self.assertNotContains(response, password)
+
+        _event.password = password
+        _event.username = username
+        _event.save()
+
+        response = self.client.get(_event.get_absolute_url())
+        self.assertContains(response, password)
+        self.assertContains(response, username)
