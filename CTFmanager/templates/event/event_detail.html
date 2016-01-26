@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}CTFman - {{ event.name }}{% endblock %}
 {% block content %}
+
     <div class="page-header">
         <h1>{{ event.name }} <small>{{ event.date }}
             {% if event.end_date %} - {{ event.end_date }}{% endif %}</small>
         </h1>
     </div>
+
     <div class="panel panel-info">
         <div class="panel-heading">Event Information</div>
         <div class="panel-body">
@@ -25,6 +27,7 @@
             {% endif %}
         </ul>
     </div>
+
     {% if event.password or event.username %}
         <div class="panel panel-danger">
             <div class="panel-heading">
@@ -49,15 +52,20 @@
         </script>
     {% endif %}
 
-    <a class="btn btn-default" id="btn_add_challenge" href="{{ event.name }}/new">Add Challenge</a>
-    <h2>Challenges</h2>
+    <div class="page-header">
+        <h2>Challenges
+            <small><a class="btn btn-default btn-sm" id="btn_add_challenge" href="{{ event.name }}/new">Add Challenge</a></small>
+        </h2>
+    </div>
+
     <table class="table table-striped">
-    {% if event.challenge_set.count > 0 %}
-        {% for challenge in event.challenge_set.all %}
-            <tr><td><a href="{% url 'challenge_pad' event.name challenge.name %}">{{ challenge.name }}</a> - {{ challenge.points }}</td></tr>
-        {% endfor %}
-    {% else %}
-        <tr><td>No Challenges!</td></tr>
-    {% endif %}
+        {% if event.challenge_set.count > 0 %}
+            {% for challenge in event.challenge_set.all %}
+                <tr><td><a href="{% url 'challenge_pad' event.name challenge.name %}">{{ challenge.name }}</a> - {{ challenge.points }}</td></tr>
+            {% endfor %}
+        {% else %}
+            <tr><td>No Challenges!</td></tr>
+        {% endif %}
     </table>
+
 {% endblock %}
