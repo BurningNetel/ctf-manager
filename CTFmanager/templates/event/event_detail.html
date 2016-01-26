@@ -36,8 +36,12 @@
     <a class="btn btn-default" id="btn_add_challenge" href="{{ event.name }}/new">Add Challenge</a>
     <h2>Challenges</h2>
     <table class="table table-striped">
-    {% for challenge in event.challenge_set.all %}
-        <tr><td><a href="{% url 'challenge_pad' event.name challenge.name %}">{{ challenge.name }}</a> - {{ challenge.points }}</td></tr>
-    {% endfor %}
+    {% if event.challenge_set.count > 0 %}
+        {% for challenge in event.challenge_set.all %}
+            <tr><td><a href="{% url 'challenge_pad' event.name challenge.name %}">{{ challenge.name }}</a> - {{ challenge.points }}</td></tr>
+        {% endfor %}
+    {% else %}
+        <tr><td>No Challenges!</td></tr>
+    {% endif %}
     </table>
 {% endblock %}

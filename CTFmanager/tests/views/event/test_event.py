@@ -152,3 +152,9 @@ class EventPageDetailTest(ViewTestCase):
         response = self.client.get(_event.get_absolute_url())
         self.assertContains(response, password)
         self.assertContains(response, username)
+
+    def test_empty_events_set_shows_correct_message(self):
+        event = self.create_event()
+        response = self.client.get(event.get_absolute_url())
+        expected = '<tr><td>No Challenges!</td></tr>'
+        self.assertContains(response, expected)
