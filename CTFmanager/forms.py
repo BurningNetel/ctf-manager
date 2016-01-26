@@ -6,6 +6,7 @@ from .models import Event, Challenge
 EMPTY_FIELD_ERROR = "Required!"
 DUPLICATE_ERROR = "Challenge already exists!"
 
+
 class EventForm(forms.models.ModelForm):
 
     class Meta:
@@ -20,6 +21,31 @@ class EventForm(forms.models.ModelForm):
                 'placeholder': 'yyyy-mm-dd (h24-MM)',
                 'class': 'form-control',
             }),
+            'description': forms.fields.TextInput(attrs={
+                'placeholder': 'Description',
+                'class': 'form-control',
+            }),
+            'location': forms.fields.TextInput(attrs={
+                'placeholder': 'Location',
+                'class': 'form-control',
+            }),
+            'username': forms.fields.TextInput(attrs={
+                'placeholder': 'CTF username',
+                'class': 'form-control',
+            }),
+            'password': forms.fields.TextInput(attrs={
+                'placeholder': 'CTF password',
+                'class': 'form-control',
+            }),
+            'url': forms.fields.TextInput(attrs={
+                'placeholder': 'http://ctfwebsite.org',
+                'class': 'form-control',
+            }),
+            'end_date': forms.fields.DateTimeInput(attrs={
+                'placeholder': 'yyyy-mm-dd (h24-MM)',
+                'class': 'form-control',
+            }),
+
         }
         error_messages = {
             'name': {'required': EMPTY_FIELD_ERROR},
