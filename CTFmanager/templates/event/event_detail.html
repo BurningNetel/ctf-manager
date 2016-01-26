@@ -32,7 +32,7 @@
                 <button type="button" class="btn btn-danger btn-xs spoiler-trigger" data-toggle="collapse">Toggle</button>
             </div>
             <div class="panel-collapse collapse out">
-                <ul class="list-group">
+                <ul id="ul_credentials" class="list-group">
                     {% if event.username %}
                         <li id="id_username" class="list-group-item">Username: {{ event.username }}</li>
                     {% endif %}

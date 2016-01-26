@@ -152,16 +152,20 @@ class NewEventTests(FunctionalTest):
         description = panel.find_element_by_id('p_description')
         location = panel.find_element_by_id('id_location')
         url = panel.find_element_by_id('id_url')
-        credentials = panel.find_element_by_id('id_username')
-        password = panel.find_element_by_id('id_password')
+        username = self.browser.find_element_by_id('id_username')
+        password = self.browser.find_element_by_id('id_password')
+
         # The header contains the events title, date, end date
         header = self.browser.find_element_by_tag_name('small')
-        # This p wil hold the credentials
+
+        # Open the hidden field
+        self.browser.find_element_by_class_name('btn-danger').click()
+        time.sleep(1)  # Wait for selenium to see the hidden fields.
 
         self.assertIn('test' * 30, description.text)
         self.assertIn('Eindhoven', location.text, )
         self.assertIn('hatstack.nl', url.text)
-        self.assertIn('CTF_TEAM_NAME', credentials.text, )
+        self.assertIn('CTF_TEAM_NAME', username.text, )
         self.assertIn('SECURE_PASSWORD', password.text)
         self.assertIn('Jan. 1, %s' % next_year, header.text, )
         self.assertIn(' - ', header.text)
