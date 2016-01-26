@@ -135,9 +135,9 @@ class NewEventTests(FunctionalTest):
         self.browser.find_element_by_id('id_name').send_keys('optionalEvent')
         next_year = (timezone.now() + timedelta(days=365)).year
         self.browser.find_element_by_id('id_date').send_keys('%s-01-01' % next_year)
-        self.browser.find_element_by_id('id_description').send_keys('test ' * 30)
+        self.browser.find_element_by_id('id_description').send_keys('test' * 30)
         self.browser.find_element_by_id('id_location').send_keys('Eindhoven')
-        self.browser.find_element_by_id('id_end_date').send_keys('%s-01-01' % next_year)
+        self.browser.find_element_by_id('id_end_date').send_keys('%s-01-02' % next_year)
         self.browser.find_element_by_id('id_username').send_keys('CTF_TEAM_NAME')
         self.browser.find_element_by_id('id_password').send_keys('SECURE_PASSWORD')
         self.browser.find_element_by_id('id_url').send_keys('hatstack.nl')
@@ -145,24 +145,25 @@ class NewEventTests(FunctionalTest):
         # The user is now at the events overview page.
         # He now goes to it's detail page
         _event = Event.objects.first()
-        self.browser.get(reverse('view_event', args=[_event.name]))
+        self.browser.get(self.server_url + reverse('view_event', args=[_event.name]))
 
         # He checks if all the information is correct
-        description = self.browser.find_element_by_id('p_description')
-        location = description.find_element_by_id('id_location')
-        url = description.find_element_by_id('id_url')
-        credentials = description.find_element_by_id('id_username')
-        password = description.find_element_by_id('id_password')
+        panel = self.browser.find_element_by_class_name('panel')
+        description = panel.find_element_by_id('p_description')
+        location = panel.find_element_by_id('id_location')
+        url = panel.find_element_by_id('id_url')
+        credentials = panel.find_element_by_id('id_username')
+        password = panel.find_element_by_id('id_password')
         # The header contains the events title, date, end date
-        header = self.browser.find_element_by_css_selector('h1')
+        header = self.browser.find_element_by_tag_name('small')
         # This p wil hold the credentials
 
-        self.assertIn(description.text, 'test ' * 30)
-        self.assertIn(location.text, 'Eindhoven')
-        self.assertIn(url.text, 'hatstack.nl')
-        self.assertIn(credentials.text, 'CTF_TEAM_NAME')
-        self.assertIn(password.text, 'SECURE_PASSWORD')
-        self.assertIn(header.text, 'Jan. 1, %s' % next_year)
-        self.assertIn(header.text, ' - ')
-        self.assertIn(header.text, 'Jan. 2, %s' % next_year)
+        self.assertIn('test' * 30, description.text)
+        self.assertIn('Eindhoven', location.text, )
+        self.assertIn('hatstack.nl', url.text)
+        self.assertIn('CTF_TEAM_NAME', credentials.text, )
+        self.assertIn('SECURE_PASSWORD', password.text)
+        self.assertIn('Jan. 1, %s' % next_year, header.text, )
+        self.assertIn(' - ', header.text)
+        self.assertIn('Jan. 2, %s' % next_year, header.text)
 
