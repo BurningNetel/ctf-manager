@@ -23,15 +23,31 @@
             {% if event.url %}
                 <li id="id_url" class="list-group-item">URL: <a href="{{ event.url }}">{{ event.url }}</a></li>
             {% endif %}
-            {% if event.username %}
-                <li id="id_username" class="list-group-item">Username: {{ event.username }}</li>
-            {% endif %}
-            {% if event.password %}
-                <li id="id_password" class="list-group-item">Password: {{ event.password }}</li>
-            {% endif %}
         </ul>
     </div>
-
+    {% if event.password or event.username %}
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                Event Credentials
+                <button type="button" class="btn btn-danger btn-xs spoiler-trigger" data-toggle="collapse">Toggle</button>
+            </div>
+            <div class="panel-collapse collapse out">
+                <ul class="list-group">
+                    {% if event.username %}
+                        <li id="id_username" class="list-group-item">Username: {{ event.username }}</li>
+                    {% endif %}
+                    {% if event.password %}
+                        <li id="id_password" class="list-group-item">Password: {{ event.password }}</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <script>
+            $(".spoiler-trigger").click(function() {
+                $(this).parent().next().collapse('toggle');
+            });
+        </script>
+    {% endif %}
 
     <a class="btn btn-default" id="btn_add_challenge" href="{{ event.name }}/new">Add Challenge</a>
     <h2>Challenges</h2>
