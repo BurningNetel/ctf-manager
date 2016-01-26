@@ -134,19 +134,18 @@ class NewEventTests(FunctionalTest):
         self.browser.get(self.server_url + reverse('newEvent'))
         self.browser.find_element_by_id('id_name').send_keys('optionalEvent')
         next_year = (timezone.now() + timedelta(days=365)).year
-        self.browser.find_element_by_id('id_date').send_keys('01-01-%s' % next_year)
+        self.browser.find_element_by_id('id_date').send_keys('%s-01-01' % next_year)
         self.browser.find_element_by_id('id_description').send_keys('test ' * 30)
         self.browser.find_element_by_id('id_location').send_keys('Eindhoven')
-        self.browser.find_element_by_id('id_end_date').send_keys('02-01-%s' % next_year)
+        self.browser.find_element_by_id('id_end_date').send_keys('%s-01-01' % next_year)
         self.browser.find_element_by_id('id_username').send_keys('CTF_TEAM_NAME')
         self.browser.find_element_by_id('id_password').send_keys('SECURE_PASSWORD')
         self.browser.find_element_by_id('id_url').send_keys('hatstack.nl')
         self.browser.find_element_by_tag_name('button').click()
-        time.sleep(5)
         # The user is now at the events overview page.
         # He now goes to it's detail page
         _event = Event.objects.first()
-        self.browser.get('view_event', args=[_event.name])
+        self.browser.get(reverse('view_event', args=[_event.name]))
 
         # He checks if all the information is correct
         # TODO: Implement this
