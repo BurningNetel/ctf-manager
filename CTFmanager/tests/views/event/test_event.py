@@ -110,3 +110,29 @@ class EventPageDetailTest(ViewTestCase):
 
         response = self.client.get(_event.get_absolute_url())
         self.assertContains(response, description)
+
+    def test_for_detail_page_shows_location(self):
+        _event = self.create_event()
+        location = "eindhoven"
+
+        response = self.client.get(_event.get_absolute_url())
+        self.assertNotContains(response, location)
+
+        _event.location = location
+        _event.save()
+        response = self.client.get(_event.get_absolute_url())
+        self.assertContains(response, location)
+
+    def test_for_detail_page_shows_url(self):
+        _event = self.create_event()
+        url = "http://TestCTF.nl"
+
+        response = self.client.get(_event.get_absolute_url())
+        self.assertNotContains(response, url)
+
+        _event.url = url
+        _event.save()
+        response = self.client.get(_event.get_absolute_url())
+
+        self.assertContains(response, url)
+

@@ -5,14 +5,22 @@
         <h1>{{ event.name }} <small>{{ event.date }}</small></h1>
     </div>
     <div id="p_description" class="panel panel-info">
-        <div class="panel-heading">Description</div>
+        <div class="panel-heading">Event Information</div>
         <div class="panel-body">
             {% if event.description %}
-                {{ event.description}}
+                <p>{{ event.description}}</p>
             {% else %}
-                No description provided.
+                <p>No description provided.</p>
             {% endif %}
         </div>
+        <ul class="list-group">
+            {% if event.location %}
+                <li class="list-group-item">Location: {{ event.location }}</li>
+            {% endif %}
+            {% if event.url %}
+                <li class="list-group-item">URL: <a href="{{ event.url }}">{{ event.url }}</a></li>
+            {% endif %}
+        </ul>
     </div>
 
 
