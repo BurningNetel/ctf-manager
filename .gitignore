@@ -1,6 +1,7 @@
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
 
 *.iml
+*.pyc
 functional_tests/screendumps
 migrations
 ## Directory-based project format:
