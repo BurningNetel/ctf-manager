@@ -6,21 +6,32 @@
     <div class="page-header">
         <h2>Upcoming Events
             <small>
-                <a class="btn btn-default btn-sm" id="btn_add_event" href="{% url 'newEvent' %}">Add Event</a>
+                <a class="btn btn-default btn-sm pull-right" id="btn_add_event" href="{% url 'newEvent' %}">Add Event</a>
             </small>
         </h2>
     </div>
 
-    <table id="table_upcoming" class="table table-striped ">
+    <div id="lg_upcoming" class="list-group">
     {% if events.count != 0 %}
         {% for event in events %}
-            <tr><td><a href="{% url 'view_event' event.name%}">{{ event.name }}</a></td></tr>
-            <tr><td>{{ event.date|date:"SHORT_DATETIME_FORMAT" }}</td></tr>
+            <a class="list-group-item clearfix" href="{% url 'view_event' event.name%}">
+                <h4 class="list-group-item-heading">{{ event.name }} - {{ event.date|date:"SHORT_DATETIME_FORMAT" }}</h4>
+                <p class="list-group-item-text">{{ event.description }}
+                    <button class=" btn btn-primary btn-sm btn-post pull-right">Join</button>
+                </p>
+            </a>
         {% endfor %}
     {% else %}
-        <tr><td>No upcoming events!</td></tr>
+        <p class="list-group-item">No upcoming events!</p>
     {% endif %}
-    </table>
+    </div>
+
+    <script>
+        $(".btn-post").click(function(e){
+            e.preventDefault();
+            e.stopPropagation();
+        })
+    </script>
 
     <div class="page-header">
         <h2>Archive</h2>

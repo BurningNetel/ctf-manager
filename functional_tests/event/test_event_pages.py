@@ -63,7 +63,7 @@ class NewEventTests(FunctionalTest):
                            str(_date.minute)
                            )
         # Then, the user clicks the 'confirm' button
-        # When every necessary field has been filled
+        # when every necessary field has been filled in.
         btn_confirm = self.browser.find_element_by_tag_name('button')
         self.assertEqual('btn btn-primary', btn_confirm.get_attribute('class'))
         span = btn_confirm.find_element_by_tag_name('span')
@@ -76,18 +76,18 @@ class NewEventTests(FunctionalTest):
         self.assertNotIn(reverse('newEvent'), self.browser.current_url)
 
         # The new event is now visible on the events page
-        table = self.browser.find_element_by_tag_name('table')
-        rows = table.find_elements_by_tag_name('td')
+        lg_upcoming = self.browser.find_element_by_id('lg_upcoming')
+        rows = lg_upcoming.find_elements_by_tag_name('h4')
         self.assertTrue(
-                any(row.text == name for row in rows)
+                any(name in row.text for row in rows)
         )
         self.assertTrue(
-                any(row.text == formatted_date for row in rows)
+                any(formatted_date in row.text for row in rows)
         )
 
         # The users wants to view details about the event
         # He clicks on the link that is the name of the event to go to the details page
-        table.find_element_by_link_text(name).click()
+        lg_upcoming.find_element_by_tag_name('a').click()
         url = self.browser.current_url
 
         self.assertIn('CTFman - ' + name, self.browser.title)
@@ -159,7 +159,7 @@ class NewEventTests(FunctionalTest):
         header = self.browser.find_element_by_tag_name('small')
 
         # Open the hidden field
-        self.browser.find_element_by_class_name('btn-danger').click()
+        self.browser.find_element_by_class_name('panel-danger').find_element_by_tag_name('a').click()
         time.sleep(1)  # Wait for selenium to see the hidden fields.
 
         self.assertIn('test' * 30, description.text)
@@ -170,4 +170,32 @@ class NewEventTests(FunctionalTest):
         self.assertIn('Jan. 1, %s' % next_year, header.text, )
         self.assertIn(' - ', header.text)
         self.assertIn('Jan. 2, %s' % next_year, header.text)
+
+
+class EventJoinTests(FunctionalTest):
+    def test_user_can_join_event(self):
+        self.create_and_login_user();
+        # There is an existing event
+        event_name = self.add_event(True)
+        self.browser.get(self.server_url + reverse('events'))
+
+        # Check if the 'have joined' counter shows 0.
+        lg = self.browser.find_element_by_id('lg_upcoming')
+        join_count = lg.find_element_by_id('%s-join_count' % event_name)
+        self.assertEqual(join_count.text, "Joined: 0")
+
+        # The users clicks the join button
+        button = lg.find_element_by_tag_name('button')
+        button.click()
+
+        # The page should not go to another page
+        self.assertEqual(self.browser.title, "CTFman - Events")
+
+        # The users gets a confirmation message without reloading the page
+        message = self.browser.find_element_by_id('id_message')
+        self.assertEqual(message, "You joined event %s!" % event_name)
+
+        # Check if there is a counter of user joined
+        join_count = lg.find_element_by_id('%s-join_count' % event_name)
+        self.assertEqual(join_count.text, "Joined: 1")
 

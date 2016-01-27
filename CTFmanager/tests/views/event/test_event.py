@@ -37,14 +37,14 @@ class EventPageTest(ViewTestCase):
 
     def test_events_page_has_correct_headers(self):
         response = self.client.get(reverse('events'))
-        expected = '<h1>Upcoming Events</h1>'
-        expected2 = '<h1>Archive</h1>'
+        expected = 'Upcoming Events'
+        expected2 = 'Archive'
         self.assertContains(response, expected)
         self.assertContains(response, expected2)
 
     def test_empty_events_set_shows_correct_message(self):
         response = self.client.get(reverse('events'))
-        expected = '<tr><td>No upcoming events!</td></tr>'
+        expected = 'No upcoming events!'
         self.assertContains(response, expected)
 
     def test_events_page_display_archive(self):
