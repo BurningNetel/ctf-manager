@@ -10,17 +10,26 @@
             </small>
         </h2>
     </div>
-
+    {# Upcoming Event List #}
     <div id="lg_upcoming" class="list-group">
     {% if events.count != 0 %}
         {% for event in events %}
-            <a class="list-group-item clearfix" href="{% url 'view_event' event.name%}">
-                <h4 class="list-group-item-heading">{{ event.name }} - {{ event.date|date:"SHORT_DATETIME_FORMAT" }}</h4>
-                <p class="list-group-item-text">{{ event.description }}
-                    <button class=" btn btn-primary btn-sm btn-post pull-right">Join</button>
-                </p>
+            <a class="list-group-item clearfix container-fluid" href="{% url 'view_event' event.name%}">
+                <div class="row">
+                    {# event name and description #}
+                    <div class="col-lg-10 col-md-9">
+                        <h4 class="list-group-item-heading">{{ event.name }} - {{ event.date|date:"SHORT_DATETIME_FORMAT" }}</h4>
+                        <p class="list-group-item-text">{{ event.description }}</p>
+                    </div>
+                    {# Event Join/Leave Button and member count #}
+                    <div class="col-lg-2 col-md-3 list-group-item-text text-right">
+                        <p style="padding-bottom: 2px;">{{ event.members.count }} Participating!</p>
+                        <button class="btn btn-primary btn-sm btn-post">Join</button>
+                    </div>
+                </div>
             </a>
         {% endfor %}
+
     {% else %}
         <p class="list-group-item">No upcoming events!</p>
     {% endif %}

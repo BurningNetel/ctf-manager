@@ -3,6 +3,7 @@ from django.core.urlresolvers import resolve, reverse
 import json
 from CTFmanager.tests.views.base import ViewTestCase
 from CTFmanager.views import events_page
+from accounts.tests.test_views import User
 
 
 class EventPageAJAXJoinEventTest(ViewTestCase):
@@ -18,17 +19,17 @@ class EventPageAJAXJoinEventTest(ViewTestCase):
         return _json, event
 
     def test_POST_returns_expected_json_on_valid_post(self):
-        _json = self.get_valid_event_join_post()
+        _json, event = self.get_valid_event_join_post()
         self.assertEqual(200, _json['status_code'])
 
     def test_POST_gives_correct_user_count(self):
-        _json = self.get_valid_event_join_post()
+        _json, event = self.get_valid_event_join_post()
 
         self.assertEqual(1, _json['members'])
 
     def test_logout_POST_gives_401_and_negative(self):
         self.client.logout()
-        _json = self.get_valid_event_join_post()
+        _json, event = self.get_valid_event_join_post()
 
         self.assertEqual(-1, _json['members'])
         self.assertEqual(401, _json['status_code'])
@@ -95,3 +96,14 @@ class EventPageTest(ViewTestCase):
         archive = response.context['archive']
         self.assertEqual(len(archive), 0)
         self.assertContains(response, 'No past events!')
+
+    def test_event_page_displays_event_members_count(self):
+        event = self.create_event()
+        response = self.client.get(reverse('events'))
+        self.assertContains(response, '0 Participating')
+
+        event.members.add(self.user)
+        event.save()
+        response = self.client.get(reverse('events'))
+
+        self.assertContains(response, '1 Participating')

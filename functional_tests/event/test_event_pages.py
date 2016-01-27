@@ -188,8 +188,8 @@ class EventJoinTests(FunctionalTest):
 
         # Check if the 'have joined' counter shows 0.
         lg = self.browser.find_element_by_id('lg_upcoming')
-        join_count = lg.find_element_by_id('%s-join_count' % event_name)
-        self.assertEqual(join_count.text, "Joined: 0")
+        join_count = lg.find_element_by_id('%s-join-count' % event_name)
+        self.assertEqual(join_count.text, "0 Participating")
 
         # The users clicks the join button
         button = lg.find_element_by_tag_name('button')
@@ -204,5 +204,5 @@ class EventJoinTests(FunctionalTest):
 
         # Check if there is a counter of user joined
         join_count = lg.find_element_by_id('%s-join_count' % event_name)
-        self.assertEqual(join_count.text, "Joined: 1")
+        self.assertEqual(join_count.text, "1 Participating")
 
