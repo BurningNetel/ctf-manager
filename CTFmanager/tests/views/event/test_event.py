@@ -1,10 +1,23 @@
 from django.core.urlresolvers import resolve, reverse
-from django.utils import timezone
-from django.utils.timezone import timedelta
 
-from CTFmanager.models import Event, Challenge
+import json
 from CTFmanager.tests.views.base import ViewTestCase
-from CTFmanager.views import events_page, view_event
+from CTFmanager.views import events_page
+
+
+class EventPageAJAXJoinEventTest(ViewTestCase):
+    """ Tests that a user can join an event
+    A user should be able to join upcoming events.
+    And get a response without the page reloading
+    """
+
+    def test_response_returns_json_on_valid_post(self):
+        event = self.create_event()
+        username = self.user.username
+        response = self.client.post(reverse('event_join', args=(event.name, username)))
+
+        self.assertEqual(200, response.status_code)
+        json.loads(response.content.decode())
 
 
 class EventPageTest(ViewTestCase):
@@ -60,101 +73,3 @@ class EventPageTest(ViewTestCase):
         archive = response.context['archive']
         self.assertEqual(len(archive), 0)
         self.assertContains(response, 'No past events!')
-
-
-class EventPageDetailTest(ViewTestCase):
-    def test_requires_login(self):
-        self.client.logout()
-        _event = self.create_event('challenge_test', True)
-        response = self.client.get(_event.get_absolute_url())
-        self.assertRedirects(response, reverse('login') + '?next=' + _event.get_absolute_url())
-
-    def test_event_detail_page_resolves_to_detail_page(self):
-        _date = timezone.now() + timedelta(days=1)
-        event = Event.objects.create(name="detailEvent", date=_date)
-        response = resolve(event.get_absolute_url())
-        self.assertEqual(response.func, view_event)
-
-    def test_event_detail_page_uses_event_detail_template(self):
-        _date = timezone.now() + timedelta(days=1)
-        event = Event.objects.create(name="detailEvent", date=_date)
-        event.save()
-        response = self.client.get(event.get_absolute_url())
-        event_on_page = response.context['event']
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'event/event_detail.html')
-        self.assertEqual(event, event_on_page)
-
-    def test_add_events_page_contains_add_challenge_button(self):
-        _event = self.create_event('challenge_test', True)
-        response = self.client.get(_event.get_absolute_url())
-        self.assertContains(response, 'id="btn_add_challenge"')
-
-    def test_for_detail_page_shows_challenges(self):
-        _event = self.create_event('test', True)
-        chal = Challenge.objects.create(name='test', points=500, event=_event)
-        chal.save()
-        response = self.client.get(_event.get_absolute_url())
-        self.assertContains(response, chal.name)
-        self.assertContains(response, chal.points)
-
-    def test_for_detail_page_shows_description(self):
-        _event = self.create_event()
-        description = "This CTF is a test, please ignore"
-
-        response = self.client.get(_event.get_absolute_url())
-        self.assertContains(response, "No description provided")
-
-        _event.description = description
-        _event.save()
-
-        response = self.client.get(_event.get_absolute_url())
-        self.assertContains(response, description)
-
-    def test_for_detail_page_shows_location(self):
-        _event = self.create_event()
-        location = "eindhoven"
-
-        response = self.client.get(_event.get_absolute_url())
-        self.assertNotContains(response, location)
-
-        _event.location = location
-        _event.save()
-        response = self.client.get(_event.get_absolute_url())
-        self.assertContains(response, location)
-
-    def test_for_detail_page_shows_url(self):
-        _event = self.create_event()
-        url = "http://TestCTF.nl"
-
-        response = self.client.get(_event.get_absolute_url())
-        self.assertNotContains(response, url)
-
-        _event.url = url
-        _event.save()
-        response = self.client.get(_event.get_absolute_url())
-
-        self.assertContains(response, url)
-
-    def test_for_detail_page_shows_credentials(self):
-        _event = self.create_event()
-        username = "user_name"
-        password = "pass_word"
-
-        response = self.client.get(_event.get_absolute_url())
-        self.assertNotContains(response, username)
-        self.assertNotContains(response, password)
-
-        _event.password = password
-        _event.username = username
-        _event.save()
-
-        response = self.client.get(_event.get_absolute_url())
-        self.assertContains(response, password)
-        self.assertContains(response, username)
-
-    def test_empty_events_set_shows_correct_message(self):
-        event = self.create_event()
-        response = self.client.get(event.get_absolute_url())
-        expected = '<tr><td>No Challenges!</td></tr>'
-        self.assertContains(response, expected)

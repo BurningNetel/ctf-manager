@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.http import JsonResponse
 
 from .forms import EventForm, ChallengeForm
 from .models import Event, Challenge
@@ -59,3 +60,9 @@ def challenge_pad(request, event_id, challenge_name):
             _challenge.save()
 
     return render(request, 'event/challenge_pad.html', {'challenge': _challenge})
+
+
+def event_join(request, event_name, username):
+    return JsonResponse({
+        'test': 'foo'
+    })

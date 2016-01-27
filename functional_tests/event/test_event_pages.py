@@ -173,7 +173,14 @@ class NewEventTests(FunctionalTest):
 
 
 class EventJoinTests(FunctionalTest):
+
     def test_user_can_join_event(self):
+        """ Tests joining and leaving an event on the events page
+        A user should be able to join an event by clicking on a join button on
+        a upcoming event.
+        A 'users joined' counter related to that button should update an
+        'users joined' field in the list-item.
+        """
         self.create_and_login_user();
         # There is an existing event
         event_name = self.add_event(True)
