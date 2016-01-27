@@ -62,8 +62,11 @@ def challenge_pad(request, event_id, challenge_name):
     return render(request, 'event/challenge_pad.html', {'challenge': _challenge})
 
 
-def event_join(request, event_name, username):
+def event_join(request, event_name):
+    user = request.user
+    event = Event.objects.get(pk=event_name)
+    members = event.join(user)
     return JsonResponse({
         'status_code': 200,
-        'joined': 1,
+        'members': members,
     })
