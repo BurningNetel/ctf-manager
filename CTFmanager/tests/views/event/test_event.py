@@ -11,21 +11,35 @@ class EventPageAJAXJoinEventTest(ViewTestCase):
     And get a response without the page reloading
     """
 
-    def test_POST_returns_expected_json_on_valid_post(self):
+    def get_valid_event_join_post(self):
         event = self.create_event()
         response = self.client.post(reverse('event_join', args=[event.name]))
-
-        # json.loads raises an exception if the json is invalid
         _json = json.loads(response.content.decode())
+        return _json, event
+
+    def test_POST_returns_expected_json_on_valid_post(self):
+        _json = self.get_valid_event_join_post()
         self.assertEqual(200, _json['status_code'])
 
     def test_POST_gives_correct_user_count(self):
-        event = self.create_event()
-        response = self.client.post(reverse('event_join', args=[event.name]))
-
-        _json = json.loads(response.content.decode())
+        _json = self.get_valid_event_join_post()
 
         self.assertEqual(1, _json['members'])
+
+    def test_logout_POST_gives_401_and_negative(self):
+        self.client.logout()
+        _json = self.get_valid_event_join_post()
+
+        self.assertEqual(-1, _json['members'])
+        self.assertEqual(401, _json['status_code'])
+
+    def test_duplicate_post_gives_304_and_negative(self):
+        _json, event = self.get_valid_event_join_post()
+        response = self.client.post(reverse('event_join', args=[event.name]))
+        _json = json.loads(response.content.decode())
+
+        self.assertEqual(-1, _json['members'])
+        self.assertEqual(304, _json['status_code'])
 
 
 class EventPageTest(ViewTestCase):

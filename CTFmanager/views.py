@@ -63,10 +63,23 @@ def challenge_pad(request, event_id, challenge_name):
 
 
 def event_join(request, event_name):
-    user = request.user
-    event = Event.objects.get(pk=event_name)
-    members = event.join(user)
-    return JsonResponse({
-        'status_code': 200,
-        'members': members,
-    })
+    if request.user.is_authenticated():
+        user = request.user
+        event = Event.objects.get(pk=event_name)
+        members = event.join(user)
+        if members > 0:
+            return JsonResponse({
+                'status_code': 200,
+                'members': members,
+            })
+        else:
+            return JsonResponse({
+                'status_code': 304,
+                'members': -1,
+            })
+    else:
+        r = JsonResponse({
+            'status_code': 401,
+            'members': -1,
+        })
+        return r
