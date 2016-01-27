@@ -11,7 +11,7 @@ from CTFmanager.models import Event, Challenge
 class EventModelTestCase(TestCase):
     tz = pytz.timezone('Europe/Amsterdam')
 
-    def create_event_object(self, _name, is_in_future=True):
+    def create_event_object(self, _name="test", is_in_future=True):
         if is_in_future:
             _datetime = datetime.now() + timedelta(days=1)
         else:
@@ -117,3 +117,22 @@ class EventAndChallengeTest(EventModelTest):
             chal1.full_clean()
 
         self.assertEqual(1, _event.challenge_set.count())
+
+
+class EventAndUserTest(EventModelTest):
+
+    def test_user_is_related_to_event(self):
+        _event = self.create_event_object()
+        user = User.objects.create_user('test')
+        count = _event.join(user)
+        self.assertIn(user, _event.members.all())
+        self.assertEqual(1, _event.members.count())
+        self.assertEqual(1, count)
+
+    def test_duplicate_join_returns_negative(self):
+        _event = self.create_event_object()
+        user = User.objects.create_user('test')
+        _event.join(user)
+        count = _event.join(user)
+        self.assertEqual(1, _event.members.count())
+        self.assertEqual(-1, count)

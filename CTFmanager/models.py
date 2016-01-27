@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
@@ -23,6 +24,15 @@ class Event(models.Model):
     creation_date = models.DateTimeField(default=timezone.now(), blank=True)
     created_by = models.SlugField(default='Anonymous', blank=True)
 
+    members = models.ManyToManyField(User)
+
+    def join(self, user):
+        if user not in self.members.all():
+            self.members.add(user)
+            return self.members.count()
+        else:
+            return -1
+
     def get_absolute_url(self):
         return reverse('view_event', args=[self.name])
 
@@ -31,7 +41,6 @@ class Event(models.Model):
         if self.date > timezone.now():
             return True
         return False
-
 
 
 class Challenge(models.Model):

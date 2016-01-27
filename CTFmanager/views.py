@@ -64,5 +64,6 @@ def challenge_pad(request, event_id, challenge_name):
 
 def event_join(request, event_name, username):
     return JsonResponse({
-        'test': 'foo'
+        'status_code': 200,
+        'joined': 1,
     })

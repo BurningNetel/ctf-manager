@@ -11,13 +11,14 @@ class EventPageAJAXJoinEventTest(ViewTestCase):
     And get a response without the page reloading
     """
 
-    def test_response_returns_json_on_valid_post(self):
+    def test_response_returns_expected_json_on_valid_post(self):
         event = self.create_event()
         username = self.user.username
         response = self.client.post(reverse('event_join', args=(event.name, username)))
-
-        self.assertEqual(200, response.status_code)
-        json.loads(response.content.decode())
+        # json.loads raises an exception if the json is invalid
+        _json = json.loads(response.content.decode())
+        self.assertEqual(_json['status_code'], 200)
+        self.assertEqual(_json['joined'], 1)
 
 
 class EventPageTest(ViewTestCase):
