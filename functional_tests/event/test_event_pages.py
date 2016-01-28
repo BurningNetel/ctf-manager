@@ -45,7 +45,7 @@ class NewEventTests(FunctionalTest):
         # The users fills in all the mandatory data
         # The events name
         tb_name = self.browser.find_element_by_id('id_name')
-        name = 'Hacklu' + str(round(time.time()))
+        name = 'Hacklu'
         tb_name.send_keys(name)
         self.assertEqual('Name', tb_name.get_attribute('placeholder'))
 
@@ -88,8 +88,7 @@ class NewEventTests(FunctionalTest):
 
         # The users wants to view details about the event
         # He clicks on the link that is the name of the event to go to the details page
-        lg_upcoming.find_element_by_tag_name('a').click()
-        url = self.browser.current_url
+        self.browser.find_element_by_id(name).click()
 
         self.assertIn('CTFman - ' + name, self.browser.title)
 
@@ -202,6 +201,9 @@ class EventJoinTests(FunctionalTest):
 
         # Check if there is a counter of user joined
         join_count = self.browser.find_element_by_id('%s-join-count' % event_name)
+        # The popup data attribute should show the username
+        popup_usernames = join_count.get_attribute('data-content')
+        self.assertIn(self.user.username, popup_usernames)
 
         self.assertEqual(join_count.text, "1 Participating!")
         self.assertEqual(button.text, "Leave")
@@ -219,6 +221,7 @@ class EventJoinTests(FunctionalTest):
         a_other_event = lg.find_element_by_id(other_event.name)
         event_button = a_event.find_element_by_id('%s-btn' % event_name)
         other_event_button = a_other_event.find_element_by_id('%s-btn' % other_event.name)
+
         self.assertEqual(other_event_button.text, "Join")
         self.assertEqual(event_button.text, "Leave")
 
@@ -234,3 +237,12 @@ class EventJoinTests(FunctionalTest):
         other_popover_text = other_popover.get_attribute('data-content')
 
         self.assertEqual(other_popover_text.strip(), 'Nobody has joined yet!')
+
+        # Finally, the user click the leave button
+        event_button.click()
+        self.assertEqual(event_button.text, "Join")
+        self.browser.refresh()
+
+        # Check if it's persistent
+        event_button = self.browser.find_element_by_id('%s-btn' % event_name)
+        self.assertEqual(event_button.text, "Join")
