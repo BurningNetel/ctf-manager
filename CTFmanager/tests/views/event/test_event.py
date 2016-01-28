@@ -2,10 +2,8 @@ from django.core.urlresolvers import resolve, reverse
 
 import json
 
-from CTFmanager.models import Event
 from CTFmanager.tests.views.base import ViewTestCase
 from CTFmanager.views import events_page
-from accounts.tests.test_views import User
 
 
 class EventPageAJAXJoinEventTest(ViewTestCase):
@@ -36,7 +34,7 @@ class EventPageAJAXJoinEventTest(ViewTestCase):
         self.assertEqual(-1, _json['members'])
         self.assertEqual(401, _json['status_code'])
 
-    def test_duplicate_post_gives_304_and_negative(self):
+    def test_duplicate_POST_gives_304_and_negative(self):
         _json, event = self.get_valid_event_join_post()
         response = self.client.post(reverse('event_join', args=[event.name]))
         _json = json.loads(response.content.decode())

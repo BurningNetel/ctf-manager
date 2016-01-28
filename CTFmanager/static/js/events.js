@@ -7,17 +7,44 @@ $( document ).ready(function() {
 
         var event_name = $(this).closest('a').attr('id');
         var url = "/events/" + event_name + "/users/";
-        $.ajax({
-            type: "POST",
-            url: url,
-            success: function(data) {
-                var members = data['members'];
-                if(data['status_code'] == 200){
-                    $('#' + event_name + '-join-count').text(members + " Participating!");
-                    $(e.target).removeClass('btn-primary').addClass('btn-warning').text('Leave');
+        var p_join_count = $('#' + event_name + '-join-count');
+        var username = $('#username').text();
+
+        if($(this).text() == "Join") {
+            $.ajax({
+                type: "POST",
+                url: url,
+                success: function (data) {
+                    var members = data['members'];
+                    if (data['status_code'] == 200) {
+                        $('#' + event_name + '-join-count').text(members + " Participating!");
+                        p_join_count.attr('data-content', p_join_count.attr('data-content') + '\n' + username)
+                        $(e.target).removeClass('btn-primary').addClass('btn-warning').text('Leave');
+                    }
                 }
-            }
-        });
+            });
+        }
+        else
+        {
+            $.ajax({
+                type: "DELETE",
+                url: url,
+                success: function (data) {
+                    var members = data['members'];
+                    if (data['status_code'] == 200) {
+                        p_join_count.text(members + " Participating!");
+                        if(members > 0)
+                        {
+                            p_join_count.attr('data-content', p_join_count.attr('data-content').replace(username, ''));
+                        }
+                        else {
+                            p_join_count.attr('data-content', 'Nobody has joined yet!')
+                        }
+                        $(e.target).removeClass('btn-warning').addClass('btn-primary').text('Join');
+                    }
+                }
+            });
+        }
     });
 
     $(".sp").click(function (e){
