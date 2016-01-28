@@ -3,6 +3,7 @@ import time
 from django.core.urlresolvers import reverse
 from django.utils import timezone, formats
 from django.utils.timezone import timedelta
+from selenium.webdriver.common.keys import Keys
 
 from CTFmanager.models import Event
 from functional_tests.base import FunctionalTest
@@ -189,20 +190,15 @@ class EventJoinTests(FunctionalTest):
         # Check if the 'have joined' counter shows 0.
         lg = self.browser.find_element_by_id('lg_upcoming')
         join_count = lg.find_element_by_id('%s-join-count' % event_name)
-        self.assertEqual(join_count.text, "0 Participating")
+        self.assertEqual(join_count.text, "0 Participating!")
 
         # The users clicks the join button
-        button = lg.find_element_by_tag_name('button')
-        button.click()
+        self.browser.find_element_by_id(event_name + '-btn').click()
 
         # The page should not go to another page
         self.assertEqual(self.browser.title, "CTFman - Events")
-
-        # The users gets a confirmation message without reloading the page
-        message = self.browser.find_element_by_id('id_message')
-        self.assertEqual(message, "You joined event %s!" % event_name)
-
+        time.sleep(1);
         # Check if there is a counter of user joined
-        join_count = lg.find_element_by_id('%s-join_count' % event_name)
-        self.assertEqual(join_count.text, "1 Participating")
+        join_count = self.browser.find_element_by_id('%s-join-count' % event_name)
+        self.assertEqual(join_count.text, "1 Participating!")
 

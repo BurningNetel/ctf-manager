@@ -51,6 +51,7 @@ def new_challenge(request, event_id):
             return render(request, 'event/add_challenge.html', {'form': form, 'event': _event})
     return render(request, 'event/add_challenge.html', {'form': ChallengeForm(), 'event': _event})
 
+
 @login_required
 def challenge_pad(request, event_id, challenge_name):
     _challenge = Challenge.objects.get(name=challenge_name)

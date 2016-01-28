@@ -2,6 +2,10 @@
 
 {% block title %}CTFman - Events{% endblock %}
 
+{% load static from staticfiles %}
+{% block include %}
+    <script src="{% static "js/events.js" %}"></script>
+{% endblock %}
 {% block content %}
     <div class="page-header">
         <h2>Upcoming Events
@@ -14,7 +18,7 @@
     <div id="lg_upcoming" class="list-group">
     {% if events.count != 0 %}
         {% for event in events %}
-            <a class="list-group-item clearfix container-fluid" href="{% url 'view_event' event.name%}">
+            <a id="{{ event.name }}" class="list-group-item clearfix container-fluid" href="{% url 'view_event' event.name%}">
                 <div class="row">
                     {# event name and description #}
                     <div class="col-lg-10 col-md-9">
@@ -23,8 +27,8 @@
                     </div>
                     {# Event Join/Leave Button and member count #}
                     <div class="col-lg-2 col-md-3 list-group-item-text text-right">
-                        <p style="padding-bottom: 2px;">{{ event.members.count }} Participating!</p>
-                        <button class="btn btn-primary btn-sm btn-post">Join</button>
+                        <p id="{{ event.name }}-join-count" style="padding-bottom: 2px;">{{ event.members.count }} Participating!</p>
+                        <button id="{{ event.name }}-btn" class="btn btn-primary btn-sm btn-post">Join</button>
                     </div>
                 </div>
             </a>
@@ -36,10 +40,7 @@
     </div>
 
     <script>
-        $(".btn-post").click(function(e){
-            e.preventDefault();
-            e.stopPropagation();
-        })
+
     </script>
 
     <div class="page-header">
