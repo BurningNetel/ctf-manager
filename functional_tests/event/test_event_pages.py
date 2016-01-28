@@ -193,12 +193,48 @@ class EventJoinTests(FunctionalTest):
         self.assertEqual(join_count.text, "0 Participating!")
 
         # The users clicks the join button
-        self.browser.find_element_by_id(event_name + '-btn').click()
+        button = self.browser.find_element_by_id(event_name + '-btn')
+        button.click()
 
         # The page should not go to another page
         self.assertEqual(self.browser.title, "CTFman - Events")
-        time.sleep(1);
+        time.sleep(1)
+
         # Check if there is a counter of user joined
         join_count = self.browser.find_element_by_id('%s-join-count' % event_name)
-        self.assertEqual(join_count.text, "1 Participating!")
 
+        self.assertEqual(join_count.text, "1 Participating!")
+        self.assertEqual(button.text, "Leave")
+
+        # Someone else has created another event,
+        # The users refreshes the pages, he still sees the
+        # 'leave' button on his event, but the other event shows 'join'
+        date = timezone.now() + timedelta(days=1)
+        other_event = Event.objects.create(name='test2', date=date, description="test 123")
+        self.browser.refresh()
+
+        # Check if buttons are correct
+        lg = self.browser.find_element_by_id('lg_upcoming')
+        a_event = lg.find_element_by_id(event_name)
+        a_other_event = lg.find_element_by_id(other_event.name)
+        event_button = a_event.find_element_by_id('%s-btn' % event_name)
+        other_event_button = a_other_event.find_element_by_id('%s-btn' % other_event.name)
+        self.assertEqual(other_event_button.text, "Join")
+        self.assertEqual(event_button.text, "Leave")
+
+        # check if username of participants are in popover.
+        join_count = self.browser.find_element_by_id("%s-join-count" % event_name)
+        popover_title = join_count.get_attribute('title')
+        popover_text = join_count.get_attribute('data-content')
+
+        # Check if the popover title an data is correct
+        self.assertEqual(popover_title, 'Participants')
+        # This should contain all participants usernames.
+        self.assertEqual(popover_text, self.user.username)
+
+        # The other popover should contain a message that says that nobody has joined yet
+        other_popover = self.browser.find_element_by_id('%s-join-count' % other_event)
+        other_popover_title = other_popover.get_attribute('title')
+        other_popover_text = other_popover.get_attribute('data-content')
+        self.assertEqual(other_popover_title, 'Participants')
+        self.assertEqual(other_popover_text, 'Nobody has joined yet!')
