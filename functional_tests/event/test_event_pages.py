@@ -88,7 +88,7 @@ class NewEventTests(FunctionalTest):
 
         # The users wants to view details about the event
         # He clicks on the link that is the name of the event to go to the details page
-        self.browser.find_element_by_id(name).click()
+        self.browser.find_element_by_id(name).find_element_by_tag_name('h4').click()
 
         self.assertIn('CTFman - ' + name, self.browser.title)
 
