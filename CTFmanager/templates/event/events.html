@@ -22,13 +22,33 @@
                 <div class="row">
                     {# event name and description #}
                     <div class="col-lg-10 col-md-9">
-                        <h4 class="list-group-item-heading">{{ event.name }} - {{ event.date|date:"SHORT_DATETIME_FORMAT" }}</h4>
+                        <h4 class="list-group-item-heading">
+                            {{ event.name }} - {{ event.date|date:"SHORT_DATETIME_FORMAT" }}
+                        </h4>
                         <p class="list-group-item-text">{{ event.description }}</p>
                     </div>
                     {# Event Join/Leave Button and member count #}
                     <div class="col-lg-2 col-md-3 list-group-item-text text-right">
-                        <p id="{{ event.name }}-join-count" style="padding-bottom: 2px;">{{ event.members.count }} Participating!</p>
-                        <button id="{{ event.name }}-btn" class="btn btn-primary btn-sm btn-post">Join</button>
+                        <p class="sp" id="{{ event.name }}-join-count"
+                           data-toggle="popover" data-trigger="hover"
+                           data-content="
+                                       {% if event.members.count == 0 %}
+                                           Nobody has joined yet!
+                                       {% else %}
+                                           {% for user in event.members.all %}
+                                                {{ user.username }}
+                                           {% endfor %}
+                                       {% endif %}
+                           "
+                           style="padding-bottom: 2px;">
+
+                            {{ event.members.count }} Participating!</p>
+                            {% if event in request.user.event_set.all %}
+                                <button id="{{ event.name }}-btn" class="btn btn-warning btn-sm btn-post">Leave</button>
+                            {% else %}
+                                <button id="{{ event.name }}-btn" class="btn btn-primary btn-sm btn-post">Join</button>
+                            {% endif %}
+
                     </div>
                 </div>
             </a>
@@ -39,9 +59,6 @@
     {% endif %}
     </div>
 
-    <script>
-
-    </script>
 
     <div class="page-header">
         <h2>Archive</h2>

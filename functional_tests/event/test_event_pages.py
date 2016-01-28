@@ -224,17 +224,13 @@ class EventJoinTests(FunctionalTest):
 
         # check if username of participants are in popover.
         join_count = self.browser.find_element_by_id("%s-join-count" % event_name)
-        popover_title = join_count.get_attribute('title')
         popover_text = join_count.get_attribute('data-content')
 
-        # Check if the popover title an data is correct
-        self.assertEqual(popover_title, 'Participants')
         # This should contain all participants usernames.
-        self.assertEqual(popover_text, self.user.username)
+        self.assertEqual(popover_text.strip(), self.user.username)
 
         # The other popover should contain a message that says that nobody has joined yet
-        other_popover = self.browser.find_element_by_id('%s-join-count' % other_event)
-        other_popover_title = other_popover.get_attribute('title')
+        other_popover = self.browser.find_element_by_id('%s-join-count' % other_event.name)
         other_popover_text = other_popover.get_attribute('data-content')
-        self.assertEqual(other_popover_title, 'Participants')
-        self.assertEqual(other_popover_text, 'Nobody has joined yet!')
+
+        self.assertEqual(other_popover_text.strip(), 'Nobody has joined yet!')

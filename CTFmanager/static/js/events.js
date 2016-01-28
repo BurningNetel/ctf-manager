@@ -20,6 +20,11 @@ $( document ).ready(function() {
         });
     });
 
+    $(".sp").click(function (e){
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
 
     // CSRF code
     function getCookie(name) {
@@ -53,4 +58,8 @@ $( document ).ready(function() {
         }
     });
 
+});
+
+$(function () {
+    $('[data-toggle="popover"]').popover()
 });

@@ -20,5 +20,5 @@ class ViewTestCase(TestCase):
         )
 
     def setUp(self):
-        self.user = User.objects.create_user('test', 'test@test.nl', 'test')
+        self.user = User.objects.create_user('TestUser1', 'test@test.nl', 'test')
         self.client.login(username=self.user.username, password='test')

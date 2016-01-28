@@ -107,3 +107,24 @@ class EventPageTest(ViewTestCase):
         response = self.client.get(reverse('events'))
 
         self.assertContains(response, '1 Participating')
+
+    def test_event_page_displays_correct_button_text(self):
+        event = self.create_event()
+        response = self.client.get(reverse('events'))
+        self.assertContains(response, 'Join</button>')
+
+        event.join(self.user)
+        response = self.client.get(reverse('events'))
+        self.assertContains(response, 'Leave</button>')
+
+    def test_event_page_shows_username_in_popup(self):
+        event = self.create_event()
+        response = self.client.get(reverse('events'))
+        self.assertContains(response, self.user.username, 1)
+        self.assertContains(response, 'Nobody has joined yet!')
+
+        event.join(self.user)
+
+        response = self.client.get(reverse('events'))
+        self.assertContains(response, self.user.username, 2)
+        self.assertNotContains(response, 'Nobody has joined yet!')
