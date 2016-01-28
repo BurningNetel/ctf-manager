@@ -1,6 +1,8 @@
 from django.core.urlresolvers import resolve, reverse
 
 import json
+
+from CTFmanager.models import Event
 from CTFmanager.tests.views.base import ViewTestCase
 from CTFmanager.views import events_page
 from accounts.tests.test_views import User
@@ -41,6 +43,37 @@ class EventPageAJAXJoinEventTest(ViewTestCase):
 
         self.assertEqual(-1, _json['members'])
         self.assertEqual(304, _json['status_code'])
+
+    def test_valid_DELETE_gives_valid_json(self):
+        event = self.create_event_join_user()
+        response = self.client.delete(reverse('event_join', args=[event.name]))
+        _json = json.loads(response.content.decode())
+
+        self.assertEqual(200, _json['status_code'])
+        self.assertEqual(0, _json['members'])
+
+    def test_duplicate_DELETE_gives_304_and_negative(self):
+        event = self.create_event_join_user()
+        self.client.delete(reverse('event_join', args=[event.name]))
+        response = self.client.delete(reverse('event_join', args=[event.name]))
+        _json = json.loads(response.content.decode())
+
+        self.assertEqual(304, _json['status_code'])
+        self.assertEqual(-1, _json['members'])
+
+    def test_logout_then_DELTE_gives_401_and_negative(self):
+        event = self.create_event_join_user()
+        self.client.logout()
+        response = self.client.delete(reverse('event_join', args=[event.name]))
+        _json = json.loads(response.content.decode())
+
+        self.assertEqual(401, _json['status_code'])
+        self.assertEqual(-1, _json['members'])
+
+    def create_event_join_user(self):
+        event = self.create_event()
+        event.join(self.user)
+        return event
 
 
 class EventPageTest(ViewTestCase):

@@ -33,6 +33,13 @@ class Event(models.Model):
         else:
             return -1
 
+    def leave(self, user):
+        if user in self.members.all():
+            self.members.remove(user)
+            return self.members.count()
+        else:
+            return -1
+
     def get_absolute_url(self):
         return reverse('view_event', args=[self.name])
 

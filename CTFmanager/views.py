@@ -65,19 +65,32 @@ def challenge_pad(request, event_id, challenge_name):
 
 def event_join(request, event_name):
     if request.user.is_authenticated():
-        user = request.user
         event = Event.objects.get(pk=event_name)
-        members = event.join(user)
-        if members > 0:
-            return JsonResponse({
-                'status_code': 200,
-                'members': members,
-            })
-        else:
-            return JsonResponse({
-                'status_code': 304,
-                'members': -1,
-            })
+        user = request.user
+        if request.method == 'POST':
+            members = event.join(user)
+            if members > 0:
+                return JsonResponse({
+                    'status_code': 200,
+                    'members': members,
+                })
+            else:
+                return JsonResponse({
+                    'status_code': 304,
+                    'members': -1,
+                })
+        elif request.method == 'DELETE':
+            members = event.leave(user)
+            if members > -1:
+                return JsonResponse({
+                    'status_code': 200,
+                    'members': members,
+                })
+            else:
+                return JsonResponse({
+                    'status_code': 304,
+                    'members': -1,
+                })
     else:
         r = JsonResponse({
             'status_code': 401,

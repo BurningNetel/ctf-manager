@@ -121,9 +121,9 @@ class EventAndChallengeTest(EventModelTest):
 
 class EventAndUserTest(EventModelTest):
 
-    def test_user_is_related_to_event(self):
+    def test_event_join_method(self):
         _event = self.create_event_object()
-        user = User.objects.create_user('test')
+        user = User.objects.create_user('testUser')
         count = _event.join(user)
         self.assertIn(user, _event.members.all())
         self.assertEqual(1, _event.members.count())
@@ -131,8 +131,18 @@ class EventAndUserTest(EventModelTest):
 
     def test_duplicate_join_returns_negative(self):
         _event = self.create_event_object()
-        user = User.objects.create_user('test')
+        user = User.objects.create_user('testUser')
         _event.join(user)
         count = _event.join(user)
         self.assertEqual(1, _event.members.count())
         self.assertEqual(-1, count)
+
+    def test_event_leave_method(self):
+        _event = self.create_event_object()
+        user = User.objects.create_user('testUser')
+        _event.members.add(user)
+
+        count = _event.leave(user)
+
+        self.assertEqual(0, count)
+        self.assertTrue(user not in _event.members.all())
