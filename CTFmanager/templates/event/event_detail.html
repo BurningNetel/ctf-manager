@@ -35,12 +35,12 @@
                 <li class="list-group-item">
                     <h4 class="list-group-item-heading">Participants:</h4>
                     {% if event.members.count > 0 %}
-                        <ul class="list-group-item">
-                        {% for user in event.members.all %}
+                        <ul id="members_list" class="list-group-item">
                             <p class="list-group-item-text">
-                                {{ user.username }}
+                                {% for user in event.members.all %}
+                                        {{ user.username }}<br>
+                                {% endfor %}
                             </p>
-                        {% endfor %}
                         </ul>
                     {% else %}
                         <p class="list-group-item-text">No participants yet!</p>

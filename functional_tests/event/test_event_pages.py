@@ -3,7 +3,6 @@ import time
 from django.core.urlresolvers import reverse
 from django.utils import timezone, formats
 from django.utils.timezone import timedelta
-from selenium.webdriver.common.keys import Keys
 
 from CTFmanager.models import Event
 from functional_tests.base import FunctionalTest
@@ -246,3 +245,9 @@ class EventJoinTests(FunctionalTest):
         # Check if it's persistent
         event_button = self.browser.find_element_by_id('%s-btn' % event_name)
         self.assertEqual(event_button.text, "Join")
+        event_button.click()
+        # check if usernames show up in events detail page
+
+        self.browser.get(self.server_url + reverse('view_event', args=[event_name]))
+        usernames = self.browser.find_element_by_id('members_list').find_element_by_tag_name('p')
+        self.assertInHTML(self.user.username, usernames.text)
