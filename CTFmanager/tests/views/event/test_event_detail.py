@@ -124,3 +124,7 @@ class EventPageDetailTest(ViewTestCase):
         response = self.client.get(event.get_absolute_url())
 
         self.assertContains(response, 'No participants yet!')
+
+
+class EventPageChallengeTest(ViewTestCase):
+    pass

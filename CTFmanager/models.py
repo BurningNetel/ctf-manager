@@ -54,7 +54,9 @@ class Challenge(models.Model):
     name = models.SlugField(max_length=30, default='')
     points = models.IntegerField(default=0)
     event = models.ForeignKey(Event, default=None)
+
     _pad_created = models.BooleanField(default=False)
+    solvers = models.ManyToManyField(User)
 
     class Meta:
         unique_together = ('name', 'event')
@@ -87,4 +89,11 @@ class Challenge(models.Model):
 
             self._pad_created = rj['code'] is 0
             return rj['code'] is 0, rj
+
+    def solve(self, user):
+        if user not in self.solvers.all():
+            self.solvers.add(user)
+            return True
+        else:
+            return False
 

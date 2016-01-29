@@ -81,7 +81,17 @@
     <table class="table table-striped">
         {% if event.challenge_set.count > 0 %}
             {% for challenge in event.challenge_set.all %}
-                <tr><td><a href="{% url 'challenge_pad' event.name challenge.name %}">{{ challenge.name }}</a> - {{ challenge.points }}</td></tr>
+                <tr>
+                {% if request.user not in challenge.solvers.all %}
+                    <td class="bg-danger">
+                {% else %}
+                    <td>
+                {% endif %}
+                        <a href="{% url 'challenge_pad' event.name challenge.name %}">
+                            {{ challenge.name }}
+                        </a> - {{ challenge.points }}
+                    </td>
+                </tr>
             {% endfor %}
         {% else %}
             <tr><td>No Challenges!</td></tr>
