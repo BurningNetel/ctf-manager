@@ -11,12 +11,12 @@
     <div class="panel panel-info">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" data-target="#desc_collapse" aria-controls="desc_collapse">
+                <a role="button" data-toggle="collapse" data-target=".desc_collapse" aria-controls="desc_collapse">
                     Event Information
                 </a>
             </h4>
         </div>
-        <div id="desc_collapse" class="collapse in">
+        <div id="desc_collapse" class="desc_collapse collapse in">
         <div class="panel-body">
             {% if event.description %}
                 <p id="p_description">{{ event.description}}</p>
@@ -24,8 +24,8 @@
                 <p id="p_description">No description provided.</p>
             {% endif %}
         </div>
-
-        <ul class="list-group">
+        </div>
+            <ul class="desc_collapse list-group collapse in">
             {% if event.location %}
                 <li id="id_location" class="list-group-item">Location: {{ event.location }}</li>
             {% endif %}
@@ -33,7 +33,6 @@
                 <li id="id_url" class="list-group-item">URL: <a href="{{ event.url }}">{{ event.url }}</a></li>
             {% endif %}
         </ul>
-        </div>
     </div>
 
     {% if event.password or event.username %}

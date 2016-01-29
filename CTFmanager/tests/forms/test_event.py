@@ -21,6 +21,7 @@ class EventFormTest(TestCase):
         self.assertIn('id_url', p)
         self.assertNotIn('id_creation_date', p)
         self.assertNotIn('id_created_by', p)
+        self.assertNotIn('id_members', p)
 
     def test_form_validation_for_blank_items(self):
         form = EventForm(data={'name': '',

@@ -6,6 +6,7 @@ from django.utils import timezone
 from CTFmanager.models import Event, Challenge
 from CTFmanager.tests.views.base import ViewTestCase
 from CTFmanager.views import view_event
+from accounts.tests.test_views import User
 
 
 class EventPageDetailTest(ViewTestCase):
@@ -104,3 +105,22 @@ class EventPageDetailTest(ViewTestCase):
         response = self.client.get(event.get_absolute_url())
         expected = '<tr><td>No Challenges!</td></tr>'
         self.assertContains(response, expected)
+
+    def test_event_detail_page_shows_members_usernames(self):
+        event = self.create_event()
+        user2 = User.objects.create_user('username2')
+        event.members.add(user2)
+        event.members.add(self.user)
+
+        response = self.client.get(event.get_absolute_url())
+
+        self.assertContains(response, 'Participants:')
+        self.assertContains(response, user2.username, 1)
+        self.assertContains(response, self.user.username, 2)
+
+    def test_event_page_shows_message_no_users_in_members(self):
+        event = self.create_event()
+
+        response = self.client.get(event.get_absolute_url())
+
+        self.assertContains(response, 'No participants yet!')

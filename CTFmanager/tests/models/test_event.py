@@ -146,3 +146,12 @@ class EventAndUserTest(EventModelTest):
 
         self.assertEqual(0, count)
         self.assertTrue(user not in _event.members.all())
+
+    def test_event_leave_user_not_in_members(self):
+        _event = self.create_event_object()
+        user = User.objects.create_user('testUser')
+
+        result = _event.leave(user)
+
+        self.assertEqual(-1, result)
+        self.assertTrue(user not in _event.members.all())
