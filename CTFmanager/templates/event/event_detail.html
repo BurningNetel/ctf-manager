@@ -32,6 +32,20 @@
             {% if event.url %}
                 <li id="id_url" class="list-group-item">URL: <a href="{{ event.url }}">{{ event.url }}</a></li>
             {% endif %}
+                <li class="list-group-item">
+                    <h4 class="list-group-item-heading">Participants:</h4>
+                    {% if event.members.count > 0 %}
+                        <ul class="list-group-item">
+                        {% for user in event.members.all %}
+                            <p class="list-group-item-text">
+                                {{ user.username }}
+                            </p>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="list-group-item-text">No participants yet!</p>
+                    {% endif %}
+                </li>
         </ul>
     </div>
 
