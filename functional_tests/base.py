@@ -1,13 +1,18 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver
-from django.core.urlresolvers import reverse
-from django.utils import timezone
-from django.contrib.auth.models import User
-from django.utils.timezone import timedelta
-import sys, time, os
+import os
+import sys
+import time
 from datetime import datetime
 
+from django.contrib.auth.models import User
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.core.urlresolvers import reverse
+from django.utils import timezone
+from django.utils.timezone import timedelta
+from selenium.webdriver.firefox.webdriver import WebDriver
+
+from CTFmanager.models import Event
 from .server_tools import reset_database
+
 SCREEN_DUMP_LOCATION = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), 'screendumps'
 )
@@ -43,8 +48,8 @@ class FunctionalTest(StaticLiveServerTestCase):
         if self._test_has_failed():
             if not os.path.exists(SCREEN_DUMP_LOCATION):
                 os.makedirs(SCREEN_DUMP_LOCATION)
-                self.take_screenshot()
-                self.dump_html()
+            self.take_screenshot()
+            self.dump_html()
         self.browser.quit()
         super().tearDown()
 
@@ -58,7 +63,6 @@ class FunctionalTest(StaticLiveServerTestCase):
         )
 
     def _test_has_failed(self):
-        # for 3.4. In 3.3, can just use self._outcomeForDoCleanups.success:
         for method, error in self._outcome.errors:
             if error:
                 return True
@@ -75,25 +79,13 @@ class FunctionalTest(StaticLiveServerTestCase):
         with open(filename, 'w') as f:
             f.write(self.browser.page_source)
 
-    def add_event(self, isFuture):
-        self.browser.get(self.server_url + reverse('newEvent'))
-        tb_name = self.browser.find_element_by_id('id_name')
+    def add_event(self, is_future=True):
         name = 'TestLu' + str(round(time.time()))
-        tb_name.send_keys(name)
-        _datetime = self.browser.find_element_by_id('id_date')
-        _date = timezone.now()
-        if isFuture:
-            _date += timedelta(days=1)
+        if is_future:
+            _datetime = timezone.now() + timedelta(days=1)
         else:
-            _date -= timedelta(days=1)
-        _datetime.send_keys(str(_date.year) + '-' +
-                           ('0' + str(_date.month))[-2:] + '-' +
-                           ('0' + str(_date.day))[-2:] + " " +
-                            str(_date.hour) + ":" +
-                            str(_date.minute)
-                            )
-        self.browser.find_element_by_tag_name('button').click()
-        return name
+            _datetime = timezone.now() - timedelta(days=1)
+        return Event.objects.create(name=name, date=_datetime).name
 
     def add_event_and_browse_to_add_challenge(self):
         name = self.add_event(True)
