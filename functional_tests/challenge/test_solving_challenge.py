@@ -14,7 +14,7 @@ class SolvingChallengeTest(FunctionalTest):
         and solved by the user as green.
         Users can also solve a challenge that is already solved.
         """
-
+        self.create_and_login_user()
         self.add_event()
         event = Event.objects.first()
 
