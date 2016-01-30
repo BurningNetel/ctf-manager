@@ -29,7 +29,7 @@ class CreatingChallengesTest(FunctionalTest):
         table = self.browser.find_element_by_tag_name('table')
         rows = table.find_elements_by_tag_name('td')
         self.assertTrue(
-                any(row.text == ('cryptochal - 500') for row in rows)
+                any('cryptochal - 500' in row.text.strip() for row in rows)
         )
 
     def test_invalid_input_in_new_challenge_shows_errors(self):

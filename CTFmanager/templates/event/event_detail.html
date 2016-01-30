@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}CTFman - {{ event.name }}{% endblock %}
-{% block content %}
 
+{% load static from staticfiles %}
+{% block include %}
+    <script src="{% static "js/solve.js" %}"></script>
+{% endblock %}
+
+{% block content %}
     {% include 'event/solve_modal.html' with form=solve_form %}
 
     <div class="page-header">
@@ -83,16 +88,19 @@
     <table class="table table-striped">
         {% if event.challenge_set.count > 0 %}
             {% for challenge in event.challenge_set.all %}
-                <tr>
-                {% if request.user not in challenge.solvers.all %}
-                    <td class="bg-danger">
+                <tr id="{{ challenge.pk }}">
+                {% if request.user in challenge.solvers.all %}
+                    <td class="bg-success">
+                {% elif challenge.solvers.count > 0 %}
+                    <td class="bg-warning">
                 {% else %}
-                    <td>
+                    <td class="bg-danger">
                 {% endif %}
                         <a href="{% url 'challenge_pad' event.name challenge.name %}">
                             {{ challenge.name }}
                         </a> - {{ challenge.points }}
-                        <button data-toggle="modal" data-target="#solve_modal" id="btn-solve-{{ challenge.name }}">Solve</button>
+                        <button class="btn btn-xs btn-default btn-solve" data-toggle="modal" data-target="#solve_modal"
+                                id="btn-solve-{{ challenge.name }}">Solve</button>
                     </td>
                 </tr>
             {% endfor %}

@@ -5,14 +5,12 @@
         <h4 class="modal-title" id="myModalLabel">Solve {{ challenge_name|default:"challenge" }}</h4>
       </div>
       <div class="modal-body">
-
           {{ form.flag.label_tag }}
           {{ form.flag }}
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Solve</button>
+        <button id="btn_solve" type="button" class="btn btn-primary" data-dismiss="modal">Solve</button>
       </div>
     </div>
   </div>

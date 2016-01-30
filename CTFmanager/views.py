@@ -71,11 +71,15 @@ def challenge_solve(request, event_pk, challenge_pk):
         if form.is_valid():
             chal = Challenge.objects.get(pk=challenge_pk)
             _flag = request.POST['flag']
-            chal.solve(request.user, flag=_flag)
-            chal.save()
-            return JsonResponse(data={'status_code': 200,
-                                      'result': True,
-                                      })
+            if chal.solve(request.user, flag=_flag):
+                chal.save()
+                return JsonResponse(data={'status_code': 200,
+                                          'result': True,
+                                          })
+            else:
+                return JsonResponse(data={'status_code': 304,
+                                          'result': False,
+                                          })
         else:
             return JsonResponse(data={'status_code': 304,
                                       'result': False,

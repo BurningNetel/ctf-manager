@@ -48,6 +48,7 @@ class SolvingChallengeTest(FunctionalTest):
         challenges_table.find_element_by_class_name('bg-success')
 
         # He refreshes the page and sees that the solve is persistent
+        self.browser.refresh()
         challenges_table = self.browser.find_element_by_tag_name('table')
         challenges_table.find_element_by_class_name('bg-success')
 

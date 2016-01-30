@@ -72,7 +72,10 @@ function btn_post_handler() {
                         $('#' + event_name + '-join-count').text(members + " Participating!");
                         p_join_count.attr('data-content', p_join_count.attr('data-content') + '\n' + username)
                         $(e.target).removeClass('btn-primary').addClass('btn-warning').text('Leave');
+                    } else {
+                        alert('something went wrong!');
                     }
+
                 }
             });
         }
