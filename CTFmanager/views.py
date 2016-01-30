@@ -65,6 +65,16 @@ def challenge_pad(request, event_id, challenge_name):
     return render(request, 'event/challenge_pad.html', {'challenge': _challenge})
 
 
+def challenge_solve(request, event_pk, challenge_pk, user_pk):
+    form = SolveForm(data=request.POST)
+    if form.is_valid():
+        return JsonResponse(data={'status_code': 200,
+                                  'result': True, })
+    else:
+        return JsonResponse(data={'status_code': 304,
+                                  'result': False, })
+
+
 def event_join(request, event_name):
     if request.user.is_authenticated():
         event = Event.objects.get(pk=event_name)
