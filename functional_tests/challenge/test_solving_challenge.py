@@ -35,15 +35,20 @@ class SolvingChallengeTest(FunctionalTest):
         # A modal pops up, asking for an (optional) flag.
         modal = self.browser.find_element_by_class_name('modal-dialog')
         modal_body = modal.find_element_by_class_name('modal-body')
-
+        modal_header = modal.find_element_by_class_name('modal-header')
+        self.assertIn('Solve challenge', modal_header.text)
         # He fills in the flag
-        self.assertInHTML('Flag', modal_body.text)
+        self.assertIn('Flag', modal_body.text)
         modal_body.find_element_by_id('id_flag').send_keys('flag{insertmd5hashinhere}')
         # And confirms his actions
         modal_footer = modal.find_element_by_class_name('modal-footer')
-        modal_footer.find_element_by_class('btn-primary').click()
+        modal_footer.find_element_by_class_name('btn-primary').click()
 
         # He sees that the challenges background has turned green
+        challenges_table.find_element_by_class_name('bg-success')
+
+        # He refreshes the page and sees that the solve is persistent
+        challenges_table = self.browser.find_element_by_tag_name('table')
         challenges_table.find_element_by_class_name('bg-success')
 
         # He adds another challenge and goes to the challenges detail page

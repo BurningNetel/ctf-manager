@@ -48,11 +48,11 @@ class EventPageAddChallengeTest(ViewTestCase):
         self.assertContains(response, 'id="btn_submit"')
 
     def test_for_valid_input_shows_challenge_on_event_detail_page(self):
-        _event = self.create_event('test', True)
+        _event = self.create_event('testEvent', True)
         url = reverse('newChallenge', args=[_event.name])
-        self.client.post(url, data={'name': 'test', 'points': '200'})
+        self.client.post(url, data={'name': 'testChallenge', 'points': '200'})
         response = self.client.get(_event.get_absolute_url())
-        self.assertContains(response, 'test</a> - 200')
+        self.assertContains(response, 'testChallenge')
 
     def test_for_invalid_input_renders_to_new_challenge_page(self):
         _event = self.create_event('test', True)

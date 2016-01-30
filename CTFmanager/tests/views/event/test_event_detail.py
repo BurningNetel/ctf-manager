@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.core.urlresolvers import reverse, resolve
 from django.utils import timezone
 
+from CTFmanager.forms import SolveForm
 from CTFmanager.models import Event, Challenge
 from CTFmanager.tests.views.base import ViewTestCase
 from CTFmanager.views import view_event
@@ -127,4 +128,28 @@ class EventPageDetailTest(ViewTestCase):
 
 
 class EventPageChallengeTest(ViewTestCase):
-    pass
+
+    def test_solve_button_displayed_on_page(self):
+        event = self.create_event()
+        chal = Challenge.objects.create(name='testChallenge',
+                                        points=100,
+                                        event=event)
+        response = self.client.get(event.get_absolute_url())
+
+        self.assertContains(response, 'id="btn-solve-%s">Solve</button>' % chal.name)
+
+    def test_event_detail_uses_solve_model_template(self):
+        event = self.create_event()
+        chal = Challenge.objects.create(name='testChallenge',
+                                        points=100,
+                                        event=event)
+        response = self.client.get(event.get_absolute_url())
+
+        self.assertTemplateUsed(response, 'event/solve_modal.html')
+
+    def test_event_detail_context_has_solve_form(self):
+        event = self.create_event()
+        response = self.client.get(event.get_absolute_url())
+
+        form = response.context['solve_form']
+        self.assertIsInstance(form, SolveForm)

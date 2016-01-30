@@ -83,3 +83,7 @@ class ChallengeForm(forms.models.ModelForm):
             'name': {'required': EMPTY_FIELD_ERROR},
             'points': {'required': EMPTY_FIELD_ERROR},
         }
+
+
+class SolveForm(forms.Form):
+    flag = forms.CharField(label='Flag', max_length=100)

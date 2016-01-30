@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.http import JsonResponse
 
-from .forms import EventForm, ChallengeForm
+from .forms import EventForm, ChallengeForm, SolveForm
 from .models import Event, Challenge
 
 
@@ -35,7 +35,9 @@ def new_event_page(request):
 @login_required
 def view_event(request, event_id):
     _event = Event.objects.get(pk=event_id)
-    return render(request, 'event/event_detail.html', {'event': _event})
+    solve_form = SolveForm()
+    return render(request, 'event/event_detail.html', {'event': _event,
+                                                       'solve_form': solve_form})
 
 
 @login_required

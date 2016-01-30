@@ -2,6 +2,8 @@
 {% block title %}CTFman - {{ event.name }}{% endblock %}
 {% block content %}
 
+    {% include 'event/solve_modal.html' with form=solve_form %}
+
     <div class="page-header">
         <h1>{{ event.name }} <small>{{ event.date }}
             {% if event.end_date %} - {{ event.end_date }}{% endif %}</small>
@@ -90,6 +92,7 @@
                         <a href="{% url 'challenge_pad' event.name challenge.name %}">
                             {{ challenge.name }}
                         </a> - {{ challenge.points }}
+                        <button data-toggle="modal" data-target="#solve_modal" id="btn-solve-{{ challenge.name }}">Solve</button>
                     </td>
                 </tr>
             {% endfor %}
