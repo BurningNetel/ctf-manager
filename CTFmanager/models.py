@@ -53,6 +53,7 @@ class Event(models.Model):
 class Challenge(models.Model):
     name = models.SlugField(max_length=30, default='')
     points = models.IntegerField(default=0)
+    flag = models.CharField(max_length=200, blank=True)
     event = models.ForeignKey(Event, default=None)
 
     _pad_created = models.BooleanField(default=False)
@@ -90,9 +91,10 @@ class Challenge(models.Model):
             self._pad_created = rj['code'] is 0
             return rj['code'] is 0, rj
 
-    def solve(self, user):
+    def solve(self, user, flag=None):
         if user not in self.solvers.all():
             self.solvers.add(user)
+            self.flag = flag
             return True
         else:
             return False

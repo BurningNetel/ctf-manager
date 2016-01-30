@@ -17,7 +17,7 @@ def events_page(request):
     _events = Event.objects.filter(date__gt=timezone.now())
     archive = Event.objects.filter(date__lte=timezone.now())
     return render(request, 'event/events.html', {'events': _events,
-                                           'archive': archive})
+                                                 'archive': archive})
 
 
 @login_required
@@ -65,14 +65,24 @@ def challenge_pad(request, event_id, challenge_name):
     return render(request, 'event/challenge_pad.html', {'challenge': _challenge})
 
 
-def challenge_solve(request, event_pk, challenge_pk, user_pk):
+def challenge_solve(request, event_pk, challenge_pk):
     form = SolveForm(data=request.POST)
-    if form.is_valid():
-        return JsonResponse(data={'status_code': 200,
-                                  'result': True, })
-    else:
-        return JsonResponse(data={'status_code': 304,
-                                  'result': False, })
+    if request.user.is_authenticated():
+        if form.is_valid():
+            chal = Challenge.objects.get(pk=challenge_pk)
+            _flag = request.POST['flag']
+            chal.solve(request.user, flag=_flag)
+            chal.save()
+            return JsonResponse(data={'status_code': 200,
+                                      'result': True,
+                                      })
+        else:
+            return JsonResponse(data={'status_code': 304,
+                                      'result': False,
+                                      })
+    return JsonResponse(data={'status_code': 401,
+                              'result': False,
+                              })
 
 
 def event_join(request, event_name):

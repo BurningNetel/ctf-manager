@@ -53,16 +53,26 @@ class ChallengeModelTest(EventModelTestCase):
 
 
 class ChallengeSolvedByTest(ChallengeModelTest):
-    def test_challenge_solve_method(self):
+    def test_challenge_solve_method_with_flag(self):
         chal = self.create_new_event_challenge()
         user = User.objects.create_user('testUser')
         user2 = User.objects.create_user('test2User')
-
-        result = chal.solve(user)
+        _flag = 'ctf{890j7f403879890581fd}'
+        result = chal.solve(user, flag=_flag)
 
         self.assertIn(user, chal.solvers.all())
         self.assertNotIn(user2, chal.solvers.all())
         self.assertTrue(result)
+        self.assertEqual(_flag, chal.flag)
+
+    def test_challenge_solve_method_without_flag(self):
+        chal = self.create_new_event_challenge()
+        user = User.objects.create_user('testUser')
+        result = chal.solve(user)
+
+        self.assertIn(user, chal.solvers.all())
+        self.assertTrue(result)
+        self.assertIsNone(chal.flag)
 
     def test_challenge_solve_method_duplicate_call(self):
         chal = self.create_new_event_challenge()
@@ -73,4 +83,5 @@ class ChallengeSolvedByTest(ChallengeModelTest):
 
         self.assertIn(user, chal.solvers.all())
         self.assertFalse(result)
+        self.assertIsNone(chal.flag)
 

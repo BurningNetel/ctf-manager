@@ -9,3 +9,11 @@ class SolveFormTest(TestCase):
         p = form.as_p()
         self.assertIn('Flag', p)
         self.assertIn('id_flag', p)
+
+    def test_solve_form_validation_valid_input(self):
+        form = SolveForm(data={'flag': 'test{testtest}'})
+        self.assertTrue(form.is_valid())
+
+    def test_solve_form_validation_invalid_input(self):
+        form = SolveForm(data={'flag': ''})
+        self.assertFalse(form.is_valid())
