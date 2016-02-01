@@ -94,5 +94,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def create_and_login_user(self):
         self.user = User.objects.create_user('test', 'test@test.nl', 'test')
-        LoginPage(self).login(self.user.username, 'test')
+        lp = LoginPage(self)
+        lp.get_page()
+        lp.login(self.user.username, 'test')
 
