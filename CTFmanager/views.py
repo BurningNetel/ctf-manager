@@ -56,13 +56,17 @@ def new_challenge(request, event_id):
 
 @login_required
 def challenge_pad(request, event_id, challenge_name):
-    _challenge = Challenge.objects.get(name=challenge_name)
+    _event = Event.objects.get(pk=event_id)
+    _challenge = Challenge.objects.get(name__iexact=challenge_name,
+                                       event=_event)
     if not _challenge.get_pad_created:
         result, json = _challenge.create_pad()
         if result:
             _challenge.save()
 
-    return render(request, 'event/challenge_pad.html', {'challenge': _challenge})
+    solve_form = SolveForm()
+    return render(request, 'event/challenge_pad.html', {'challenge': _challenge,
+                                                        'solve_form': solve_form})
 
 
 def challenge_solve(request, event_pk, challenge_pk):

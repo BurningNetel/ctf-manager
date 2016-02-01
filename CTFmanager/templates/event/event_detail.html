@@ -88,7 +88,7 @@
     <table class="table table-striped">
         {% if event.challenge_set.count > 0 %}
             {% for challenge in event.challenge_set.all %}
-                <tr id="{{ challenge.pk }}">
+                <tr>
                 {% if request.user in challenge.solvers.all %}
                     <td class="bg-success">
                 {% elif challenge.solvers.count > 0 %}
@@ -100,7 +100,7 @@
                             {{ challenge.name }}
                         </a> - {{ challenge.points }}
                         <button class="btn btn-xs btn-default btn-solve" data-toggle="modal" data-target="#solve_modal"
-                                id="btn-solve-{{ challenge.name }}">Solve</button>
+                                id="{{ challenge.pk }}">Solve</button>
                     </td>
                 </tr>
             {% endfor %}

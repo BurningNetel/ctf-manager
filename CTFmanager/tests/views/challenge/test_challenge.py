@@ -1,6 +1,7 @@
 import time
 from unittest.mock import patch, Mock
 
+from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 
 from CTFmanager.models import Challenge
@@ -42,6 +43,7 @@ class ChallengeTest(ViewTestCase):
         response = self.client.get(chal.get_local_pad_url())
 
         self.assertTemplateUsed(response, 'event/challenge_pad.html')
+        self.assertTemplateUsed(response, 'event/solve_modal.html')
 
     @patch('CTFmanager.models.get')
     def test_challenge_pad_view_passes_challenge_to_context(self, get_mock):
@@ -78,3 +80,35 @@ class ChallengeTest(ViewTestCase):
 
         response = self.client.get(chal.get_local_pad_url())
         self.assertContains(response, 'iframe')
+
+    @patch('CTFmanager.models.get')
+    def test_unsolved_chal_solve_button_is_displayed(self, get_mock):
+        chal, event = self.create_event_challenge()
+
+        get_mock.return_value = request_mock = Mock()
+        request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
+
+        response = self.client.get(chal.get_local_pad_url())
+        self.assertContains(response, 'id="btn_solve"')
+        self.assertContains(response, 'panel-danger')
+
+    @patch('CTFmanager.models.get')
+    def test_solved_chal_correct_color_is_displayed(self, get_mock):
+        chal, event = self.create_event_challenge()
+        chal.solvers.add(self.user)
+        get_mock.return_value = request_mock = Mock()
+        request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
+
+        response = self.client.get(chal.get_local_pad_url())
+        self.assertContains(response, 'panel-success')
+
+    @patch('CTFmanager.models.get')
+    def test_unsolved_solved_chal_correct_color_is_displayed(self, get_mock):
+        chal, event = self.create_event_challenge()
+        user2 = User.objects.create_user('testUser')
+        chal.solvers.add(user2)
+        get_mock.return_value = request_mock = Mock()
+        request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
+
+        response = self.client.get(chal.get_local_pad_url())
+        self.assertContains(response, 'panel-warning')

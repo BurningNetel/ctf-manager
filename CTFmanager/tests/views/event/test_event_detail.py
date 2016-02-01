@@ -136,7 +136,7 @@ class EventPageChallengeTest(ViewTestCase):
                                         event=event)
         response = self.client.get(event.get_absolute_url())
 
-        self.assertContains(response, 'id="btn-solve-%s">Solve</button>' % chal.name)
+        self.assertContains(response, 'id="%s">Solve</button>' % chal.pk)
 
     def test_event_detail_uses_solve_model_template(self):
         event = self.create_event()

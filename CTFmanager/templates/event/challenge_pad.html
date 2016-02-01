@@ -2,15 +2,29 @@
 
 {% block title %}CTFman - {{ challenge.name }}{% endblock %}
 
+{% load static from staticfiles %}
+{% block include %}
+    <script src="{% static "js/solve.js" %}"></script>
+{% endblock %}
+
 {% block content %}
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">{{ challenge.name }}</div>
-        <div style="padding: 0 !important;"  class="panel-body">
-            <div class="embed-responsive embed-responsive-4by3">
-                <iframe src="{{ challenge.get_absolute_etherpad_url }}"></iframe>
+    {% include 'event/solve_modal.html' with form=solve_form %}
+    {% if request.user in challenge.solvers.all %}
+        <div class="panel panel-success">
+    {% elif challenge.solvers.count > 0 %}
+        <div class="panel panel-warning">
+    {% else %}
+        <div class="panel panel-danger">
+    {% endif %}
+            <div class="panel-heading">{{ challenge.name }}
+                <button class="btn btn-xs btn-default btn-solve" data-toggle="modal" data-target="#solve_modal"
+                                        id="{{ challenge.pk }}">Solve</button>
             </div>
-      </div>
-    </div>
+
+            <div style="padding: 0 !important;"  class="panel-body">
+                <div class="embed-responsive embed-responsive-4by3">
+                    <iframe src="{{ challenge.get_absolute_etherpad_url }}"></iframe>
+                </div>
+            </div>
+        </div>
 {% endblock %}

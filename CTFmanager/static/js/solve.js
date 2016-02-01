@@ -1,12 +1,16 @@
 $( document ).ready(function() {
     var last_chal_id;
     $('.btn-solve').click(function (e) {
-        last_chal_id = $(this).closest('tr').attr('id');
+        last_chal_id = $(this).attr('id');
     });
 
     $('#btn_solve').click(function (e) {
         e.preventDefault();
-        var url = window.location.pathname + '/challenges/' + last_chal_id + '/users/';
+        var re = /\/([a-zA-Z0-9-_]{1,20})\/([a-zA-Z0-9-_]{1,20})/;
+        var str = window.location.pathname;
+        var event_url = re.exec(str);
+        var url = event_url[0] + '/challenges/' + last_chal_id + '/users/';
+
         var flag = $('#id_flag').val();
         $.ajax({
             type: "POST",
@@ -14,7 +18,13 @@ $( document ).ready(function() {
             data: {'flag': flag},
             success: function (data) {
                 if(data['status_code'] == 200) {
-                    $('#' + last_chal_id).find('td').removeClass('bg-danger bg-warning').addClass('bg-success');
+                    var btn = $('#' + last_chal_id);
+                    if(btn.parent().parent().hasClass('panel')){
+                        btn.parent().parent().removeClass('panel-danger panel-warning').addClass('panel-success');
+                    }
+                    else {
+                        btn.closest('td').removeClass('bg-danger bg-warning').addClass('bg-success');
+                    }
                 }
                 else {
                     alert('something went wrong!');
