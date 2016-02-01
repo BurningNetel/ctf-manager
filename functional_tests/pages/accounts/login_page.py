@@ -12,10 +12,7 @@ class LoginFields(Enum):
 class LoginPage(Page):
 
     title = 'CTFman - Login'
-
-    def get_login_page(self):
-        self.test.browser.get(self.test.server_url)
-        return self
+    name = 'login'
 
     def login(self, username, password):
         self.get_id(LoginFields.username.value).send_keys(username)

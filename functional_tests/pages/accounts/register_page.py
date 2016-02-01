@@ -1,7 +1,5 @@
 from enum import Enum, unique
 
-from django.core.urlresolvers import reverse
-
 from functional_tests.pages.page import Page
 
 
@@ -15,10 +13,7 @@ class RegisterFields(Enum):
 class RegisterPage(Page):
 
     title = 'CTFman - Register'
-
-    def get_register_page(self):
-        self.test.browser.get(self.test.server_url + reverse('register'))
-        return self
+    name = 'register'
 
     def register(self, name, password):
         self.get_id(RegisterFields.username.value).send_keys(name)

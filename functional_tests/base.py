@@ -5,12 +5,12 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.utils.timezone import timedelta
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from CTFmanager.models import Event
+from functional_tests.pages.accounts.login_page import LoginPage
 from .server_tools import reset_database
 
 SCREEN_DUMP_LOCATION = os.path.join(
@@ -94,7 +94,5 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def create_and_login_user(self):
         self.user = User.objects.create_user('test', 'test@test.nl', 'test')
-        self.browser.get(self.server_url + reverse('login'))
-        self.browser.find_element_by_id('id_username').send_keys('test')
-        self.browser.find_element_by_id('id_password').send_keys('test')
-        self.browser.find_element_by_tag_name('button').click()
+        LoginPage(self).login(self.user.username, 'test')
+
