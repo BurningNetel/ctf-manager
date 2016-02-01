@@ -44,3 +44,8 @@ class EventDetailPage(Page):
         self.get_credentials_panel().find_element_by_tag_name('a').click()
         return self
 
+    def get_member_list(self):
+        return self.get_id('members_list')
+
+    def get_member_list_text(self):
+        return self.get_member_list().find_element_by_tag_name('p')

@@ -190,26 +190,25 @@ class EventJoinTests(FunctionalTest):
         self.create_and_login_user();
         # There is an existing event
         event_name = self.add_event(True)
-        self.browser.get(self.server_url + reverse('events'))
+        ep = EventPage(self).get_page()
 
         # Check if the 'have joined' counter shows 0.
-        lg = self.browser.find_element_by_id('lg_upcoming')
-        join_count = lg.find_element_by_id('%s-join-count' % event_name)
+        join_count = ep.get_join_count(event_name)
         self.assertEqual(join_count.text, "0 Participating!")
 
         # The users clicks the join button
-        button = self.browser.find_element_by_id(event_name + '-btn')
+        button = ep.get_join_button(event_name)
         button.click()
 
         # The page should not go to another page
-        self.assertEqual(self.browser.title, "CTFman - Events")
+        self.assertEqual(ep.title, self.browser.title)
         time.sleep(1)
 
         # Check if there is a counter of user joined
-        join_count = self.browser.find_element_by_id('%s-join-count' % event_name)
+        join_count = ep.get_join_count(event_name)
         # The popup data attribute should show the username
-        popup_usernames = join_count.get_attribute('data-content')
-        self.assertIn(self.user.username, popup_usernames)
+        popup_usernames = ep.get_join_count_users(event_name)
+        self.assertIn(self.user.username, popup_usernames.strip())
 
         self.assertEqual(join_count.text, "1 Participating!")
         self.assertEqual(button.text, "Leave")
@@ -222,25 +221,20 @@ class EventJoinTests(FunctionalTest):
         self.browser.refresh()
 
         # Check if buttons are correct
-        lg = self.browser.find_element_by_id('lg_upcoming')
-        a_event = lg.find_element_by_id(event_name)
-        a_other_event = lg.find_element_by_id(other_event.name)
-        event_button = a_event.find_element_by_id('%s-btn' % event_name)
-        other_event_button = a_other_event.find_element_by_id('%s-btn' % other_event.name)
+        event_button = ep.get_join_button(event_name)
+        other_event_button = ep.get_join_button(other_event.name)
 
         self.assertEqual(other_event_button.text, "Join")
         self.assertEqual(event_button.text, "Leave")
 
         # check if username of participants are in popover.
-        join_count = self.browser.find_element_by_id("%s-join-count" % event_name)
-        popover_text = join_count.get_attribute('data-content')
+        popover_text = ep.get_join_count_users(event_name)
 
         # This should contain all participants usernames.
         self.assertEqual(popover_text.strip(), self.user.username)
 
         # The other popover should contain a message that says that nobody has joined yet
-        other_popover = self.browser.find_element_by_id('%s-join-count' % other_event.name)
-        other_popover_text = other_popover.get_attribute('data-content')
+        other_popover_text = ep.get_join_count_users(other_event.name)
 
         self.assertEqual(other_popover_text.strip(), 'Nobody has joined yet!')
 
@@ -250,11 +244,11 @@ class EventJoinTests(FunctionalTest):
         self.browser.refresh()
 
         # Check if it's persistent
-        event_button = self.browser.find_element_by_id('%s-btn' % event_name)
+        event_button = ep.get_join_button(event_name)
         self.assertEqual(event_button.text, "Join")
         event_button.click()
         # check if usernames show up in events detail page
 
-        self.browser.get(self.server_url + reverse('view_event', args=[event_name]))
-        usernames = self.browser.find_element_by_id('members_list').find_element_by_tag_name('p')
+        edp = EventDetailPage(self, event_name).get_page()
+        usernames = edp.get_member_list_text()
         self.assertInHTML(self.user.username, usernames.text)
