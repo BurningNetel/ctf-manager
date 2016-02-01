@@ -1,50 +1,46 @@
-from functional_tests.base import FunctionalTest
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+
+from functional_tests.base import FunctionalTest
+from functional_tests.pages.accounts.logout_page import LogoutPage
+from functional_tests.pages.home_page import HomePage
+from ..pages.accounts.login_page import LoginPage
+from ..pages.accounts.register_page import RegisterPage
 
 
 class RegistrationTest(FunctionalTest):
     def test_registration_of_normal_user_and_logging_in(self):
         # User goes to the website
-        self.browser.get(self.server_url + '/')
-        self.browser.find_element_by_id('id_register').click()
+        lp = LoginPage(self).get_login_page()
+        self.assertEqual(self.browser.title, lp.title)
+        lp.click_register_button()
 
         # User is at registration page
-        self.assertEqual(self.browser.title, 'CTFman - Register')
-        username = self.browser.find_element_by_id('id_username')
-        password1 = self.browser.find_element_by_id('id_password1')
-        password2 = self.browser.find_element_by_id('id_password2')
+        rp = RegisterPage(self)
+        self.assertEqual(self.browser.title, rp.title)
+        # User fills in username and password
         name = 'username123'
         password = 'v3rry_s3cur3_p4ssw0rd'
-        # User fills in username and password
-        username.send_keys(name)
-        password1.send_keys(password)
-        password2.send_keys(password)
-
-        # User confirms action
-        self.browser.find_element_by_id('btn_submit').click()
+        rp.register(name, password)
 
         # User is redirected to login page and logs in with username and password
-        username_login = self.browser.find_element_by_id('id_username')
-        password_login = self.browser.find_element_by_id('id_password')
-        username_login.send_keys(name)
-        password_login.send_keys(password)
-        # user submits form
-        self.browser.find_element_by_id('btn_submit').click()
+
+        self.assertEqual(self.browser.title, lp.title)
+        lp.login(name, password)
+
         # User is redirected to home page, his username is shown on the page
-        self.assertEqual(self.browser.title, 'CTFman - Home')
-        username = self.browser.find_element_by_id('username')
-        self.assertEqual(username.text, name)
+        hp = HomePage(self)
+        username = hp.get_id('username')
+        self.assertEqual(name, username.text)
+
         # Finally he logs out by pressing the log out button
-
-        self.browser.find_element_by_id('btn_logout').click()
-
-        self.assertEqual(self.browser.title, 'CTFman - Logout')
+        hp.click_logout()
+        outp = LogoutPage(self)
+        self.assertEqual(self.browser.title, outp.title)
 
         # He goes back to the login page by clicking a button on the page
-        self.browser.find_element_by_tag_name('main').find_element_by_tag_name('a').click()
-
-        self.assertEqual(self.browser.title, 'CTFman - Login')
+        outp.click_back_to_login_button()
+        self.assertEqual(self.browser.title, lp.title)
 
 
 class AuthorizationTest(FunctionalTest):
