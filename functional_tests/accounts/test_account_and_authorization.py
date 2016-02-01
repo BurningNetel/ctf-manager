@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 
 from functional_tests.base import FunctionalTest
 from functional_tests.pages.accounts.logout_page import LogoutPage
@@ -45,14 +44,17 @@ class RegistrationTest(FunctionalTest):
 
 class AuthorizationTest(FunctionalTest):
     def test_home_page_requires_log_in(self):
-        user = User.objects.create_user('test', 'test@test.nl', 'test')
+        lp = LoginPage(self)
+
+        password = 'test123'
+        user = User.objects.create_user('test', 'test@test.nl', password)
+
         # User goes to home page without logging in
-        self.browser.get(self.server_url + reverse('home'))
+        HomePage(self).get_home_page()
         # He gets redirected to login page
-        self.assertEqual(self.browser.title, 'CTFman - Login')
+        self.assertEqual(self.browser.title, lp.title)
+
         # The user logs in
-        self.browser.find_element_by_id('id_username').send_keys(user.username)
-        self.browser.find_element_by_id('id_password').send_keys('test')
-        self.browser.find_element_by_tag_name('button').click()
+        lp.login(user.username, password)
         # The user is redirected back to the home page
-        self.assertEqual(self.browser.title, 'CTFman - Home')
+        self.assertEqual(HomePage.title, self.browser.title)
