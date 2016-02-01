@@ -10,7 +10,7 @@ from ..pages.accounts.register_page import RegisterPage
 class RegistrationTest(FunctionalTest):
     def test_registration_of_normal_user_and_logging_in(self):
         # User goes to the website
-        lp = LoginPage(self).get_login_page()
+        lp = LoginPage(self).get_page()
         self.assertEqual(self.browser.title, lp.title)
         lp.click_register_button()
 
@@ -50,7 +50,7 @@ class AuthorizationTest(FunctionalTest):
         user = User.objects.create_user('test', 'test@test.nl', password)
 
         # User goes to home page without logging in
-        HomePage(self).get_home_page()
+        HomePage(self).get_page()
         # He gets redirected to login page
         self.assertEqual(self.browser.title, lp.title)
 
