@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 
 from functional_tests.base import FunctionalTest
+from functional_tests.pages.CTFmanager.home_page import HomePage
 from functional_tests.pages.accounts.logout_page import LogoutPage
-from functional_tests.pages.home_page import HomePage
 from ..pages.accounts.login_page import LoginPage
 from ..pages.accounts.register_page import RegisterPage
 
