@@ -7,6 +7,7 @@ from django.utils.timezone import timedelta
 from CTFmanager.models import Event
 from functional_tests.base import FunctionalTest
 from functional_tests.pages.CTFmanager.add_event_page import NewEventPage, NewEventPageFields
+from functional_tests.pages.CTFmanager.event_detail_page import EventDetailPage
 from functional_tests.pages.CTFmanager.event_page import EventPage
 
 
@@ -41,20 +42,20 @@ class NewEventTests(FunctionalTest):
         self.assertEqual(btn_add_event.get_attribute('text'), 'Add Event')
         btn_add_event.click()
 
-        ne = NewEventPage(self)
+        nep = NewEventPage(self)
         # The browser redirects to a new page
-        self.assertIn(reverse(ne.name), self.browser.current_url)
+        self.assertIn(reverse(nep.name), self.browser.current_url)
 
         # The users fills in all the mandatory data
         # The events name
-        tb_name = ne.get_name_input()
+        tb_name = nep.get_name_input()
         name = 'Hacklu'
         tb_name.send_keys(name)
         self.assertEqual(NewEventPageFields.name_ph.value
                          , tb_name.get_attribute('placeholder'))
 
         # The date and time that the event starts
-        datetime = ne.get_date_input()
+        datetime = nep.get_date_input()
         self.assertEqual(NewEventPageFields.date_ph.value,
                          datetime.get_attribute('placeholder'))
         # The date of the upcoming event is filled in the date textbox
@@ -71,7 +72,7 @@ class NewEventTests(FunctionalTest):
 
         # Then, the user clicks the 'confirm' button
         # when every necessary field has been filled in.
-        btn_confirm = ne.get_confirm_button()
+        btn_confirm = nep.get_confirm_button()
         self.assertEqual('btn btn-primary', btn_confirm.get_attribute('class'))
         span = btn_confirm.find_element_by_tag_name('span')
         self.assertEqual('Save', span.text)
@@ -80,7 +81,7 @@ class NewEventTests(FunctionalTest):
 
         # The browser redirects the user to the events page
         self.assertIn(reverse(ep.name), self.browser.current_url)
-        self.assertNotIn(reverse(ne.name), self.browser.current_url)
+        self.assertNotIn(reverse(nep.name), self.browser.current_url)
 
         # The new event is now visible on the events page
         lg_upcoming = ep.get_upcoming_list_group()
@@ -102,33 +103,31 @@ class NewEventTests(FunctionalTest):
         self.create_and_login_user()
         # A user wants to create an event for 2015 and for 2016,
         # but uses the same name
-        self.browser.get(self.server_url + reverse('newEvent'))
+        nep = NewEventPage(self).get_page()
 
-        self.assertIn(reverse('newEvent'), self.browser.current_url)
+        self.assertIn(reverse(nep.name), self.browser.current_url)
 
         # The users creates the first event, it submits correctly.
         name = 'CTF' + str(round(time.time()))
-        self.browser.find_element_by_id('id_name').send_keys(name)
-        self.browser.find_element_by_id('id_date').send_keys('2016-01-01 18:00')
-        self.browser.find_element_by_tag_name('button').click()
+        date = '2016-01-01 18:00'
+        nep.submit_basic_event(name, date)
 
-        self.assertNotIn('/new', self.browser.current_url)
+        self.assertNotIn(reverse(nep.name), self.browser.current_url)
 
         # The users adds another event
-        self.browser.get(self.server_url + reverse('newEvent'))
-
+        nep.get_page()
         self.assertIn(reverse('newEvent'), self.browser.current_url)
+
         # He uses the same name
-        self.browser.find_element_by_id('id_name').send_keys(name)
-        self.browser.find_element_by_id('id_date').send_keys('2015-01-01 18:00')
-        self.browser.find_element_by_tag_name('button').click()
+        date2 = '2015-01-01 18:00'
+        nep.submit_basic_event(name, date2)
 
         # The form now shows a error
-        self.assertIn(reverse('newEvent'), self.browser.current_url)
+        self.assertIn(reverse(nep.name), self.browser.current_url)
         self.browser.find_element_by_css_selector('.has-error')
 
     def test_new_event_with_optional_fields_filled(self):
-        """ This tests tests the add_event form, and the event detail page for optional fields
+        """ This test tests the add_event form, and the event detail page for optional fields
         The user is going to add a new event,
         He knows a lot about the event, so he is able to fill in all optional fields too
         At the end of this test, he check if the optional fields are displayed on the events detail page.
@@ -137,43 +136,44 @@ class NewEventTests(FunctionalTest):
         """
         self.create_and_login_user()
         # browse to new event page
-        self.browser.get(self.server_url + reverse('newEvent'))
-        self.browser.find_element_by_id('id_name').send_keys('optionalEvent')
+        nep = NewEventPage(self).get_page()
+        # The user fills in all the field
         next_year = (timezone.now() + timedelta(days=365)).year
-        self.browser.find_element_by_id('id_date').send_keys('%s-01-01' % next_year)
-        self.browser.find_element_by_id('id_description').send_keys('test' * 30)
-        self.browser.find_element_by_id('id_location').send_keys('Eindhoven')
-        self.browser.find_element_by_id('id_end_date').send_keys('%s-01-02' % next_year)
-        self.browser.find_element_by_id('id_username').send_keys('CTF_TEAM_NAME')
-        self.browser.find_element_by_id('id_password').send_keys('SECURE_PASSWORD')
-        self.browser.find_element_by_id('id_url').send_keys('hatstack.nl')
-        self.browser.find_element_by_tag_name('button').click()
+        nep.submit_complete_event('optionalEvent',
+                                  '%s-01-01' % next_year,
+                                  'test' * 30,
+                                  'Eindhoven',
+                                  '%s-01-02' % next_year,
+                                  'CTF_TEAM_NAME',
+                                  'SECURE_PASSWORD',
+                                  'hatstack.nl')
+
         # The user is now at the events overview page.
         # He now goes to it's detail page
         _event = Event.objects.first()
-        self.browser.get(self.server_url + reverse('view_event', args=[_event.name]))
+        edp = EventDetailPage(self, _event.name)
+        edp.get_page()
 
         # He checks if all the information is correct
-        panel = self.browser.find_element_by_class_name('panel')
-        description = panel.find_element_by_id('p_description')
-        location = panel.find_element_by_id('id_location')
-        url = panel.find_element_by_id('id_url')
-        username = self.browser.find_element_by_id('id_username')
-        password = self.browser.find_element_by_id('id_password')
+        description = edp.get_description_p()
+        location = edp.get_location()
+        url = edp.get_url()
+        username = edp.get_password()
+        password = edp.get_username()
 
         # The header contains the events title, date, end date
-        header = self.browser.find_element_by_tag_name('small')
+        header = edp.get_header()
 
+        edp.toggle_credentials_panel()
         # Open the hidden field
-        self.browser.find_element_by_class_name('panel-danger').find_element_by_tag_name('a').click()
         time.sleep(1)  # Wait for selenium to see the hidden fields.
 
         self.assertIn('test' * 30, description.text)
-        self.assertIn('Eindhoven', location.text, )
+        self.assertIn('Eindhoven', location.text)
         self.assertIn('hatstack.nl', url.text)
-        self.assertIn('CTF_TEAM_NAME', username.text, )
+        self.assertIn('CTF_TEAM_NAME', username.text)
         self.assertIn('SECURE_PASSWORD', password.text)
-        self.assertIn('Jan. 1, %s' % next_year, header.text, )
+        self.assertIn('Jan. 1, %s' % next_year, header.text)
         self.assertIn(' - ', header.text)
         self.assertIn('Jan. 2, %s' % next_year, header.text)
 
