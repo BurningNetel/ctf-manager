@@ -10,6 +10,7 @@ from django.utils.timezone import timedelta
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from CTFmanager.models import Event
+from functional_tests.pages.CTFmanager.add_challenge_page import AddChallengePage
 from functional_tests.pages.accounts.login_page import LoginPage
 from .server_tools import reset_database
 
@@ -89,7 +90,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def add_event_and_browse_to_add_challenge(self):
         name = self.add_event(True)
-        self.browser.get(self.server_url + '/events/' + name + '/new')
+        AddChallengePage(self).get_page(name)
         return name
 
     def create_and_login_user(self):

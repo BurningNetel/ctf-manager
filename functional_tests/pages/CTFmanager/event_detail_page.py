@@ -5,12 +5,13 @@ from functional_tests.pages.page import Page
 
 class EventDetailPage(Page):
 
-    title = 'CTFman - Event'
+    title = 'CTFman - '
     name = 'view_event'
 
     def __init__(self, test, event_name):
         super().__init__(test)
         self.event_name = event_name
+        self.title += event_name
 
     def get_page(self):
         self.test.browser.get(self.test.server_url + reverse(self.name, args=[self.event_name]))
@@ -49,3 +50,7 @@ class EventDetailPage(Page):
 
     def get_member_list_text(self):
         return self.get_member_list().find_element_by_tag_name('p')
+
+    def get_channel_list(self):
+        table = self.test.browser.find_element_by_id('table')
+        return table.find_elements_by_tag_name('td')

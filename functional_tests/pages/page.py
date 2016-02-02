@@ -21,6 +21,9 @@ class Page(metaclass=ABCMeta):
     def get_id(self, id_):
         return self.test.browser.find_element_by_id(id_)
 
-    def get_page(self):
-        self.test.browser.get(self.test.server_url + reverse(self.name))
+    def get_page(self, *args):
+        if len(args) is 0:
+            self.test.browser.get(self.test.server_url + reverse(self.name))
+        else:
+            self.test.browser.get(self.test.server_url + reverse(self.name, args=args))
         return self
