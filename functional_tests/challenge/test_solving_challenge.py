@@ -1,10 +1,10 @@
 from CTFmanager.models import Event, Challenge
+from functional_tests.pages.CTFmanager.event_detail_page import EventDetailPage
 
 from ..base import FunctionalTest
 
 
 class SolvingChallengeTest(FunctionalTest):
-
     def test_user_challenge_and_challenge_solving(self):
         """ A user can click on a solve button on the event and challenge pages.
         The users model than adds the challenge to its 'solved_challenges' field.
@@ -18,14 +18,14 @@ class SolvingChallengeTest(FunctionalTest):
         self.add_event()
         event = Event.objects.first()
 
-        challenge = Challenge.objects.create(name='not_solved',
-                                             points='100',
-                                             event=event)
+        Challenge.objects.create(name='not_solved',
+                                 points='100',
+                                 event=event)
         # The user goes to the events page to solve some challenges
-        self.browser.get(self.server_url + event.get_absolute_url())
-
+        edp = EventDetailPage(self, event.name)
+        edp.get_page()
         # He sees a red, unsolved challenge
-        challenges_table = self.browser.find_element_by_tag_name('table')
+        challenges_table = edp.get_challenge_table()
         challenges_table.find_element_by_class_name('bg-danger')
 
         # He already did this challenge, but is not solved yet, so he clicks on
@@ -33,23 +33,22 @@ class SolvingChallengeTest(FunctionalTest):
         challenges_table.find_element_by_tag_name('button').click()
 
         # A modal pops up, asking for an (optional) flag.
-        modal = self.browser.find_element_by_class_name('modal-dialog')
-        modal_body = modal.find_element_by_class_name('modal-body')
-        modal_header = modal.find_element_by_class_name('modal-header')
+        modal_body = edp.get_modal_body()
+        modal_header = edp.get_modal_header()
+
         self.assertIn('Solve challenge', modal_header.text)
         # He fills in the flag
         self.assertIn('Flag', modal_body.text)
-        modal_body.find_element_by_id('id_flag').send_keys('flag{insertmd5hashinhere}')
+        edp.type_in_modal_flag_field('flag{insertmd5hashinhere}')
         # And confirms his actions
-        modal_footer = modal.find_element_by_class_name('modal-footer')
-        modal_footer.find_element_by_class_name('btn-primary').click()
+        edp.press_modal_button()
 
         # He sees that the challenges background has turned green
         challenges_table.find_element_by_class_name('bg-success')
 
         # He refreshes the page and sees that the solve is persistent
         self.browser.refresh()
-        challenges_table = self.browser.find_element_by_tag_name('table')
+        challenges_table = edp.get_challenge_table()
         challenges_table.find_element_by_class_name('bg-success')
 
         # He adds another challenge and goes to the challenges detail page

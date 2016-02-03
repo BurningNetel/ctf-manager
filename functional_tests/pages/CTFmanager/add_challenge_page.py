@@ -27,7 +27,10 @@ class AddChallengePage(Page):
         self.get_name_field().send_keys(text)
 
     def press_confirm_button(self):
-        self.get_confirm_button().click()
+        self.get_confirm_button().find_element_by_tag_name('span').click()
 
     def get_confirm_button(self):
         return self.test.browser.find_element_by_id('btn_submit')
+
+    def get_error_messages(self):
+        return self.test.browser.find_elements_by_class_name('has-error')

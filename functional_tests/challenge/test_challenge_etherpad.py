@@ -1,8 +1,9 @@
 from django.conf import settings
-from django.core.urlresolvers import reverse
 
 from CTFmanager.models import Event, Challenge
 from functional_tests.base import FunctionalTest
+from functional_tests.pages.CTFmanager.challenge_detail_page import ChallengeDetailPage
+from functional_tests.pages.CTFmanager.event_detail_page import EventDetailPage
 
 
 class EtherpadCreationTest(FunctionalTest):
@@ -17,15 +18,15 @@ class EtherpadCreationTest(FunctionalTest):
         event = Event.objects.first()
         challenge = Challenge.objects.create(name='ctfchallenge', points='500', event=event)
         # The user added a challenge, and wants to view it's pad
-        self.browser.get(self.server_url + reverse('view_event', args=[event.name]))
+        edp = EventDetailPage(self, event.name).get_page()
         # He clicks on the challenges name to go to the etherpad
-        main = self.browser.find_element_by_tag_name('main')
-        table = main.find_element_by_tag_name('table')
+        table = edp.get_challenge_table()
         url = table.find_element_by_tag_name('a')
         url.click()
         # The application redirects him to a view with the etherpad included.
-        self.assertEqual(self.browser.title, 'CTFman - %s' % challenge.name)
+        cdp = ChallengeDetailPage(self, challenge.name)
+        self.assertEqual(self.browser.title, cdp.title)
         # Check if the correct pad is framed
-        frame = self.browser.find_element_by_tag_name('iframe')
+        frame = cdp.get_iframe()
         src = frame.get_attribute('src')
         self.assertEqual(src, '%s%s_%s' %(settings.ETHERPAD_PAD_URL, event.name, challenge.name))

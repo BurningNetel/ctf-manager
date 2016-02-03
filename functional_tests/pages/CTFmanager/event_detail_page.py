@@ -51,6 +51,34 @@ class EventDetailPage(Page):
     def get_member_list_text(self):
         return self.get_member_list().find_element_by_tag_name('p')
 
-    def get_channel_list(self):
-        table = self.test.browser.find_element_by_id('table')
+    def get_challenge_list(self):
+        table = self.get_challenge_table()
         return table.find_elements_by_tag_name('td')
+
+    def get_challenge_table(self):
+        return self.test.browser.find_element_by_tag_name('table')
+
+    def get_modal(self):
+        return self.test.browser.find_element_by_class_name('modal-dialog')
+
+    def get_modal_body(self):
+        return self.get_modal().find_element_by_class_name('modal-body')
+
+    def get_modal_header(self):
+        return self.get_modal().find_element_by_class_name('modal-header')
+
+    def get_modal_flag_field(self):
+        return self.get_modal_body().find_element_by_id('id_flag')
+
+    def type_in_modal_flag_field(self, text):
+        self.get_modal_flag_field().send_keys(text)
+        return self
+
+    def get_modal_footer(self):
+        return self.get_modal().find_element_by_class_name('modal-footer')
+
+    def get_modal_button(self):
+        return self.get_modal_footer().find_element_by_class_name('btn-primary')
+
+    def press_modal_button(self):
+        self.get_modal_button().click()

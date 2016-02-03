@@ -26,7 +26,7 @@ class CreatingChallengesTest(FunctionalTest):
         self.assertEqual(self.browser.title, edp.title)
 
         # He sees his new challenge on the page!
-        rows = edp.get_channel_list()
+        rows = edp.get_challenge_list()
         self.assertTrue(
                 any('cryptochal - 500' in row.text.strip() for row in rows)
         )
@@ -36,28 +36,30 @@ class CreatingChallengesTest(FunctionalTest):
         # The users adds a new event
         event_name = self.add_event_and_browse_to_add_challenge()
 
-        self.assertEqual(self.browser.title, 'CTFman - New Challenge')
+        acp = AddChallengePage(self)
+
+        self.assertEqual(self.browser.title, acp.title)
 
         # He removes the 0 that's default in the points field
-        self.browser.find_element_by_id('id_points').click()
-        self.browser.find_element_by_id('id_points').send_keys('\b')
+        acp.type_in_points('\b')
 
         # He clicks on the submit button without filling in any data
-        self.browser.find_element_by_id('btn_submit').click()
-        self.assertEqual(self.browser.title, 'CTFman - New Challenge')
+        acp.press_confirm_button()
+
+        self.assertEqual(self.browser.title, acp.title)
 
         # The page redirects him to the same page, but errors are shown that the fields are empty
-        error_messages = self.browser.find_elements_by_css_selector('.has-error')
+        error_messages = acp.get_error_messages()
         self.assertEqual(len(error_messages), 2)
 
         # Now, the user posts invalid info inside the points field, but correct info in the normal field
-        self.browser.find_element_by_id('id_points').send_keys('')
-        self.browser.find_element_by_id('id_name').send_keys('test')
+        acp.type_in_points('')
+        acp.type_in_name('test')
 
-        self.browser.find_element_by_id('btn_submit').click()
+        acp.press_confirm_button()
         # The page should show one error
-        self.assertEqual(self.browser.title, 'CTFman - New Challenge')
-        errors = self.browser.find_elements_by_css_selector('.has-error')
+        self.assertEqual(self.browser.title, acp.title)
+        errors = acp.get_error_messages()
         self.assertEqual(len(errors), 1)
 
         # Finally, the user creates a challenge that already exists.
@@ -67,14 +69,15 @@ class CreatingChallengesTest(FunctionalTest):
                                  event=event)
         chal.save()
         event.save()
-        id_name = self.browser.find_element_by_id('id_name')
+        id_name = acp.get_name_field()
         id_name.clear()
         id_name.send_keys(chal.name)
-        id_points = self.browser.find_element_by_id('id_points')
+        id_points = acp.get_points_field()
         id_points.clear()
         id_points.send_keys(str(chal.points))
-        self.browser.find_element_by_id('btn_submit').click()
+
+        acp.press_confirm_button()
         # The Challenge should not save, and the form should show an error.
-        self.assertEqual(self.browser.title, 'CTFman - New Challenge')
-        errors = self.browser.find_elements_by_css_selector('.has-error')
+        self.assertEqual(self.browser.title, acp.title)
+        errors = acp.get_error_messages()
         self.assertTrue(len(errors) > 0)
