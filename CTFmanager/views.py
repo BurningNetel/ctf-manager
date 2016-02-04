@@ -1,9 +1,10 @@
 from braces.views import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse_lazy
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 from .forms import EventForm, ChallengeForm, SolveForm
 from .models import Event, Challenge
@@ -25,16 +26,14 @@ class EventPageView(LoginRequiredMixin, TemplateView):
         return context
 
 
-@login_required
-def new_event_page(request):
-    form = EventForm(data=request.POST)
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-            return redirect('events')
-        else:
-            return render(request, 'event/add_event.html', {'form': form})
-    return render(request, 'event/add_event.html', {'form': EventForm()})
+class EventFormView(LoginRequiredMixin, FormView):
+    template_name = 'event/add_event.html'
+    form_class = EventForm
+    success_url = reverse_lazy('events')
+
+    def form_valid(self, form):
+        form.save()
+        return super(EventFormView, self).form_valid(form)
 
 
 @login_required

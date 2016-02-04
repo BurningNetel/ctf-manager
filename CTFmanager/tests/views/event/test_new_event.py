@@ -1,10 +1,9 @@
-from django.core.urlresolvers import reverse, resolve
+from django.core.urlresolvers import reverse
 from django.utils.html import escape
 
 from CTFmanager.forms import EventForm, EMPTY_FIELD_ERROR
 from CTFmanager.models import Event
 from CTFmanager.tests.views.base import ViewTestCase
-from CTFmanager.views import new_event_page
 
 
 class NewEventsPageTest(ViewTestCase):
@@ -17,10 +16,6 @@ class NewEventsPageTest(ViewTestCase):
         self.client.logout()
         response = self.client.get(reverse('newEvent'))
         self.assertRedirects(response, reverse('login') + '?next=' + reverse('newEvent'))
-
-    def test_add_events_url_resolves_to_add_events_page(self):
-        response = resolve(reverse('newEvent'))
-        self.assertEqual(response.func, new_event_page)
 
     def test_add_events_page_renders_add_events_template(self):
         response = self.client.get(reverse('newEvent'))
