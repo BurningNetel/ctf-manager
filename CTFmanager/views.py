@@ -1,23 +1,28 @@
+from braces.views import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.views.generic import TemplateView
 
 from .forms import EventForm, ChallengeForm, SolveForm
 from .models import Event, Challenge
 
 
-@login_required
-def home_page(request):
-    return render(request, 'home.html')
+class HomePageView(LoginRequiredMixin, TemplateView):
+
+    template_name = 'home.html'
 
 
-@login_required
-def events_page(request):
-    _events = Event.objects.filter(date__gt=timezone.now())
-    archive = Event.objects.filter(date__lte=timezone.now())
-    return render(request, 'event/events.html', {'events': _events,
-                                                 'archive': archive})
+class EventPageView(LoginRequiredMixin, TemplateView):
+
+    template_name = 'event/events.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(EventPageView, self).get_context_data(**kwargs)
+        context['events'] = Event.objects.filter(date__gt=timezone.now())
+        context['archive'] = Event.objects.filter(date__lte=timezone.now())
+        return context
 
 
 @login_required

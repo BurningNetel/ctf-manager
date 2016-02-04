@@ -5,3 +5,5 @@ wheel==0.24.0
 selenium
 invoke
 requests
+django-braces
+django-crispy-forms

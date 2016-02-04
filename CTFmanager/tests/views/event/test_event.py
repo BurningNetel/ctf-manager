@@ -1,9 +1,8 @@
-from django.core.urlresolvers import resolve, reverse
-
 import json
 
+from django.core.urlresolvers import reverse
+
 from CTFmanager.tests.views.base import ViewTestCase
-from CTFmanager.views import events_page
 
 
 class EventPageAJAXJoinEventTest(ViewTestCase):
@@ -79,10 +78,6 @@ class EventPageTest(ViewTestCase):
         self.client.logout()
         response = self.client.get(reverse('events'))
         self.assertRedirects(response, reverse('login') + '?next=' + reverse('events'))
-
-    def test_events_url_resolves_to_events_page(self):
-        response = resolve(reverse('events'))
-        self.assertEqual(response.func, events_page)
 
     def test_events_page_renders_events_template(self):
         response = self.client.get(reverse('events'))
