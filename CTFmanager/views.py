@@ -1,7 +1,6 @@
 from braces.views import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
-from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.generic import TemplateView, FormView
@@ -71,63 +70,3 @@ def challenge_pad(request, event_id, challenge_name):
     solve_form = SolveForm()
     return render(request, 'event/challenge_pad.html', {'challenge': _challenge,
                                                         'solve_form': solve_form})
-
-
-def challenge_solve(request, event_pk, challenge_pk):
-    form = SolveForm(data=request.POST)
-    if request.user.is_authenticated():
-        if form.is_valid():
-            chal = Challenge.objects.get(pk=challenge_pk)
-            _flag = request.POST['flag']
-            if chal.solve(request.user, flag=_flag):
-                chal.save()
-                return JsonResponse(data={'status_code': 200,
-                                          'result': True,
-                                          })
-            else:
-                return JsonResponse(data={'status_code': 304,
-                                          'result': False,
-                                          })
-        else:
-            return JsonResponse(data={'status_code': 304,
-                                      'result': False,
-                                      })
-    return JsonResponse(data={'status_code': 401,
-                              'result': False,
-                              })
-
-
-def event_join(request, event_name):
-    if request.user.is_authenticated():
-        event = Event.objects.get(pk=event_name)
-        user = request.user
-        if request.method == 'POST':
-            members = event.join(user)
-            if members > 0:
-                return JsonResponse({
-                    'status_code': 200,
-                    'members': members,
-                })
-            else:
-                return JsonResponse({
-                    'status_code': 304,
-                    'members': -1,
-                })
-        elif request.method == 'DELETE':
-            members = event.leave(user)
-            if members > -1:
-                return JsonResponse({
-                    'status_code': 200,
-                    'members': members,
-                })
-            else:
-                return JsonResponse({
-                    'status_code': 304,
-                    'members': -1,
-                })
-    else:
-        r = JsonResponse({
-            'status_code': 401,
-            'members': -1,
-        })
-        return r
