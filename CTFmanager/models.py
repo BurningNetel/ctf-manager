@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
-from requests import get
+
+from .services import EtherPadHelper
 
 
 class Event(models.Model):
@@ -76,20 +77,9 @@ class Challenge(models.Model):
         return reverse('challenge_pad', args=[self.event.name, self.name])
 
     def create_pad(self):
-        """ Creates a new pad using the etherpad API running on the base_url server
-        :return: Succes, json response
-        """
-        if settings.ETHERPAD_API_KEY is not None and settings.ETHERPAD_DEFAULT_TEXT is not None \
-                and settings.ETHERPAD_API_URL is not None:
-            payload = {'apikey': settings.ETHERPAD_API_KEY,
-                       'padID': self._get_padname(),
-                       'text': settings.ETHERPAD_DEFAULT_TEXT}
-            r = get(settings.ETHERPAD_API_URL + 'createPad', params=payload)
-
-            rj = r.json()
-
-            self._pad_created = rj['code'] is 0
-            return rj['code'] is 0, rj
+        pad_name = self._get_padname()
+        self._pad_created = EtherPadHelper.create_pad(pad_name)
+        return self._pad_created
 
     def solve(self, user, flag=None):
         if user not in self.solvers.all():

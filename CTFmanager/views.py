@@ -63,7 +63,7 @@ def challenge_pad(request, event_id, challenge_name):
     _challenge = Challenge.objects.get(name__iexact=challenge_name,
                                        event=_event)
     if not _challenge.get_pad_created:
-        result, json = _challenge.create_pad()
+        result = _challenge.create_pad()
         if result:
             _challenge.save()
 
