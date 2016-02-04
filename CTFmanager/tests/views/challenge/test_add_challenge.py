@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse, resolve
 from django.utils.html import escape
 
-from CTFmanager.forms import ChallengeForm, EMPTY_FIELD_ERROR, DUPLICATE_ERROR
+from CTFmanager.forms import ChallengeForm, DUPLICATE_ERROR
 from CTFmanager.models import Event, Challenge
 from CTFmanager.tests.views.base import ViewTestCase
 from CTFmanager.views import new_challenge
@@ -38,15 +38,6 @@ class EventPageAddChallengeTest(ViewTestCase):
         response = self.create_new_challenge_response()
         self.assertIsInstance(response.context['form'], ChallengeForm)
 
-    def test_add_challenge_page_displays_challenge_form(self):
-        response = self.create_new_challenge_response()
-        self.assertContains(response, 'id="id_points')
-        self.assertContains(response, 'id="id_name"')
-
-    def test_add_challenge_page_has_submit_button(self):
-        response = self.create_new_challenge_response()
-        self.assertContains(response, 'id="btn_submit"')
-
     def test_for_valid_input_shows_challenge_on_event_detail_page(self):
         _event = self.create_event('testEvent', True)
         url = reverse('newChallenge', args=[_event.name])
@@ -69,10 +60,6 @@ class EventPageAddChallengeTest(ViewTestCase):
         self.post_incorrect_form()
         event = Event.objects.first()
         self.assertEqual(0, len(event.challenge_set.all()))
-
-    def test_for_invalid_input_renders_error_text(self):
-        response = self.post_incorrect_form()
-        self.assertContains(response, escape(EMPTY_FIELD_ERROR))
 
     def test_duplicate_challenge_displays_error_text(self):
         _event = self.create_event('testEvent')

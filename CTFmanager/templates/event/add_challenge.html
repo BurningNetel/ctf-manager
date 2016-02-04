@@ -1,27 +1,10 @@
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
 {% block title %}CTFman - New Challenge{% endblock %}
 
 {% block content %}
-<form class ="form" method="POST" action="{% url 'newChallenge' event.name %}">
-    <h1>New Challenge</h1>
-    {% for field in form %}
-        <div class="form-group">
-        {% if field.errors %}
-            <div class="has-error">
-                <div class="help-block">{{ field.errors.as_text }}</div>
-            </div>
-        {% endif %}
-            <div class="input-group">
-            <span class="input-group-addon">{{ field.name }}</span>
-            {{ field }}
-            </div>
-        </div>
-
-    {% endfor %}
-    <button id="btn_submit" class="btn btn-primary" type="submit">
-        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Save</span>
-    </button>
-    {% csrf_token %}
-</form>
+    <div class="page-header">
+        <h1>New Challenge</h1>
+    </div>
+    {% crispy form %}
 {% endblock %}

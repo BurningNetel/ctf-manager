@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, HTML
 from django import forms
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse_lazy
 
 from .models import Event, Challenge
 
@@ -11,7 +12,6 @@ DUPLICATE_ERROR = "Challenge already exists!"
 
 
 class EventForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -31,7 +31,7 @@ class EventForm(forms.ModelForm):
             Field('password'),
             Field('location'),
             FormActions(
-            Submit('save', 'Save')
+                Submit('save', 'Save')
             )
         )
 
@@ -41,9 +41,26 @@ class EventForm(forms.ModelForm):
 
 
 class ChallengeForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ChallengeForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Field('name'),
+            Field('points'),
+            HTML('<hr>'),
+            Field('flag'),
+            FormActions(
+                Submit('save', 'Save')
+            )
+        )
 
     def set_event(self, event):
         self.instance.event = event
+        self.helper.form_action = reverse_lazy('newChallenge', args=[event.pk])
 
     def validate_unique(self):
         try:
@@ -54,22 +71,7 @@ class ChallengeForm(forms.ModelForm):
 
     class Meta:
         model = Challenge
-        fields = {'name', 'points', }
-        widgets = {
-            'name': forms.fields.TextInput(attrs={
-                'placeholder': 'Name',
-                'class': 'form-control',
-            }),
-            'points': forms.fields.NumberInput(attrs={
-                'placeholder': 'Points',
-                'class': 'form-control',
-            }),
-        }
-
-        error_messages = {
-            'name': {'required': EMPTY_FIELD_ERROR},
-            'points': {'required': EMPTY_FIELD_ERROR},
-        }
+        fields = ['name', 'points', 'flag']
 
 
 class SolveForm(forms.Form):

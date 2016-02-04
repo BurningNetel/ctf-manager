@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.utils import timezone
 
-from CTFmanager.forms import ChallengeForm, EMPTY_FIELD_ERROR, DUPLICATE_ERROR
+from CTFmanager.forms import ChallengeForm, DUPLICATE_ERROR
 from CTFmanager.models import Event, Challenge
 
 
@@ -9,9 +9,9 @@ class ChallengeFormTest(TestCase):
     def test_form_renders_Challenge_inputs(self):
         form = ChallengeForm()
         p = form.as_p()
-        self.assertIn('placeholder="Name"', p)
-        self.assertIn('placeholder="Points"', p)
-        self.assertIn('class="form-control"', p)
+        self.assertIn('id_name', p)
+        self.assertIn('id_points', p)
+        self.assertIn('id_flag', p)
 
     def test_form_validation_for_correct_items(self):
         form = ChallengeForm(data={'name': 'test',
@@ -28,8 +28,8 @@ class ChallengeFormTest(TestCase):
                                    'points': ''})
 
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['name'], [EMPTY_FIELD_ERROR])
-        self.assertEqual(form.errors['points'], [EMPTY_FIELD_ERROR])
+        self.assertEqual(form.errors['name'], ['This field is required.'])
+        self.assertEqual(form.errors['points'], ['This field is required.'])
 
     def test_form_validation_for_duplicate_items(self):
         _date = timezone.now()
