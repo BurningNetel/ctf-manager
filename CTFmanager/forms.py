@@ -1,3 +1,6 @@
+from crispy_forms.bootstrap import FormActions
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Layout, Field, HTML
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -7,53 +10,37 @@ EMPTY_FIELD_ERROR = "Required!"
 DUPLICATE_ERROR = "Challenge already exists!"
 
 
-class EventForm(forms.models.ModelForm):
+class EventForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.form_method = 'post'
+        self.helper.form_action = 'newEvent'
+        self.helper.layout = Layout(
+            Field('name'),
+            Field('date', placeholder='yyyy-mm-dd (h24-MM)'),
+            HTML('<hr>'),
+            Field('end_date', placeholder='yyyy-mm-dd (h24-MM)'),
+            Field('description'),
+            Field('url'),
+            Field('username'),
+            Field('password'),
+            Field('location'),
+            FormActions(
+            Submit('save', 'Save')
+            )
+        )
 
     class Meta:
         model = Event
         exclude = ['creation_date', 'created_by', 'members']
-        widgets = {
-            'name': forms.fields.TextInput(attrs={
-                'placeholder': 'Name',
-                'class': 'form-control',
-            }),
-            'date': forms.fields.DateTimeInput(attrs={
-                'placeholder': 'yyyy-mm-dd (h24-MM)',
-                'class': 'form-control',
-            }),
-            'description': forms.fields.TextInput(attrs={
-                'placeholder': 'Description',
-                'class': 'form-control',
-            }),
-            'location': forms.fields.TextInput(attrs={
-                'placeholder': 'Location',
-                'class': 'form-control',
-            }),
-            'username': forms.fields.TextInput(attrs={
-                'placeholder': 'CTF username',
-                'class': 'form-control',
-            }),
-            'password': forms.fields.TextInput(attrs={
-                'placeholder': 'CTF password',
-                'class': 'form-control',
-            }),
-            'url': forms.fields.TextInput(attrs={
-                'placeholder': 'http://ctfwebsite.org',
-                'class': 'form-control',
-            }),
-            'end_date': forms.fields.DateTimeInput(attrs={
-                'placeholder': 'yyyy-mm-dd (h24-MM)',
-                'class': 'form-control',
-            }),
-
-        }
-        error_messages = {
-            'name': {'required': EMPTY_FIELD_ERROR},
-            'date': {'required': EMPTY_FIELD_ERROR},
-        }
 
 
-class ChallengeForm(forms.models.ModelForm):
+class ChallengeForm(forms.ModelForm):
 
     def set_event(self, event):
         self.instance.event = event

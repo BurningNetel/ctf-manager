@@ -1,27 +1,8 @@
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
 {% block title %}CTFman - New Event{% endblock %}
 
 {% block content %}
 <h1>New Event</h1>
-<form class ="form" method="POST" action="{% url 'newEvent' %}">
-    {% for field in form %}
-        {% if field.errors %}
-            <div class="has-error">
-                <div class="help-block">{{ field.errors.as_text }}</div>
-            </div>
-        {% endif %}
-        <div class="form-group">
-            <div class="input-group">
-            <span class="input-group-addon">{{ field.name }}</span>
-            {{ field }}
-            </div>
-        </div>
-
-    {% endfor %}
-    <button id="btn_submit" class="btn btn-primary" type="submit">
-        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Save</span>
-    </button>
-    {% csrf_token %}
-</form>
+{% crispy form %}
 {% endblock %}

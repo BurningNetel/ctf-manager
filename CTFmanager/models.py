@@ -13,7 +13,7 @@ class Event(models.Model):
     """
     name = models.SlugField(primary_key=True, max_length=20, default='')
     date = models.DateTimeField(default='')
-    description = models.CharField(default='',
+    description = models.TextField(default='',
                                    max_length=5000,
                                    blank=True)
     location = models.SlugField(max_length=100, default='', blank=True)

@@ -6,7 +6,6 @@ from functional_tests.pages.page import Page
 @unique
 class NewEventPageFields(Enum):
     name = 'id_name'
-    name_ph = 'Name'
     date = 'id_date'
     date_ph = 'yyyy-mm-dd (h24-MM)'
     description = 'id_description'
@@ -47,7 +46,7 @@ class NewEventPage(Page):
         return self.get_id(NewEventPageFields.url.value)
 
     def get_confirm_button(self):
-        return self.test.browser.find_element_by_tag_name('button')
+        return self.get_id('submit-id-save')
 
     def submit_basic_event(self, name, date):
         self.get_id(NewEventPageFields.name.value).send_keys(name)

@@ -51,8 +51,6 @@ class NewEventTests(FunctionalTest):
         tb_name = nep.get_name_input()
         name = 'Hacklu'
         tb_name.send_keys(name)
-        self.assertEqual(NewEventPageFields.name_ph.value
-                         , tb_name.get_attribute('placeholder'))
 
         # The date and time that the event starts
         datetime = nep.get_date_input()
@@ -74,9 +72,7 @@ class NewEventTests(FunctionalTest):
         # when every necessary field has been filled in.
         btn_confirm = nep.get_confirm_button()
         self.assertEqual('btn btn-primary', btn_confirm.get_attribute('class'))
-        span = btn_confirm.find_element_by_tag_name('span')
-        self.assertEqual('Save', span.text)
-
+        self.assertEqual('Save', btn_confirm.get_attribute('value'))
         btn_confirm.click()
 
         # The browser redirects the user to the events page

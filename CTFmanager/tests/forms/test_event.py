@@ -1,34 +1,17 @@
 from django.test import TestCase
 
-from CTFmanager.forms import EventForm, EMPTY_FIELD_ERROR
+from CTFmanager.forms import EventForm
 
 
 class EventFormTest(TestCase):
 
-    def test_form_renders_Event_inputs(self):
-        form = EventForm()
-        p = form.as_p()
-        self.assertIn('placeholder="Name"', p)
-        self.assertIn('id_name', p)
-        self.assertIn('class="form-control"', p)
-        self.assertIn('id_date', p)
-        self.assertIn('placeholder="yyyy-mm-dd (h24-MM)"', p)
-        self.assertIn('id_description',p)
-        self.assertIn('id_location', p)
-        self.assertIn('id_end_date', p)
-        self.assertIn('id_username', p)
-        self.assertIn('id_password', p)
-        self.assertIn('id_url', p)
-        self.assertNotIn('id_creation_date', p)
-        self.assertNotIn('id_created_by', p)
-        self.assertNotIn('id_members', p)
-
     def test_form_validation_for_blank_items(self):
         form = EventForm(data={'name': '',
                                'date': ''})
+
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['name'], [EMPTY_FIELD_ERROR])
-        self.assertEqual(form.errors['date'], [EMPTY_FIELD_ERROR])
+        self.assertEqual(form.errors['name'], ['This field is required.'])
+        self.assertEqual(form.errors['date'], ['This field is required.'])
 
     def test_form_validation_for_correct_items(self):
         form = EventForm(data={'name': 'HackCTF',

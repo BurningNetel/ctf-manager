@@ -1,7 +1,6 @@
 from django.core.urlresolvers import reverse
-from django.utils.html import escape
 
-from CTFmanager.forms import EventForm, EMPTY_FIELD_ERROR
+from CTFmanager.forms import EventForm
 from CTFmanager.models import Event
 from CTFmanager.tests.views.base import ViewTestCase
 
@@ -24,10 +23,6 @@ class NewEventsPageTest(ViewTestCase):
     def test_add_events_page_renders_event_form(self):
         response = self.client.get(reverse('newEvent'))
         self.assertIsInstance(response.context['form'], EventForm)
-
-    def test_for_invalid_input_renders_error_text(self):
-        response = self.post_incorrect_form()
-        self.assertContains(response, escape(EMPTY_FIELD_ERROR))
 
     def test_for_invalid_input_nothing_saved(self):
         self.post_incorrect_form()
