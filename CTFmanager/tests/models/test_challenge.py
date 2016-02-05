@@ -19,7 +19,7 @@ class ChallengeModelTest(EventModelTestCase):
         chal = self.create_new_event_challenge()
         event = chal.event
 
-        url = chal.get_local_pad_url()
+        url = chal.get_absolute_url()
         self.assertEqual(url, '/events/%s/%s' % (event.name, chal.name))
 
     @patch('CTFmanager.services.get')

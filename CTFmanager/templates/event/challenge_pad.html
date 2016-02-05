@@ -16,15 +16,14 @@
     {% else %}
         <div class="panel panel-danger">
     {% endif %}
-            <div class="panel-heading">{{ challenge.name }}
-                <button class="btn btn-xs btn-default btn-solve" data-toggle="modal" data-target="#solve_modal"
-                                        id="{{ challenge.pk }}">Solve</button>
-            </div>
-
-            <div style="padding: 0 !important;"  class="panel-body">
-                <div class="embed-responsive embed-responsive-4by3">
-                    <iframe src="{{ challenge.get_absolute_etherpad_url }}"></iframe>
-                </div>
+    <div class="panel-heading">{{ challenge.name }}
+        <button class="btn btn-xs btn-default btn-solve" data-toggle="modal" data-target="#solve_modal"
+                id="{{ challenge.pk }}">Solve</button>
+        </div>
+        <div style="padding: 0 !important;"  class="panel-body">
+            <div class="embed-responsive embed-responsive-4by3">
+                <iframe src="{{ challenge.get_absolute_etherpad_url }}"></iframe>
             </div>
         </div>
+    </div>
 {% endblock %}

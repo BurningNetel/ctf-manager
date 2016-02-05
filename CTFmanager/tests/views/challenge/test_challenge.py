@@ -16,13 +16,13 @@ class ChallengeTest(ViewTestCase):
 
         response = self.client.get(event.get_absolute_url())
 
-        url = chal.get_local_pad_url()
+        url = chal.get_absolute_url()
         self.assertContains(response, '<a href="' + url + '"')
 
     def test_challenge_name_resolves_to_correct_page(self):
         chal, event = self.create_event_challenge()
 
-        response = resolve(chal.get_local_pad_url())
+        response = resolve(chal.get_absolute_url())
 
         self.assertEqual(response.func, challenge_pad)
 
@@ -34,7 +34,7 @@ class ChallengeTest(ViewTestCase):
         get_mock.return_value = request_mock
         request_mock.json.return_value = {'code':0, 'message': 'ok', 'data': None}
 
-        response = self.client.get(chal.get_local_pad_url())
+        response = self.client.get(chal.get_absolute_url())
 
         self.assertTemplateUsed(response, 'event/challenge_pad.html')
         self.assertTemplateUsed(response, 'event/solve_modal.html')
@@ -46,7 +46,7 @@ class ChallengeTest(ViewTestCase):
         get_mock.return_value = request_mock = Mock()
         request_mock.json.return_value = {'code':0, 'message':'ok', 'data': None}
 
-        response = self.client.get(chal.get_local_pad_url())
+        response = self.client.get(chal.get_absolute_url())
         challenge = response.context['challenge']
         self.assertEqual(chal, challenge)
 
@@ -60,7 +60,7 @@ class ChallengeTest(ViewTestCase):
         get_mock.return_value = request_mock = Mock()
         request_mock.json.return_value = {'code':0, 'message':'ok', 'data': None}
 
-        self.client.get(chal.get_local_pad_url())
+        self.client.get(chal.get_absolute_url())
 
         chal = Challenge.objects.get(name=chal.name)
         self.assertTrue(chal.get_pad_created)
@@ -72,7 +72,7 @@ class ChallengeTest(ViewTestCase):
         get_mock.return_value = request_mock = Mock()
         request_mock.json.return_value = {'code':0, 'message':'ok', 'data': None}
 
-        response = self.client.get(chal.get_local_pad_url())
+        response = self.client.get(chal.get_absolute_url())
         self.assertContains(response, 'iframe')
 
     @patch('CTFmanager.services.get')
@@ -82,7 +82,7 @@ class ChallengeTest(ViewTestCase):
         get_mock.return_value = request_mock = Mock()
         request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
 
-        response = self.client.get(chal.get_local_pad_url())
+        response = self.client.get(chal.get_absolute_url())
         self.assertContains(response, 'panel-success')
 
     @patch('CTFmanager.services.get')
@@ -93,5 +93,5 @@ class ChallengeTest(ViewTestCase):
         get_mock.return_value = request_mock = Mock()
         request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
 
-        response = self.client.get(chal.get_local_pad_url())
+        response = self.client.get(chal.get_absolute_url())
         self.assertContains(response, 'panel-warning')

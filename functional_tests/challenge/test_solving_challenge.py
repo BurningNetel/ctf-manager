@@ -1,6 +1,7 @@
 import time
 
 from CTFmanager.models import Event, Challenge
+from functional_tests.pages.CTFmanager.challenge_detail_page import ChallengeDetailPage
 from functional_tests.pages.CTFmanager.event_detail_page import EventDetailPage
 from ..base import FunctionalTest
 
@@ -53,14 +54,24 @@ class SolvingChallengeTest(FunctionalTest):
         challenges_table.find_element_by_class_name('bg-success')
 
         # He adds another challenge and goes to the challenges detail page
+        chal = Challenge.objects.create(name='not_solved2',
+                                 points='100',
+                                 event=event)
 
+        self.browser.get(self.server_url + chal.get_absolute_url())
+        cdp = ChallengeDetailPage(self, chal.name)
         # The header color is red
+        header_classes = cdp.get_panel().get_attribute('class')
+        self.assertIn('panel-danger', header_classes)
 
         # After a few minutes he has solved the challenge. He clicks on the challenge
         # solved button
-
+        cdp.click_solve_button()
+        time.sleep(1)
         # He fills in the flag
-
+        cdp.type_in_modal_flag_field('test{dfas}')
         # and presses ok
-
+        cdp.press_modal_button()
         # The color of the panel header is now green
+        header_classes = cdp.get_panel().get_attribute('class')
+        self.assertIn('panel-success', header_classes)

@@ -73,7 +73,7 @@ class Challenge(models.Model):
     def get_absolute_etherpad_url(self):
         return settings.ETHERPAD_PAD_URL + self._get_padname()
 
-    def get_local_pad_url(self):
+    def get_absolute_url(self):
         return reverse('challenge_pad', args=[self.event.name, self.name])
 
     def create_pad(self):
