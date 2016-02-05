@@ -10,12 +10,6 @@ from CTFmanager.views import challenge_pad
 
 
 class ChallengeTest(ViewTestCase):
-    def create_event_challenge(self, name='testEvent'):
-        event = self.create_event('testEvent', True)
-        chal = Challenge.objects.create(name=name,
-                                        points='500',
-                                        event=event)
-        return chal, event
 
     def test_challenge_name_is_link_to_etherpad_page(self):
         chal, event = self.create_event_challenge()
@@ -80,17 +74,6 @@ class ChallengeTest(ViewTestCase):
 
         response = self.client.get(chal.get_local_pad_url())
         self.assertContains(response, 'iframe')
-
-    @patch('CTFmanager.services.get')
-    def test_unsolved_chal_solve_button_is_displayed(self, get_mock):
-        chal, event = self.create_event_challenge()
-
-        get_mock.return_value = request_mock = Mock()
-        request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
-
-        response = self.client.get(chal.get_local_pad_url())
-        self.assertContains(response, 'id="btn_solve"')
-        self.assertContains(response, 'panel-danger')
 
     @patch('CTFmanager.services.get')
     def test_solved_chal_correct_color_is_displayed(self, get_mock):

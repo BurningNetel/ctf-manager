@@ -1,16 +1,16 @@
-<div class="modal" id="solve_modal" tabindex="-1" role="dialog">
+<div class="modal fade" id="form-modal" tabindex="-1" role="dialog" aria-labelledby="solve-modal-label" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">Solve {{ challenge_name|default:"challenge" }}</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">Solve {{ challenge_name|default:"challenge" }}</h4>
       </div>
-      <div class="modal-body">
-          {{ form.flag.label_tag }}
-          {{ form.flag }}
+      <div id="form-modal-body" class="modal-body">
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button id="btn_solve" type="button" class="btn btn-primary" data-dismiss="modal">Solve</button>
+        <button id="btn_modal_submit" type="button" class="btn btn-primary" data-dismiss="modal">Solve</button>
       </div>
     </div>
   </div>

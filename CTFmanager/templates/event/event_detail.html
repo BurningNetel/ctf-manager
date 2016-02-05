@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-    {% include 'event/solve_modal.html' with form=solve_form %}
+    {% include 'event/solve_modal.html' %}
 
     <div class="page-header">
         <h1>{{ event.name }} <small>{{ event.date }}
@@ -84,7 +84,6 @@
             <small><a class="btn btn-default btn-sm" id="btn_add_challenge" href="{{ event.name }}/new">Add Challenge</a></small>
         </h2>
     </div>
-
     <table class="table table-striped">
         {% if event.challenge_set.count > 0 %}
             {% for challenge in event.challenge_set.all %}

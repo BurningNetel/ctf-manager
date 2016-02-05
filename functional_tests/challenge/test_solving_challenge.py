@@ -1,6 +1,7 @@
+import time
+
 from CTFmanager.models import Event, Challenge
 from functional_tests.pages.CTFmanager.event_detail_page import EventDetailPage
-
 from ..base import FunctionalTest
 
 
@@ -35,7 +36,7 @@ class SolvingChallengeTest(FunctionalTest):
         # A modal pops up, asking for an (optional) flag.
         modal_body = edp.get_modal_body()
         modal_header = edp.get_modal_header()
-
+        time.sleep(0.5)
         self.assertIn('Solve challenge', modal_header.text)
         # He fills in the flag
         self.assertIn('Flag', modal_body.text)

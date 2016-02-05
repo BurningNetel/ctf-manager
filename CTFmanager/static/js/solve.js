@@ -1,36 +1,43 @@
 $( document ).ready(function() {
     var last_chal_id;
+
+    var formAjaxSubmit = function(form, modal) {
+        $(form).submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (xhr, ajaxOptions, thrownError) {
+                    if ( $(xhr).find('.has-error').length > 0 ) {
+                        $(modal).find('.modal-body').html(xhr);
+                        formAjaxSubmit(form, modal);
+                    } else {
+                        var btn = $('#' + last_chal_id);
+                        if(btn.parent().parent().hasClass('panel')) {
+                            btn.parent().parent().removeClass('panel-danger panel-warning').addClass('panel-success');
+                        } else {
+                            btn.closest('td').removeClass('bg-danger bg-warning').addClass('bg-success');
+                        }
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                }
+            });
+        });
+    };
+
     $('.btn-solve').click(function (e) {
         last_chal_id = $(this).attr('id');
+        var url = '/events/solve-form/' + last_chal_id
+        $('#form-modal-body').load(url, function (){
+            $('#form-modal').modal('toggle');
+            formAjaxSubmit('#form-modal-body form', '#form-modal');
+        });
     });
 
-    $('#btn_solve').click(function (e) {
-        e.preventDefault();
-        var re = /\/([a-zA-Z0-9-_]{1,20})\/([a-zA-Z0-9-_]{1,20})/;
-        var str = window.location.pathname;
-        var event_url = re.exec(str);
-        var url = event_url[0] + '/challenges/' + last_chal_id + '/users/';
-
-        var flag = $('#id_flag').val();
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: {'flag': flag},
-            success: function (data) {
-                if(data['status_code'] == 200) {
-                    var btn = $('#' + last_chal_id);
-                    if(btn.parent().parent().hasClass('panel')){
-                        btn.parent().parent().removeClass('panel-danger panel-warning').addClass('panel-success');
-                    }
-                    else {
-                        btn.closest('td').removeClass('bg-danger bg-warning').addClass('bg-success');
-                    }
-                }
-                else {
-                    alert('something went wrong!');
-                }
-            }
-        });
+    $('#btn_modal_submit').click(function (e) {
+        $('#form-modal-body').find('form').submit();
     });
 
     csrf_setup();

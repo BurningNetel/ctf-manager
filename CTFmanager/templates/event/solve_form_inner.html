@@ -1,0 +1,6 @@
+{% load crispy_forms_tags %}
+<div class="row">
+    <form class="form-horizontal" action="{% url 'solve_form' pk %}" method="post">
+        {% crispy form %}
+    </form>
+</div>

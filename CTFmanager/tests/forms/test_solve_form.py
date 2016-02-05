@@ -14,6 +14,6 @@ class SolveFormTest(TestCase):
         form = SolveForm(data={'flag': 'test{testtest}'})
         self.assertTrue(form.is_valid())
 
-    def test_solve_form_validation_invalid_input(self):
+    def test_solve_form_validation_no_input(self):
         form = SolveForm(data={'flag': ''})
-        self.assertFalse(form.is_valid())
+        self.assertTemplateUsed(form.is_valid())

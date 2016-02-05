@@ -81,10 +81,9 @@ class Challenge(models.Model):
         self._pad_created = EtherPadHelper.create_pad(pad_name)
         return self._pad_created
 
-    def solve(self, user, flag=None):
+    def solve(self, user):
         if user not in self.solvers.all():
             self.solvers.add(user)
-            self.flag = flag
             return True
         else:
             return False

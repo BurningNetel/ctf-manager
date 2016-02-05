@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-    {% include 'event/solve_modal.html' with form=solve_form %}
+    {% include 'event/solve_modal.html' %}
     {% if request.user in challenge.solvers.all %}
         <div class="panel panel-success">
     {% elif challenge.solvers.count > 0 %}

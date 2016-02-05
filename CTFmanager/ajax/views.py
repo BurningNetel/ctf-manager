@@ -1,31 +1,42 @@
 from django.http import JsonResponse
+from django.views.generic import FormView
 
 from CTFmanager.forms import SolveForm
 from CTFmanager.models import Challenge, Event
 
 
-def challenge_solve(request, event_pk, challenge_pk):
-    form = SolveForm(data=request.POST)
-    if request.user.is_authenticated():
-        if form.is_valid():
-            chal = Challenge.objects.get(pk=challenge_pk)
-            _flag = request.POST['flag']
-            if chal.solve(request.user, flag=_flag):
-                chal.save()
-                return JsonResponse(data={'status_code': 200,
-                                          'result': True,
-                                          })
-            else:
-                return JsonResponse(data={'status_code': 304,
-                                          'result': False,
-                                          })
-        else:
-            return JsonResponse(data={'status_code': 304,
-                                      'result': False,
-                                      })
-    return JsonResponse(data={'status_code': 401,
-                              'result': False,
-                              })
+class AjaxTemplateMixin(object):
+
+    def dispatch(self, request, *args, **kwargs):
+        if not hasattr(self, 'ajax_template_name'):
+            split = self.template_name.split('.html')
+            split[-1] = '_inner'
+            split.append('.html')
+            self.ajax_template_name = ''.join(split)
+        if request.is_ajax():
+            self.template_name = self.ajax_template_name
+        return super(AjaxTemplateMixin, self).dispatch(request, *args, **kwargs)
+
+
+class SolveFormView(AjaxTemplateMixin, FormView):
+    template_name = 'event/solve_form.html'
+    form_class = SolveForm
+
+    def get_context_data(self, **kwargs):
+        context = super(SolveFormView, self).get_context_data(**kwargs)
+        context['pk'] = self.args[0]
+        return context
+
+    def get_form(self, form_class=SolveForm):
+        challenge = Challenge.objects.get(pk=self.args[0])
+        return form_class(instance=challenge, **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        challenge = form.save(commit=False)
+        user = self.request.user
+        result = challenge.solve(user)
+        challenge.save()
+        return JsonResponse(data={'success': result})
 
 
 def event_join(request, event_name):
