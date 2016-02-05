@@ -66,7 +66,8 @@ class SolvingChallengeTest(FunctionalTest):
 
         # After a few minutes he has solved the challenge. He clicks on the challenge
         # solved button
-        cdp.click_solve_button()
+        #cdp.click_solve_button()
+        self.browser.find_element_by_id(chal.pk).click()
         time.sleep(2)
         # He fills in the flag
         cdp.type_in_modal_flag_field('test{dfas}')
