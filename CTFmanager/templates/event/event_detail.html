@@ -39,20 +39,18 @@
             {% if event.url %}
                 <li id="id_url" class="list-group-item">URL: <a href="{{ event.url }}">{{ event.url }}</a></li>
             {% endif %}
-                <li class="list-group-item">
-                    <h4 class="list-group-item-heading">Participants:</h4>
-                    {% if event.members.count > 0 %}
-                        <ul id="members_list" class="list-group-item">
-                            <p class="list-group-item-text">
-                                {% for user in event.members.all %}
-                                        {{ user.username }}<br>
-                                {% endfor %}
-                            </p>
-                        </ul>
-                    {% else %}
-                        <p class="list-group-item-text">No participants yet!</p>
-                    {% endif %}
-                </li>
+            <li class="list-group-item">
+                <h4 class="list-group-item-heading">Participants:</h4>
+                <ul id="members_list" class="list-group-item">
+                    <p class="list-group-item-text">
+                        {% for user in event.members.all %}
+                                {{ user.username }}<br>
+                        {% empty %}
+                            No participants yet!
+                        {% endfor %}
+                    </p>
+                </ul>
+            </li>
         </ul>
     </div>
 
@@ -85,27 +83,25 @@
         </h2>
     </div>
     <table class="table table-striped">
-        {% if event.challenge_set.count > 0 %}
-            {% for challenge in event.challenge_set.all %}
-                <tr>
-                {% if request.user in challenge.solvers.all %}
-                    <td class="bg-success">
-                {% elif challenge.solvers.count > 0 %}
-                    <td class="bg-warning">
-                {% else %}
-                    <td class="bg-danger">
-                {% endif %}
-                        <a href="{% url 'challenge_pad' event.name challenge.name %}">
-                            {{ challenge.name }}
-                        </a> - {{ challenge.points }}
-                        <button class="btn btn-xs btn-default btn-solve" data-toggle="modal" data-target="#solve_modal"
-                                id="{{ challenge.pk }}">Solve</button>
-                    </td>
-                </tr>
-            {% endfor %}
-        {% else %}
+        {% for challenge in event.challenge_set.all %}
+            <tr>
+            {% if request.user in challenge.solvers.all %}
+                <td class="bg-success">
+            {% elif challenge.solvers.count > 0 %}
+                <td class="bg-warning">
+            {% else %}
+                <td class="bg-danger">
+            {% endif %}
+                    <a href="{% url 'challenge_pad' event.name challenge.name %}">
+                        {{ challenge.name }}
+                    </a> - {{ challenge.points }}
+                    <button class="btn btn-xs btn-default btn-solve" data-toggle="modal" data-target="#solve_modal"
+                            id="{{ challenge.pk }}">Solve</button>
+                </td>
+            </tr>
+        {% empty %}
             <tr><td>No Challenges!</td></tr>
-        {% endif %}
+        {% endfor %}
     </table>
 
 {% endblock %}
