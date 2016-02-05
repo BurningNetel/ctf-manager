@@ -53,6 +53,10 @@ class SolvingChallengeTest(FunctionalTest):
         challenges_table = edp.get_challenge_table()
         challenges_table.find_element_by_class_name('bg-success')
 
+    def test_challenge_pad_solving(self):
+        self.create_and_login_user()
+        self.add_event()
+        event = Event.objects.first()
         # He adds another challenge and goes to the challenges detail page
         chal = Challenge.objects.create(name='not_solved2',
                                  points='100',
@@ -68,7 +72,7 @@ class SolvingChallengeTest(FunctionalTest):
         # solved button
         #cdp.click_solve_button()
         self.browser.find_element_by_id(str(chal.pk)).click()
-        time.sleep(2)
+        time.sleep(1)
         # He fills in the flag
         cdp.type_in_modal_flag_field('test{dfas}')
         # and presses ok
