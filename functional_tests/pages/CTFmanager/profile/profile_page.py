@@ -41,3 +41,4 @@ class ProfilePage(Page):
 
     def get_header(self):
         return self.test.browser.find_element_by_tag_name('h1')
+

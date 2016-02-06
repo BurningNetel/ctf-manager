@@ -21,9 +21,22 @@
             <p id="p_username">Username: {{ p_user.username }}</p>
             <p id="join-date">Joined on: {{ p_user.date_joined|date }}</p>
             <p id="last-login">Last seen: {{ p_user.last_login|date }}</p>
+            <p id="total-score">Total score: {{ p_user.total_score }}</p>
         </div>
-        <div class="tab-pane fade" id="events">asd</div>
-        <div class="tab-pane fade" id="statistics">fasd</div>
+        <div class="tab-pane fade" id="events">
+            <h3>Participated in:</h3>
+            <ul id="joined_event_list" class="list-group">
+            {% for event in events %}
+                <li class="list-group-item">{{ event.name }}</li>
+            {% empty %}
+                <li class="list-group-item list-group-item-danger">This user hasn't joined any events yet!</li>
+            {% endfor %}
+            </ul>
+        </div>
+
+        <div class="tab-pane fade" id="statistics">
+
+        </div>
     </div>
 
 {% endblock %}
