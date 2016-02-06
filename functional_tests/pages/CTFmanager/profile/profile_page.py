@@ -38,5 +38,3 @@ class ProfilePage(Page):
 
     def get_joined_event_list(self):
         return self.get_id('joined_event_list')
-
-    def get_
