@@ -7,6 +7,6 @@ urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^events/', include('CTFmanager.urls')),
     url(r'accounts/', include('accounts.urls')),
-    url(r'^profile/', include('CTFprofile.urls')),
+    url(r'^profiles/', include('CTFprofile.urls')),
     # url(r'^admin/', include(admin.site.urls)),
 ]

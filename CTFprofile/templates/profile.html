@@ -1,8 +1,29 @@
 {% extends 'base.html' %}
-{% block title %}CTFman - {{ user.username }} {% endblock %}
+{% block title %}CTFman - {{ p_user.username }} {% endblock %}
 
 {% block content %}
-    <div class="header">
-        <h1>{{ user.username }}'s profile</h1>
+    <div class="page-header">
+        <h1>{{ p_user.username }}'s profile</h1>
     </div>
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#profile" aria-controls="home" role="tab" data-toggle="tab">Profile</a></li>
+        <li role="presentation">
+            <a href="#events" aria-controls="home" role="tab" data-toggle="tab">Events</a></li>
+        <li role="presentation">
+            <a href="#statistics" aria-controls="home" role="tab" data-toggle="tab">Statistics</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div  class="tab-pane fade in active" id="profile">
+            <h3>User Details</h3>
+            <p id="p_username">Username: {{ p_user.username }}</p>
+            <p id="join-date">Joined on: {{ p_user.date_joined|date }}</p>
+            <p id="last-login">Last seen: {{ p_user.last_login|date }}</p>
+        </div>
+        <div class="tab-pane fade" id="events">asd</div>
+        <div class="tab-pane fade" id="statistics">fasd</div>
+    </div>
+
 {% endblock %}

@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from functional_tests.pages.CTFmanager.profile.profile_page import ProfilePage
 from ..base import FunctionalTest
 
@@ -10,28 +12,32 @@ class ProfilePageTest(FunctionalTest):
         different tabs.
         """
         self.create_and_login_user()
+        viewed_user = User.objects.create_user('viewMe')
         # The user goes to his profile page
-        pp = ProfilePage(self, self.user.username).get_page(self.user.pk)
+        pp = ProfilePage(self, viewed_user.username).get_page(viewed_user.pk)
         self.assertEqual(self.browser.title, pp.title)
         # The pages title has the users name
         h1 = pp.get_header()
-        self.assertEqual("%s's profile" % self.user.username, h1.text)
+        self.assertEqual("%s's profile" % viewed_user.username, h1.text)
         # He sees tabs, they show profile, events and statistics
         tabs = pp.get_nav_tabs()
-        tabs_html = tabs.get_attribute('innerHTML')
-        self.assertInHTML('Profile', tabs_html)
-        self.assertInHTML('Events', tabs_html)
-        self.assertInHTML('Statistics', tabs_html)
-
+        tabs.find_element_by_link_text('Statistics')
+        tabs.find_element_by_link_text('Events')
+        tabs.find_element_by_link_text('Profile')
         # He sees his name, score and date on the page
         pp_username = pp.get_name()
-        self.assertEqual(self.user.username, pp_username)
-
-        score = pp.get_total_score()
-        self.assertEqual(self.user.total_score(), score)
+        self.assertIn(viewed_user.username, pp_username.text)
 
         date_joined = pp.get_date_joined()
-        self.assertEqual(self.user.date_joined, date_joined)
+        day = viewed_user.date_joined.day
+        month = viewed_user.date_joined.month
+        year = viewed_user.date_joined.year
+        self.assertIn(str(day), date_joined.text)
+        self.assertIn(str(month), date_joined.text)
+        self.assertIn(str(year), date_joined.text)
+
+        score = pp.get_total_score()
+        self.assertEqual(viewed_user.total_score(), score)
 
         # He clicks on the events tab
         pp.get_tab_events().click()

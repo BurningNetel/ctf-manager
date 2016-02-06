@@ -10,13 +10,13 @@ class ProfilePage(Page):
         self.title += username
 
     def get_name(self):
-        return self.get_id('pr_username')
+        return self.get_id('p_username')
 
     def get_total_score(self):
-        return self.get_id('id_total_score')
+        return self.get_id('total-score')
 
     def get_date_joined(self):
-        return self.get_id('id_date_score')
+        return self.get_id('join-date')
 
     def get_nav_tabs(self):
         return self.test.browser.find_element_by_class_name('nav-tabs')
