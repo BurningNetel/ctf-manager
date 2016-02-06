@@ -38,3 +38,6 @@ class ProfilePage(Page):
 
     def get_joined_event_list(self):
         return self.get_id('joined_event_list')
+
+    def get_header(self):
+        return self.test.browser.find_element_by_tag_name('h1')

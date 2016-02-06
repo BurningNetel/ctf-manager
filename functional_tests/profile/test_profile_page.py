@@ -11,8 +11,11 @@ class ProfilePageTest(FunctionalTest):
         """
         self.create_and_login_user()
         # The user goes to his profile page
-        pp = ProfilePage(self, self.user.username).get_page([self.user.pk])
-
+        pp = ProfilePage(self, self.user.username).get_page(self.user.pk)
+        self.assertEqual(self.browser.title, pp.title)
+        # The pages title has the users name
+        h1 = pp.get_header()
+        self.assertEqual("%s's profile" % self.user.username, h1.text)
         # He sees tabs, they show profile, events and statistics
         tabs = pp.get_nav_tabs()
         tabs_html = tabs.get_attribute('innerHTML')
