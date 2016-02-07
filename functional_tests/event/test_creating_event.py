@@ -3,12 +3,12 @@ from datetime import timedelta
 
 from django.core.urlresolvers import reverse
 from django.utils import timezone, formats
-from functional_tests.pages.challenge.add_event_page import NewEventPage, NewEventPageFields
-from functional_tests.pages.challenge.event_page import EventPage
 
 from CTFmanager.models import Event
 from functional_tests.base import FunctionalTest
+from functional_tests.pages.event.add_event_page import NewEventPage, NewEventPageFields
 from functional_tests.pages.event.event_detail_page import EventDetailPage
+from functional_tests.pages.event.event_page import EventPage
 
 
 class NewEventTests(FunctionalTest):

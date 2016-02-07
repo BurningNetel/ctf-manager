@@ -16,11 +16,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='challenge',
-            name='solvers',
-            field=models.ManyToManyField(to=settings.AUTH_USER_MODEL),
-        ),
         migrations.AlterField(
             model_name='event',
             name='creation_date',

@@ -36,7 +36,9 @@ class SolveFormView(AjaxTemplateMixin, FormView):
         user = self.request.user
         result = challenge.solve(user)
         challenge.save()
-        return JsonResponse(data={'success': result})
+        if result:
+            return JsonResponse(data={'success': True})
+        return JsonResponse(data={'success': False})
 
 
 def event_join(request, event_name):

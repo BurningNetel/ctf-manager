@@ -1,8 +1,9 @@
 from unittest.mock import patch, Mock
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
-from CTFmanager.models import Challenge
+from CTFmanager.models import Challenge, Solver
 from .test_event import EventModelTestCase
 
 
@@ -52,23 +53,35 @@ class ChallengeModelTest(ChallengeModelTestCase):
 
 
 class ChallengeSolvedByTest(ChallengeModelTestCase):
+    def setUp(self):
+        super(ChallengeSolvedByTest, self).setUp()
+        self.user = User.objects.create_user('testUser')
+
     def test_challenge_solve_method(self):
         chal = self.create_new_event_challenge()
-        user = User.objects.create_user('testUser')
         user2 = User.objects.create_user('test2User')
-        result = chal.solve(user)
+        result = chal.solve(self.user)
 
-        self.assertIn(user, chal.solvers.all())
+        self.assertIn(self.user, chal.solvers.all())
         self.assertNotIn(user2, chal.solvers.all())
-        self.assertTrue(result)
+        self.assertIsInstance(result, Solver)
 
     def test_challenge_solve_method_duplicate_call(self):
         chal = self.create_new_event_challenge()
-        user = User.objects.create_user('testUser')
 
-        chal.solve(user)
-        result = chal.solve(user)
+        chal.solve(self.user)
+        result = chal.solve(self.user)
 
-        self.assertIn(user, chal.solvers.all())
+        self.assertIn(self.user, chal.solvers.all())
         self.assertFalse(result)
+
+    def test_challenge_get_solve_time(self):
+        chal = self.create_new_event_challenge()
+        solve_time = timezone.now()
+        Solver.objects.create(challenge=chal, user=self.user, solve_time=solve_time)
+
+        chal_solve_time = chal.get_solve_time(self.user)
+
+        self.assertEqual(solve_time, chal_solve_time)
+
 

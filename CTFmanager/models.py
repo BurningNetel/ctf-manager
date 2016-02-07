@@ -65,7 +65,6 @@ class Event(models.Model):
                     self.min_score = chal_p
             self.save()
 
-
     @property
     def is_upcoming(self):
         if self.date > timezone.now():
@@ -79,14 +78,17 @@ class Challenge(models.Model):
     flag = models.CharField(max_length=200, blank=True)
     event = models.ForeignKey(Event, default=None)
 
+    solvers = models.ManyToManyField(User, through='Solver')
     _pad_created = models.BooleanField(default=False)
-    solvers = models.ManyToManyField(User)
 
     class Meta:
         unique_together = ('name', 'event')
 
-    def _get_padname(self):
+    def _get_pad_name(self):
         return '%s_%s' % (self.event.name, self.name)
+
+    def get_solve_time(self, user):
+        return self.solver_set.get(user=user).solve_time
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -98,20 +100,28 @@ class Challenge(models.Model):
         return self._pad_created
 
     def get_absolute_etherpad_url(self):
-        return settings.ETHERPAD_PAD_URL + self._get_padname()
+        return settings.ETHERPAD_PAD_URL + self._get_pad_name()
 
     def get_absolute_url(self):
         return reverse('challenge_pad', args=[self.event.name, self.name])
 
     def create_pad(self):
-        pad_name = self._get_padname()
+        pad_name = self._get_pad_name()
         self._pad_created = EtherPadHelper.create_pad(pad_name)
+        self.save()
         return self._pad_created
 
     def solve(self, user):
         if user not in self.solvers.all():
-            self.solvers.add(user)
-            return True
-        else:
-            return False
+            return Solver.objects.create(
+                user=user,
+                challenge=self,
+                solve_time=timezone.now()
+            )
+        return None
 
+
+class Solver(models.Model):
+    challenge = models.ForeignKey(Challenge)
+    user = models.ForeignKey(User)
+    solve_time = models.DateTimeField(blank=True, null=True)

@@ -1,6 +1,8 @@
 import time
 from unittest import skip
 
+from django.utils.formats import date_format
+
 from CTFmanager.models import Event, Challenge
 from functional_tests.pages.challenge.challenge_detail_page import ChallengeDetailPage
 from functional_tests.pages.event.event_detail_page import EventDetailPage
@@ -8,20 +10,32 @@ from ..base import FunctionalTest
 
 
 class SolvingChallengeTest(FunctionalTest):
+
+    def test_user_challenge_start_stop_solving_button(self):
+        """ The user can click on a 'start solving' button.
+        The challenge will be marked as 'solving...' (blue)
+        a 'join_time' field will be set for the user,
+        when he clicks the 'start solving' button.
+        He can also opt-out of a solve by pressing the 'stop solving' button.
+        This button wil only appear after the 'start solving' button has been
+        pressed.
+        """
+
     def test_user_challenge_and_challenge_solving(self):
-        """ A user can click on a solve button on the event and challenge pages.
+        """ The user can click on a solve button on the event and challenge pages.
         The users model than adds the challenge to its 'solved_challenges' field.
         A user is asked for the flag if it does not exist in the challenge model.
         The pages display unsolved challenges as red,
         solved but not by the user as yellow,
         and solved by the user as green.
-        Users can also solve a challenge that is already solved.
+        Users can also solve a challenge that is already solved by someone else.
+        When the user click the 'solve' button. A solve time is set for that user.
         """
         self.create_and_login_user()
         self.add_event()
         event = Event.objects.first()
 
-        Challenge.objects.create(name='not_solved',
+        chal = Challenge.objects.create(name='not_solved',
                                  points='100',
                                  event=event)
         # The user goes to the events page to solve some challenges
@@ -53,6 +67,16 @@ class SolvingChallengeTest(FunctionalTest):
         self.browser.refresh()
         challenges_table = edp.get_challenge_table()
         challenges_table.find_element_by_class_name('bg-success')
+
+        # He goes to the challenges detail page to see that a solve time has been set.
+        self.browser.get(self.server_url + chal.get_absolute_url())
+        solve_dt = chal.get_solve_time(self.user)
+        chal_time = "You solved this challenge at %s" % date_format(solve_dt, 'SHORT_DATETIME_FORMAT', True)
+
+        cdp = ChallengeDetailPage(self, chal.name)
+        solve_time = cdp.get_solve_time()
+
+        self.assertEqual(chal_time, solve_time.text)
 
     @skip("Test passes, but not on CI due to unknown error")
     def test_challenge_pad_solving(self):

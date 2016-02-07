@@ -4,7 +4,7 @@ from unittest.mock import patch, Mock
 from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 
-from CTFmanager.models import Challenge
+from CTFmanager.models import Challenge, Solver
 from CTFmanager.tests.views.base import ViewTestCase
 from CTFmanager.views import challenge_pad
 
@@ -78,7 +78,8 @@ class ChallengeTest(ViewTestCase):
     @patch('CTFmanager.services.get')
     def test_solved_chal_correct_color_is_displayed(self, get_mock):
         chal, event = self.create_event_challenge()
-        chal.solvers.add(self.user)
+        Solver.objects.create(user=self.user,
+                              challenge=chal)
         get_mock.return_value = request_mock = Mock()
         request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
 
@@ -89,7 +90,8 @@ class ChallengeTest(ViewTestCase):
     def test_unsolved_solved_chal_correct_color_is_displayed(self, get_mock):
         chal, event = self.create_event_challenge()
         user2 = User.objects.create_user('testUser')
-        chal.solvers.add(user2)
+        Solver.objects.create(user=user2,
+                              challenge=chal)
         get_mock.return_value = request_mock = Mock()
         request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
 

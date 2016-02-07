@@ -50,3 +50,7 @@ class ChallengeDetailPage(Page):
 
     def press_modal_button(self):
         self.get_modal_button().click()
+        return self
+
+    def get_solve_time(self):
+        return self.get_id('solve_time')

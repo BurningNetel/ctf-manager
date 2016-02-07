@@ -3,12 +3,18 @@
 {% block title %}CTFman - {{ challenge.name }}{% endblock %}
 
 {% load static from staticfiles %}
+
+{% load challenge_tags %}
+
 {% block include %}
     <script src="{% static "js/solve.js" %}"></script>
 {% endblock %}
 
 {% block content %}
     {% include 'event/solve_modal.html' %}
+
+    <p id="solve_time">{% solve_time user challenge %}</p>
+
     {% if request.user in challenge.solvers.all %}
         <div class="panel panel-success">
     {% elif challenge.solvers.count > 0 %}
@@ -16,6 +22,7 @@
     {% else %}
         <div class="panel panel-danger">
     {% endif %}
+
     <div class="panel-heading">{{ challenge.name }}
         <button class="btn btn-xs btn-default btn-solve" data-toggle="modal" data-target="#solve_modal"
                 id="{{ challenge.pk }}">Solve</button>
