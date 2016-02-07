@@ -142,7 +142,9 @@ class NewEventTests(FunctionalTest):
                                   '%s-01-02' % next_year,
                                   'CTF_TEAM_NAME',
                                   'SECURE_PASSWORD',
-                                  'hatstack.nl')
+                                  'hatstack.nl',
+                                  10,
+                                  1200)
 
         # The user is now at the events overview page.
         # He now goes to it's detail page

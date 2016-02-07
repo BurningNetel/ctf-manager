@@ -28,7 +28,7 @@
     </ul>
         <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-            <li id="username"><a href="#">{{ user.get_username }}</a></li>
+            <li id="username"><a href="{% url 'view_profile' user.pk %}">{{ user.get_username }}</a></li>
             {% else %}
             <li>You shouldn't be here</li>
             {% endif %}

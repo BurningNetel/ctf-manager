@@ -88,7 +88,9 @@ class EventModelTest(EventModelTestCase):
                                      username="Us3rn4me",
                                      password="_-1aB.,",
                                      url="test",
-                                     created_by=_user.username)
+                                     created_by=_user.username,
+                                      min_score=100,
+                                      max_score=1800)
         _event.save()
 
         event = Event.objects.first()
@@ -99,6 +101,8 @@ class EventModelTest(EventModelTestCase):
         self.assertEqual(event.password, "_-1aB.,")
         self.assertEqual(event.url, "test")
         self.assertEqual(event.created_by, _user.username)
+        self.assertEqual(event.min_score, 100)
+        self.assertEqual(event.max_score, 1800)
 
 
 class EventAndChallengeTest(EventModelTest):

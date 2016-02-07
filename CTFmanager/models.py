@@ -22,8 +22,10 @@ class Event(models.Model):
     password = models.CharField(default='', max_length=200, blank=True)
     url = models.CharField(default='', max_length=200, blank=True)
     end_date = models.DateTimeField(blank=True, null=True)
-    creation_date = models.DateTimeField(default=timezone.now(), blank=True)
+    creation_date = models.DateTimeField(default=timezone.now, blank=True)
     created_by = models.SlugField(default='Anonymous', blank=True)
+    min_score = models.PositiveIntegerField(blank=True, null=True)
+    max_score = models.PositiveIntegerField(blank=True, null=True)
 
     members = models.ManyToManyField(User)
 

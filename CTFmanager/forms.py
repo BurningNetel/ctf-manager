@@ -9,6 +9,9 @@ from .models import Event, Challenge
 
 EMPTY_FIELD_ERROR = "Required!"
 DUPLICATE_ERROR = "Challenge already exists!"
+MIN_MAX_ERROR = "Min score must be less than max score."
+MAX_ERROR = "Minimal value must be provided."
+MIN_ERROR = "Maximal value must be provided"
 
 
 class EventForm(forms.ModelForm):
@@ -30,10 +33,33 @@ class EventForm(forms.ModelForm):
             Field('username'),
             Field('password'),
             Field('location'),
+            Field('min_score'),
+            Field('max_score'),
             FormActions(
                 Submit('save', 'Save')
             )
         )
+
+    def clean(self):
+        super(EventForm, self).clean()
+        form_data = self.cleaned_data
+
+        min_score = form_data['min_score']
+        max_score = form_data['max_score']
+
+        self.validate_min_max_score_fields(max_score, min_score)
+
+        return form_data
+
+    def validate_min_max_score_fields(self, max_score, min_score):
+        if min_score and max_score:
+            if min_score >= max_score:
+                self.add_error('min_score', MIN_MAX_ERROR)
+        if min_score or max_score:
+            if min_score is None and max_score is not None:
+                self.add_error('max_score', MAX_ERROR)
+            elif max_score is None and min_score is not None:
+                self.add_error('min_score', MIN_ERROR)
 
     class Meta:
         model = Event
