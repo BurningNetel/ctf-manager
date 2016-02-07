@@ -1,4 +1,4 @@
-from ...page import Page
+from functional_tests.pages.page import Page
 
 class ProfilePage(Page):
 

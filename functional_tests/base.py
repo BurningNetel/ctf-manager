@@ -10,8 +10,8 @@ from django.utils.timezone import timedelta
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from CTFmanager.models import Event
-from functional_tests.pages.CTFmanager.add_challenge_page import AddChallengePage
 from functional_tests.pages.accounts.login_page import LoginPage
+from functional_tests.pages.challenge.add_challenge_page import AddChallengePage
 from .server_tools import reset_database
 
 SCREEN_DUMP_LOCATION = os.path.join(

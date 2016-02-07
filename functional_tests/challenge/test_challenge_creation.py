@@ -1,7 +1,7 @@
 from CTFmanager.models import Event, Challenge
 from functional_tests.base import FunctionalTest
-from functional_tests.pages.CTFmanager.add_challenge_page import AddChallengePage
-from functional_tests.pages.CTFmanager.event_detail_page import EventDetailPage
+from functional_tests.pages.challenge.add_challenge_page import AddChallengePage
+from functional_tests.pages.event.event_detail_page import EventDetailPage
 
 
 class CreatingChallengesTest(FunctionalTest):

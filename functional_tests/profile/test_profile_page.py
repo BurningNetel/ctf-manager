@@ -3,7 +3,7 @@ import time
 from django.contrib.auth.models import User
 
 from CTFmanager.models import Challenge, Event
-from functional_tests.pages.CTFmanager.profile.profile_page import ProfilePage
+from functional_tests.pages.profile import ProfilePage
 from ..base import FunctionalTest
 
 

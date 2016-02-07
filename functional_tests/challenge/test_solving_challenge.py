@@ -2,8 +2,8 @@ import time
 from unittest import skip
 
 from CTFmanager.models import Event, Challenge
-from functional_tests.pages.CTFmanager.challenge_detail_page import ChallengeDetailPage
-from functional_tests.pages.CTFmanager.event_detail_page import EventDetailPage
+from functional_tests.pages.challenge.challenge_detail_page import ChallengeDetailPage
+from functional_tests.pages.event.event_detail_page import EventDetailPage
 from ..base import FunctionalTest
 
 

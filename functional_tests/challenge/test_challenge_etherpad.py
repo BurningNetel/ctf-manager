@@ -2,8 +2,8 @@ from django.conf import settings
 
 from CTFmanager.models import Event, Challenge
 from functional_tests.base import FunctionalTest
-from functional_tests.pages.CTFmanager.challenge_detail_page import ChallengeDetailPage
-from functional_tests.pages.CTFmanager.event_detail_page import EventDetailPage
+from functional_tests.pages.challenge.challenge_detail_page import ChallengeDetailPage
+from functional_tests.pages.event.event_detail_page import EventDetailPage
 
 
 class EtherpadCreationTest(FunctionalTest):
