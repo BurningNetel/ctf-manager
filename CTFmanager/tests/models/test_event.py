@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytz
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -10,6 +12,8 @@ from CTFmanager.models import Event, Challenge
 
 class EventModelTestCase(TestCase):
     tz = pytz.timezone('Europe/Amsterdam')
+    def setUp(self):
+        self.tz = pytz.timezone("Europe/Amsterdam")
 
     def create_event_object(self, _name="test", is_in_future=True):
         if is_in_future:
@@ -20,8 +24,6 @@ class EventModelTestCase(TestCase):
 
 
 class EventModelTest(EventModelTestCase):
-    def setUp(self):
-        self.tz = pytz.timezone("Europe/Amsterdam")
 
     def test_saving_and_retrieving_event(self):
         # Not using create_event_object because exact date is asserted
@@ -104,8 +106,37 @@ class EventModelTest(EventModelTestCase):
         self.assertEqual(event.min_score, 100)
         self.assertEqual(event.max_score, 1800)
 
+    def test_first_challenge_added_doesnt_update_min_max(self):
+        event = self.create_event_object()
+        Challenge.objects.create(name='chal', points=500, event=event)
 
-class EventAndChallengeTest(EventModelTest):
+        event = Event.objects.first()
+
+        self.assertIsNone(event.min_score)
+        self.assertIsNone(event.max_score)
+
+    def test_two_challenges_added_updates_min_max_when_not_set(self):
+        event = self.create_event_object()
+        chal_min = Challenge.objects.create(name='chal', points=100, event=event)
+        chal_max = Challenge.objects.create(name='chal2', points=400, event=event)
+
+        event = Event.objects.first()
+
+        self.assertEqual(chal_min.points, event.min_score)
+        self.assertEqual(chal_max.points, event.max_score)
+
+    def test_two_challenges_added_doesnt_update_min_max_when_equal_score(self):
+        event = self.create_event_object()
+        Challenge.objects.create(name='chal', points=100, event=event)
+        Challenge.objects.create(name='chal2', points=100, event=event)
+
+        event = Event.objects.first()
+
+        self.assertIsNone(event.min_score)
+        self.assertIsNone(event.max_score)
+
+
+class EventAndChallengeTest(EventModelTestCase):
     def test_challenge_is_related_to_event(self):
         _event = self.create_event_object('test', True)
         chal = Challenge.objects.create(name='chal', points=500, event=_event)
@@ -122,8 +153,19 @@ class EventAndChallengeTest(EventModelTest):
 
         self.assertEqual(1, _event.challenge_set.count())
 
+    @patch('CTFmanager.models.Event.challenge_added')
+    def test_on_challenge_save_events_update_method_is_called(self, challenge_added_mock):
+        event = self.create_event_object()
 
-class EventAndUserTest(EventModelTest):
+        chal = Challenge(name='chal', points=500, event=event)
+        chal.save()
+
+        self.assertEqual(1, challenge_added_mock.call_count)
+        self.assertEqual(chal, challenge_added_mock.call_args[0][0])
+
+
+
+class EventAndUserTest(EventModelTestCase):
 
     def test_event_join_method(self):
         _event = self.create_event_object()

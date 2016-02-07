@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Min, Max
 from django.utils import timezone
 
 from .services import EtherPadHelper
@@ -10,6 +11,7 @@ from .services import EtherPadHelper
 class Event(models.Model):
     """
     The optional fields are: Description, Location, End_Date, Credentials, URL
+    min_score, max_score
     (hidden fields): Creation_Date, Created_By
     """
     name = models.SlugField(primary_key=True, max_length=20, default='')
@@ -46,6 +48,24 @@ class Event(models.Model):
     def get_absolute_url(self):
         return reverse('view_event', args=[self.name])
 
+    def challenge_added(self, challenge):
+        if self.challenge_set.count() > 1:
+            if not self.min_score and not self.max_score:
+                result = self.challenge_set.aggregate(Min('points'), Max('points'))
+
+                if not result['points__min'] is result['points__max']:
+                    self.min_score = result['points__min']
+                    self.max_score = result['points__max']
+            else:
+                chal_p = challenge.points
+
+                if chal_p > self.max_score:
+                    self.max_score = chal_p
+                elif chal_p < self.min_score:
+                    self.min_score = chal_p
+            self.save()
+
+
     @property
     def is_upcoming(self):
         if self.date > timezone.now():
@@ -67,6 +87,11 @@ class Challenge(models.Model):
 
     def _get_padname(self):
         return '%s_%s' % (self.event.name, self.name)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super(Challenge, self).save(force_insert, force_update, using, update_fields)
+        self.event.challenge_added(self)
 
     @property
     def get_pad_created(self):
