@@ -9,10 +9,10 @@ from .test_event import EventModelTestCase
 
 class ChallengeModelTestCase(EventModelTestCase):
     def create_new_event_challenge(self):
-        event = self.create_event_object('testEvent')
+        self.event = self.create_event_object('testEvent')
         chal = Challenge.objects.create(name='testChallenge',
                                         points='500',
-                                        event=event)
+                                        event=self.event)
         return chal
 
 
@@ -56,6 +56,12 @@ class ChallengeSolvedByTest(ChallengeModelTestCase):
     def setUp(self):
         super(ChallengeSolvedByTest, self).setUp()
         self.user = User.objects.create_user('testUser')
+
+    def test_challenge_solve_adds_user_to_event(self):
+        chal = self.create_new_event_challenge()
+        chal.solve(self.user)
+
+        self.assertIn(self.user, self.event.members.all())
 
     def test_challenge_solve_method(self):
         chal = self.create_new_event_challenge()

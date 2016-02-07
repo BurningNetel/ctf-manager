@@ -113,6 +113,7 @@ class Challenge(models.Model):
 
     def solve(self, user):
         if user not in self.solvers.all():
+            self.event.join(user)
             return Solver.objects.create(
                 user=user,
                 challenge=self,

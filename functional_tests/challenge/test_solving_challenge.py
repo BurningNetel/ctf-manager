@@ -106,3 +106,6 @@ class SolvingChallengeTest(FunctionalTest):
         # The color of the panel header is now green
         header_classes = cdp.get_panel().get_attribute('class')
         self.assertIn('panel-success', header_classes)
+
+        # The user automatically joins the event when he solves a challenge in that event
+        self.assertIn(self.user, event.members.all())
