@@ -6,8 +6,7 @@ from CTFmanager.models import Challenge
 from .test_event import EventModelTestCase
 
 
-class ChallengeModelTest(EventModelTestCase):
-
+class ChallengeModelTestCase(EventModelTestCase):
     def create_new_event_challenge(self):
         event = self.create_event_object('testEvent')
         chal = Challenge.objects.create(name='testChallenge',
@@ -15,6 +14,8 @@ class ChallengeModelTest(EventModelTestCase):
                                         event=event)
         return chal
 
+
+class ChallengeModelTest(ChallengeModelTestCase):
     def test_challenges_reverses_to_challenge_pad_page(self):
         chal = self.create_new_event_challenge()
         event = chal.event
@@ -50,7 +51,7 @@ class ChallengeModelTest(EventModelTestCase):
         self.assertEqual(1, get_mock.call_count)
 
 
-class ChallengeSolvedByTest(ChallengeModelTest):
+class ChallengeSolvedByTest(ChallengeModelTestCase):
     def test_challenge_solve_method(self):
         chal = self.create_new_event_challenge()
         user = User.objects.create_user('testUser')
