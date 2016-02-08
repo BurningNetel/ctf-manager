@@ -54,3 +54,13 @@ class ChallengeDetailPage(Page):
 
     def get_solve_time(self):
         return self.get_id('solve_time')
+
+    def get_join_time(self):
+        return self.get_id('join_time')
+
+    def get_solving_button(self):
+        return self.test.browser.find_element_by_class_name('btn-solving')
+
+    def press_solving_button(self):
+        self.get_solving_button().click()
+        return self

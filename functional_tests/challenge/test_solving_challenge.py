@@ -20,6 +20,70 @@ class SolvingChallengeTest(FunctionalTest):
         This button wil only appear after the 'start solving' button has been
         pressed.
         """
+        self.create_and_login_user()
+        self.add_event()
+        event = Event.objects.first()
+
+        chal = Challenge.objects.create(name='solving',
+                                        points=200,
+                                        event=event)
+
+        # The user goes to the events detail page
+        edp = EventDetailPage(self, event.name).get_page()
+
+        # He clicks the 'start solving' button to communicate that he is going to solve this challenge.
+        solving_button = edp.get_solving_button()
+        self.assertEqual('Start Solving', solving_button.text)
+        edp.press_solving_button(chal.pk)
+
+        # The buttons text changes
+        solving_button = edp.get_solving_button()
+        self.assertEqual('Stop Solving', solving_button.text)
+
+        # The challenges background turns blue, indicating that he is solving the challenge
+        edp.get_challenge_table().find_element_by_class_name('bg-info')
+
+        # He goes to solve the challenge on the challenges detail page.
+        cdp = ChallengeDetailPage(self, chal.name).get_page()
+
+        # There he finds the join time
+        join_time = cdp.get_join_time()
+        chal_join_time = date_format("You started solving this challenge on %s."
+                                     % chal.get_join_time(self.user),
+                                     'SHORT_DATETIME_FORMAT', True)
+        self.assertEqual(chal_join_time, join_time)
+
+        # And the header is blue
+        header_classes = cdp.get_panel().get_attribute('class')
+        self.assertIn('panel-info', header_classes)
+
+        # And the solving button has the 'stop solving' text
+        solving_button = cdp.get_solving_button()
+        self.assertEqual('Stop Solving', solving_button.text)
+
+        # He decides that the challenge is too hard, and click the 'stop solving' button.
+        cdp.press_solving_button()
+
+        # The solve button changes text
+        solving_button = cdp.get_solving_button()
+        self.assertEqual('Start Solving', solving_button.text)
+
+        # And the join time disappears:
+        cdp.get_join_time()  # Expect to fail
+
+        # And the headers color is red again
+        header_classes = cdp.get_panel().get_attribute('class')
+        self.assertIn('panel-danger', header_classes)
+
+        # He goes back to the events page
+        edp.get_page()
+
+        # He sees the buttons text is back to its original form
+        solving_button = edp.get_solving_button()
+        self.assertEqual('Start Solving', solving_button.text)
+
+        # And the challenges background color is red again
+        edp.get_challenge_table().find_element_by_class_name('bg-danger')
 
     def test_user_challenge_and_challenge_solving(self):
         """ The user can click on a solve button on the event and challenge pages.
@@ -54,9 +118,11 @@ class SolvingChallengeTest(FunctionalTest):
         modal_header = edp.get_modal_header()
         time.sleep(0.5)
         self.assertIn('Solve challenge', modal_header.text)
+
         # He fills in the flag
         self.assertIn('Flag', modal_body.text)
         edp.type_in_modal_flag_field('flag{insertmd5hashinhere}')
+
         # And confirms his actions
         edp.press_modal_button()
 
