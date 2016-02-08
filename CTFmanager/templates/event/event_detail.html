@@ -2,6 +2,7 @@
 {% block title %}CTFman - {{ event.name }}{% endblock %}
 
 {% load static from staticfiles %}
+{% load challenge_tags %}
 {% block include %}
     <script src="{% static "js/solve.js" %}"></script>
 {% endblock %}
@@ -82,23 +83,31 @@
             <small><a class="btn btn-default btn-sm" id="btn_add_challenge" href="{{ event.name }}/new">Add Challenge</a></small>
         </h2>
     </div>
-    <table class="table table-striped">
+    <table class="table table-striped clearfix">
         {% for challenge in event.challenge_set.all %}
             <tr id="{{ challenge.pk }}" >
-            {% if request.user in challenge.solvers.all %}
+            {% if user|solved:challenge %}
                 <td class="bg-success">
-            {% elif challenge.solvers.count > 0 %}
+            {% elif user|is_solving:challenge %}
+                <td class="bg-info">
+            {% elif challenge|is_solved %}
                 <td class="bg-warning">
             {% else %}
                 <td class="bg-danger">
             {% endif %}
-                    <a href="{% url 'challenge_pad' event.name challenge.name %}">
-                        {{ challenge.name }}
-                    </a> - {{ challenge.points }}
+                <a href="{% url 'challenge_pad' event.name challenge.name %}">
+                    {{ challenge.name }}
+                </a> - {{ challenge.points }}
+            <div class="pull-right">
+                {% if user|is_solving:challenge %}
+                    <button class="btn btn-xs btn-info btn-solving">Stop Solving</button>
+                {% else %}
                     <button class="btn btn-xs btn-info btn-solving">Start Solving</button>
-                    <button class="btn btn-xs btn-succes btn-solve"
-                            data-toggle="modal" data-target="#solve_modal">Solve</button>
+                {% endif %}
+                <button class="btn btn-xs btn-success btn-solve"
+                        data-toggle="modal" data-target="#solve_modal">Solve</button>
                 </td>
+            </div>
             </tr>
         {% empty %}
             <tr><td>No Challenges!</td></tr>

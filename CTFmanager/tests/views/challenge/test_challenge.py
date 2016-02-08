@@ -92,8 +92,7 @@ class ChallengeTest(ViewTestCase):
     def test_unsolved_solved_chal_correct_color_is_displayed(self, get_mock):
         chal, event = self.create_event_challenge()
         user2 = User.objects.create_user('testUser')
-        Solver.objects.create(user=user2,
-                              challenge=chal)
+        chal.solve(user2)
         get_mock.return_value = request_mock = Mock()
         request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
 

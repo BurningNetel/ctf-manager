@@ -38,3 +38,7 @@ def is_solving(user, challenge):
     if challenge.get_join_time(user):
         return True
     return False
+
+@register.filter
+def is_solved(challenge):
+    return challenge.is_solved()

@@ -3,10 +3,11 @@ import json
 from django.core.urlresolvers import reverse
 
 from CTFmanager.forms import SolveForm
+from CTFmanager.models import Challenge
 from CTFmanager.tests.views.base import ViewTestCase
 
-class JoinViewTestCase(ViewTestCase):
 
+class JoinViewTestCase(ViewTestCase):
     def setUp(self):
         super(JoinViewTestCase, self).setUp()
         self.chal, self.event = self.create_event_challenge()
@@ -26,8 +27,19 @@ class JoinViewTestCase(ViewTestCase):
         self.assertFalse(_json['success'])
         self.assertNotIn(self.user, self.chal.solvers.all())
 
-class SolveFormViewTestCase(ViewTestCase):
+    def test_valid_DELETE_returns_true_and_sets_join_time_to_none(self):
+        self.chal.join(self.user)
+        response = self.client.delete(reverse('join_challenge', args=[self.chal.pk]))
 
+        _json = json.loads(response.content.decode())
+
+        chal = Challenge.objects.get(pk=self.chal.pk)
+
+        self.assertTemplateUsed(_json['success'])
+        self.assertIsNone(chal.get_join_time(self.user))
+
+
+class SolveFormViewTestCase(ViewTestCase):
     def setUp(self):
         super(SolveFormViewTestCase, self).setUp()
         self.chal, self.event = self.create_event_challenge('testChal')
@@ -54,4 +66,4 @@ class SolveFormViewTestCase(ViewTestCase):
 
     def post_valid_response(self):
         return self.client.post(reverse('solve_form', args=[self.chal.pk]),
-                                    data={'flag': 'test{flag}'})
+                                data={'flag': 'test{flag}'})

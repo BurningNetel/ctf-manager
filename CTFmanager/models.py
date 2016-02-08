@@ -103,9 +103,17 @@ class Challenge(models.Model):
         if user not in self.solvers.all():
             Solver.objects.create(user=user, challenge=self, join_time=timezone.now())
         else:
-            solver = Solver.objects.get(user=user)
+            solver = self.solver_set.get(user=user)
             solver.join_time = timezone.now()
             solver.save()
+
+    def leave(self, user):
+        if user in self.solvers.all():
+            solve = self.solver_set.get(user=user)
+            solve.join_time = None
+            solve.save()
+            return True
+        return False
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -142,6 +150,12 @@ class Challenge(models.Model):
             solve.solve_time = timezone.now()
             solve.save()
             return True
+        return False
+
+    def is_solved(self):
+        for solve in self.solver_set.all():
+            if solve.solve_time is not None:
+                return True
         return False
 
 

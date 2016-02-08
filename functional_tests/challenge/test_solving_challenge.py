@@ -44,7 +44,7 @@ class SolvingChallengeTest(FunctionalTest):
 
         # He goes to solve the challenge on the challenges detail page.
         cdp = ChallengeDetailPage(self, chal.name).get_page(event.pk, chal.name)
-
+        time.sleep(1)
         # There he finds the join time
         join_time = cdp.get_join_time()
         chal_join_time = "You started solving this challenge on %s." \
@@ -66,9 +66,6 @@ class SolvingChallengeTest(FunctionalTest):
         # The solve button changes text
         solving_button = cdp.get_solving_button()
         self.assertEqual('Start Solving', solving_button.text)
-
-        # And the join time disappears:
-        cdp.get_join_time()  # Expect to fail
 
         # And the headers color is red again
         header_classes = cdp.get_panel().get_attribute('class')

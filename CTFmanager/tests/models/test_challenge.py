@@ -90,7 +90,6 @@ class ChallengeSolvedByTest(ChallengeModelTestCase):
         self.assertIn(self.user, chal.solvers.all())
         self.assertTrue(result)
 
-
     def test_challenge_get_solve_time(self):
         chal = self.create_new_event_challenge()
         solve_time = timezone.now()
@@ -143,3 +142,23 @@ class ChallengeSolvedByTest(ChallengeModelTestCase):
         self.assertIn(self.user, chal.solvers.all())
         self.assertTrue(solve.join_time > now)
 
+    def test_challenge_leave(self):
+        chal = self.create_new_event_challenge()
+        Solver.objects.create(user=self.user, challenge=chal, join_time=timezone.now())
+        result = chal.leave(self.user)
+
+        self.assertTrue(result)
+        self.assertIsNone(chal.get_join_time(self.user))
+
+    def test_challenge_leave_user_not_in_solvers(self):
+        chal = self.create_new_event_challenge()
+        result = chal.leave(self.user)
+
+        self.assertFalse(result)
+        self.assertIsNone(chal.get_join_time(self.user))
+
+    def test_is_solved(self):
+        chal = self.create_new_event_challenge()
+        self.assertFalse(chal.is_solved())
+        chal.solve(self.user)
+        self.assertTrue(chal.is_solved())

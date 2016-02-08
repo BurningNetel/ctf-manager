@@ -14,8 +14,8 @@ $( document ).ready(function() {
                         formAjaxSubmit(form, modal);
                     } else {
                         var row = $('#' + last_chal_id);
-                        if(row.parent().parent().hasClass('panel')) {
-                            row.parent().parent().removeClass('panel-danger panel-warning').addClass('panel-success');
+                        if(row.parent().hasClass('panel')) {
+                            row.parent().removeClass('panel-danger panel-warning').addClass('panel-success');
                         } else {
                             row.find('td').removeClass('bg-danger bg-warning bg-info').addClass('bg-success');
                         }
@@ -29,7 +29,11 @@ $( document ).ready(function() {
 
     // ButtonHandler for the Solve button
     $('.btn-solve').click(function (e) {
-        last_chal_id = $(this).closest('tr').attr('id');
+        last_chal_id = $(e.target).closest('tr').attr('id');
+        if (last_chal_id == undefined)
+        {
+            last_chal_id = $(e.target).parent().parent().attr('id')
+        }
         var url = '/events/solve-form/' + last_chal_id;
         $('#form-modal-body').load(url, function (){
             $('#form-modal').modal('toggle');
@@ -45,22 +49,52 @@ $( document ).ready(function() {
     // Button Handler for the Start/Stop Solving button
     $('.btn-solving').click(function(e){
         e.preventDefault();
-        last_chal_id = $(this).closest('tr').attr('id');
+        last_chal_id = $(e.target).closest('tr').attr('id');
+        if (last_chal_id == undefined)
+        {
+            last_chal_id = $(e.target).parent().parent().attr('id')
+        }
+
         var url = '/events/join-challenge/' + last_chal_id;
-        $.ajax({
-            type: "POST",
-            url: url,
-            success: function (data) {
-                var success = data['success'];
-                if (success){
-                    var row = $('#' + last_chal_id);
-                    row.find('td').removeClass('bg-danger bg-success bg-warning').addClass('bg-info');
-                    $(e.target).html('Stop Solving');
-                } else {
-                    alert('something went wrong!');
+        if($(e.target).html() == 'Start Solving') {
+            $.ajax({
+                type: "POST",
+                url: url,
+                success: function (data) {
+                    var success = data['success'];
+                    if (success){
+                        var row = $('#' + last_chal_id);
+                        if(row.parent().hasClass('panel')) {
+                            row.parent().removeClass('panel-warning panel-danger').addClass('panel-info');
+                        } else {
+                            row.find('td').removeClass('bg-danger bg-warning').addClass('bg-info');
+                        }
+                        $(e.target).html('Stop Solving');
+                    } else {
+                        alert('something went wrong!');
+                    }
                 }
-            }
-        });
+            })
+        } else {
+            $.ajax({
+                type: "DELETE",
+                url: url,
+                success: function (data) {
+                    var success = data['success'];
+                    if (success){
+                        var row = $('#' + last_chal_id);
+                        if(row.parent().hasClass('panel')) {
+                            row.parent().removeClass('panel-succes panel-info panel-warning').addClass('panel-danger');
+                        } else {
+                            row.find('td').removeClass('bg-warning bg-success bg-info').addClass('bg-danger');
+                        }
+                        $(e.target).html('Start Solving');
+                    } else {
+                        alert('something went wrong!');
+                    }
+                }
+            })
+        }
 
     });
 

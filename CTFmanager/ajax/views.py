@@ -50,6 +50,15 @@ def join_challenge(request, challenge_pk):
         else:
             return JsonResponse({'success': False})
 
+    if request.method == 'DELETE':
+        if request.user.is_authenticated():
+            chal = Challenge.objects.get(pk=challenge_pk)
+            success = chal.leave(request.user)
+            chal.save()
+            return JsonResponse({'success': success})
+        else:
+            return JsonResponse({'success': False})
+
 
 def event_join(request, event_name):
     if request.user.is_authenticated():
