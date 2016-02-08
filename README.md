@@ -1,5 +1,6 @@
 # CTFmanager
 Staging: http://ctfmanstaging.joepseuren.xyz
+
 Uses Etherpad to create a powerfull tool to manage and play with a CTF team
 
 Written in Django.
