@@ -81,6 +81,16 @@ class ChallengeSolvedByTest(ChallengeModelTestCase):
         self.assertIn(self.user, chal.solvers.all())
         self.assertFalse(result)
 
+    def test_challenge_solve_solver_already_exists(self):
+        chal = self.create_new_event_challenge()
+        Solver.objects.create(challenge=chal, user=self.user)
+
+        result = chal.solve(self.user)
+
+        self.assertIn(self.user, chal.solvers.all())
+        self.assertTrue(result)
+
+
     def test_challenge_get_solve_time(self):
         chal = self.create_new_event_challenge()
         solve_time = timezone.now()
@@ -90,4 +100,46 @@ class ChallengeSolvedByTest(ChallengeModelTestCase):
 
         self.assertEqual(solve_time, chal_solve_time)
 
+    def test_challenge_solve_time_not_set_returns_none(self):
+        chal = self.create_new_event_challenge()
+        chal_solve_time = chal.get_solve_time(self.user)
+
+        self.assertIsNone(chal_solve_time)
+
+    def test_challenge_get_join_time(self):
+        chal = self.create_new_event_challenge()
+        join_time = timezone.now()
+        Solver.objects.create(challenge=chal, user=self.user, join_time=join_time)
+
+        chal_join_time = chal.get_join_time(self.user)
+
+        self.assertEqual(join_time, chal_join_time)
+
+    def test_challenge_get_join_time_not_set_returns_none(self):
+        chal = self.create_new_event_challenge()
+
+        chal_join_time = chal.get_join_time(self.user)
+
+        self.assertIsNone(chal_join_time)
+
+    def test_challenge_set_join_time(self):
+        chal = self.create_new_event_challenge()
+        now = timezone.now()
+
+        chal.join(self.user)
+        solve = Solver.objects.get(user=self.user)
+
+        self.assertIn(self.user, chal.solvers.all())
+        self.assertTrue(solve.join_time > now)
+
+    def test_challenge_set_join_time_solver_already_created(self):
+        chal = self.create_new_event_challenge()
+        Solver.objects.create(user=self.user, challenge=chal)
+        now = timezone.now()
+
+        chal.join(self.user)
+        solve = Solver.objects.get(user=self.user)
+
+        self.assertIn(self.user, chal.solvers.all())
+        self.assertTrue(solve.join_time > now)
 

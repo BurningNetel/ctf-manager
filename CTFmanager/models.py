@@ -88,7 +88,24 @@ class Challenge(models.Model):
         return '%s_%s' % (self.event.name, self.name)
 
     def get_solve_time(self, user):
-        return self.solver_set.get(user=user).solve_time
+        try:
+            return self.solver_set.get(user=user).solve_time
+        except Solver.DoesNotExist:
+            return None
+
+    def get_join_time(self, user):
+        try:
+            return self.solver_set.get(user=user).join_time
+        except Solver.DoesNotExist:
+            return None
+
+    def join(self, user):
+        if user not in self.solvers.all():
+            Solver.objects.create(user=user, challenge=self, join_time=timezone.now())
+        else:
+            solver = Solver.objects.get(user=user)
+            solver.join_time = timezone.now()
+            solver.save()
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -112,17 +129,24 @@ class Challenge(models.Model):
         return self._pad_created
 
     def solve(self, user):
+        self.event.join(user)
+
         if user not in self.solvers.all():
-            self.event.join(user)
             return Solver.objects.create(
                 user=user,
                 challenge=self,
                 solve_time=timezone.now()
             )
-        return None
+        solve = self.solver_set.get(user=user)
+        if not solve.solve_time:
+            solve.solve_time = timezone.now()
+            solve.save()
+            return True
+        return False
 
 
 class Solver(models.Model):
     challenge = models.ForeignKey(Challenge)
     user = models.ForeignKey(User)
     solve_time = models.DateTimeField(blank=True, null=True)
+    join_time = models.DateTimeField(blank=True, null=True)

@@ -3,6 +3,7 @@ from unittest.mock import patch, Mock
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
+from django.utils import timezone
 
 from CTFmanager.models import Challenge, Solver
 from CTFmanager.tests.views.base import ViewTestCase
@@ -79,7 +80,8 @@ class ChallengeTest(ViewTestCase):
     def test_solved_chal_correct_color_is_displayed(self, get_mock):
         chal, event = self.create_event_challenge()
         Solver.objects.create(user=self.user,
-                              challenge=chal)
+                              challenge=chal,
+                              solve_time=timezone.now())
         get_mock.return_value = request_mock = Mock()
         request_mock.json.return_value = {'code': 0, 'message':'ok', 'data': None}
 

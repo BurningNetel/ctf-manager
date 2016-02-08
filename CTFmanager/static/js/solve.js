@@ -13,11 +13,11 @@ $( document ).ready(function() {
                         $(modal).find('.modal-body').html(xhr);
                         formAjaxSubmit(form, modal);
                     } else {
-                        var btn = $('#' + last_chal_id);
-                        if(btn.parent().parent().hasClass('panel')) {
-                            btn.parent().parent().removeClass('panel-danger panel-warning').addClass('panel-success');
+                        var row = $('#' + last_chal_id);
+                        if(row.parent().parent().hasClass('panel')) {
+                            row.parent().parent().removeClass('panel-danger panel-warning').addClass('panel-success');
                         } else {
-                            btn.closest('td').removeClass('bg-danger bg-warning').addClass('bg-success');
+                            row.find('td').removeClass('bg-danger bg-warning bg-info').addClass('bg-success');
                         }
                     }
                 },
@@ -27,17 +27,41 @@ $( document ).ready(function() {
         });
     };
 
+    // ButtonHandler for the Solve button
     $('.btn-solve').click(function (e) {
-        last_chal_id = $(this).attr('id');
-        var url = '/events/solve-form/' + last_chal_id
+        last_chal_id = $(this).closest('tr').attr('id');
+        var url = '/events/solve-form/' + last_chal_id;
         $('#form-modal-body').load(url, function (){
             $('#form-modal').modal('toggle');
             formAjaxSubmit('#form-modal-body form', '#form-modal');
         });
     });
 
+    // Button Handler for the Modals Submit button
     $('#btn_modal_submit').click(function (e) {
         $('#form-modal-body').find('form').submit();
+    });
+
+    // Button Handler for the Start/Stop Solving button
+    $('.btn-solving').click(function(e){
+        e.preventDefault();
+        last_chal_id = $(this).closest('tr').attr('id');
+        var url = '/events/join-challenge/' + last_chal_id;
+        $.ajax({
+            type: "POST",
+            url: url,
+            success: function (data) {
+                var success = data['success'];
+                if (success){
+                    var row = $('#' + last_chal_id);
+                    row.find('td').removeClass('bg-danger bg-success bg-warning').addClass('bg-info');
+                    $(e.target).html('Stop Solving');
+                } else {
+                    alert('something went wrong!');
+                }
+            }
+        });
+
     });
 
     csrf_setup();

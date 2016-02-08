@@ -25,6 +25,7 @@ class ViewTestCase(TestCase):
                                         points='500',
                                         event=event)
         return chal, event
+
     def setUp(self):
         self.user = User.objects.create_user('TestUser1', 'test@test.nl', 'test')
         self.client.login(username=self.user.username, password='test')

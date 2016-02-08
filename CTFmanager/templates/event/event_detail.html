@@ -84,7 +84,7 @@
     </div>
     <table class="table table-striped">
         {% for challenge in event.challenge_set.all %}
-            <tr>
+            <tr id="{{ challenge.pk }}" >
             {% if request.user in challenge.solvers.all %}
                 <td class="bg-success">
             {% elif challenge.solvers.count > 0 %}
@@ -95,8 +95,9 @@
                     <a href="{% url 'challenge_pad' event.name challenge.name %}">
                         {{ challenge.name }}
                     </a> - {{ challenge.points }}
-                    <button class="btn btn-xs btn-default btn-solve" data-toggle="modal" data-target="#solve_modal"
-                            id="{{ challenge.pk }}">Solve</button>
+                    <button class="btn btn-xs btn-info btn-solving">Start Solving</button>
+                    <button class="btn btn-xs btn-succes btn-solve"
+                            data-toggle="modal" data-target="#solve_modal">Solve</button>
                 </td>
             </tr>
         {% empty %}

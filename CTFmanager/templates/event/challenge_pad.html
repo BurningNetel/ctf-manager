@@ -13,12 +13,17 @@
 {% block content %}
     {% include 'event/solve_modal.html' %}
 
+    <p id="join_time">{% join_time user challenge %}</p>
     <p id="solve_time">{% solve_time user challenge %}</p>
 
-    {% if request.user in challenge.solvers.all %}
+    {% if request.user|solved:challenge %}
         <div class="panel panel-success">
     {% elif challenge.solvers.count > 0 %}
-        <div class="panel panel-warning">
+        {% if request.user|is_solving:challenge %}
+            <div class="panel panel-info">
+        {% else %}
+            <div class="panel panel-warning">
+        {% endif %}
     {% else %}
         <div class="panel panel-danger">
     {% endif %}

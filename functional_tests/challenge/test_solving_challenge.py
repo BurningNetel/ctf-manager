@@ -10,7 +10,6 @@ from ..base import FunctionalTest
 
 
 class SolvingChallengeTest(FunctionalTest):
-
     def test_user_challenge_start_stop_solving_button(self):
         """ The user can click on a 'start solving' button.
         The challenge will be marked as 'solving...' (blue)
@@ -34,7 +33,7 @@ class SolvingChallengeTest(FunctionalTest):
         # He clicks the 'start solving' button to communicate that he is going to solve this challenge.
         solving_button = edp.get_solving_button()
         self.assertEqual('Start Solving', solving_button.text)
-        edp.press_solving_button(chal.pk)
+        edp.press_solving_button()
 
         # The buttons text changes
         solving_button = edp.get_solving_button()
@@ -44,14 +43,14 @@ class SolvingChallengeTest(FunctionalTest):
         edp.get_challenge_table().find_element_by_class_name('bg-info')
 
         # He goes to solve the challenge on the challenges detail page.
-        cdp = ChallengeDetailPage(self, chal.name).get_page()
+        cdp = ChallengeDetailPage(self, chal.name).get_page(event.pk, chal.name)
 
         # There he finds the join time
         join_time = cdp.get_join_time()
-        chal_join_time = date_format("You started solving this challenge on %s."
-                                     % chal.get_join_time(self.user),
-                                     'SHORT_DATETIME_FORMAT', True)
-        self.assertEqual(chal_join_time, join_time)
+        chal_join_time = "You started solving this challenge on %s." \
+                         % date_format(chal.get_join_time(self.user),
+                                       'SHORT_DATETIME_FORMAT', True)
+        self.assertEqual(chal_join_time, join_time.text)
 
         # And the header is blue
         header_classes = cdp.get_panel().get_attribute('class')
@@ -85,6 +84,9 @@ class SolvingChallengeTest(FunctionalTest):
         # And the challenges background color is red again
         edp.get_challenge_table().find_element_by_class_name('bg-danger')
 
+        # The challenge join_time is None again
+        self.assertIsNone(chal.get_join_time(self.user))
+
     def test_user_challenge_and_challenge_solving(self):
         """ The user can click on a solve button on the event and challenge pages.
         The users model than adds the challenge to its 'solved_challenges' field.
@@ -100,8 +102,8 @@ class SolvingChallengeTest(FunctionalTest):
         event = Event.objects.first()
 
         chal = Challenge.objects.create(name='not_solved',
-                                 points='100',
-                                 event=event)
+                                        points='100',
+                                        event=event)
         # The user goes to the events page to solve some challenges
         edp = EventDetailPage(self, event.name)
         edp.get_page()
@@ -111,12 +113,12 @@ class SolvingChallengeTest(FunctionalTest):
 
         # He already did this challenge, but is not solved yet, so he clicks on
         # the 'solve' button
-        challenges_table.find_element_by_tag_name('button').click()
+        challenges_table.find_element_by_class_name('btn-solve').click()
 
         # A modal pops up, asking for an (optional) flag.
         modal_body = edp.get_modal_body()
         modal_header = edp.get_modal_header()
-        time.sleep(0.5)
+        time.sleep(1)
         self.assertIn('Solve challenge', modal_header.text)
 
         # He fills in the flag
@@ -151,8 +153,8 @@ class SolvingChallengeTest(FunctionalTest):
         event = Event.objects.first()
         # He adds another challenge and goes to the challenges detail page
         chal = Challenge.objects.create(name='not_solved2',
-                                 points='100',
-                                 event=event)
+                                        points='100',
+                                        event=event)
 
         self.browser.get(self.server_url + chal.get_absolute_url())
         cdp = ChallengeDetailPage(self, chal.name)
@@ -162,7 +164,7 @@ class SolvingChallengeTest(FunctionalTest):
 
         # After a few minutes he has solved the challenge. He clicks on the challenge
         # solved button
-        #cdp.click_solve_button()
+        # cdp.click_solve_button()
         self.browser.find_element_by_id(str(chal.pk)).click()
         time.sleep(1)
         # He fills in the flag

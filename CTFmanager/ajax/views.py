@@ -41,6 +41,16 @@ class SolveFormView(AjaxTemplateMixin, FormView):
         return JsonResponse(data={'success': False})
 
 
+def join_challenge(request, challenge_pk):
+    if request.method == 'POST':
+        if request.user.is_authenticated():
+            chal = Challenge.objects.get(pk=challenge_pk)
+            chal.join(request.user)
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False})
+
+
 def event_join(request, event_name):
     if request.user.is_authenticated():
         event = Event.objects.get(pk=event_name)

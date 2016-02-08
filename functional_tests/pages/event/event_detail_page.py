@@ -84,8 +84,8 @@ class EventDetailPage(Page):
         self.get_modal_button().click()
         return self
 
-    def get_solving_button(self, challenge_pk):
-        return self.get_challenge_table().find_element_by_id('%s-solving' % challenge_pk)
+    def get_solving_button(self):
+        return self.get_challenge_table().find_element_by_class_name('btn-solving')
 
-    def press_solving_button(self, challenge_pk):
-        self.get_solving_button(challenge_pk).click()
+    def press_solving_button(self):
+        self.get_solving_button().click()

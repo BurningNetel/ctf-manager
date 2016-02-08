@@ -5,7 +5,8 @@ from . import views
 from .ajax import views as ajax
 
 urlpatterns = [
-    url(r'^solve-form/([0-9]{1,10})$', ajax.SolveFormView.as_view() , name="solve_form"),
+    url(r'^join-challenge/([0-9]+)$', ajax.join_challenge, name='join_challenge'),
+    url(r'^solve-form/([0-9]+)$', ajax.SolveFormView.as_view(), name="solve_form"),
     url(r'^$', views.EventPageView.as_view(), name='events'),
     url(r'^new/$', views.EventFormView.as_view(), name='newEvent'),
     url(r'^([a-zA-Z0-9_-]{1,20})$', views.view_event, name='view_event'),
