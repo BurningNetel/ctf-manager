@@ -28,10 +28,13 @@
 
     <div class="panel-heading clearfix" id="{{ challenge.pk }}">{{ challenge.name }}
         <div class="pull-right">
-        {% if user|is_solving:challenge %}
-            <button class="btn btn-xs btn-default btn-solving">Stop Solving</button>
-        {% else %}
-            <button class="btn btn-xs btn-default btn-solving">Start Solving</button>
+
+        {% if not user|solved:challenge %}
+            {% if user|is_solving:challenge %}
+                <button class="btn btn-xs btn-default btn-solving">Stop Solving</button>
+            {% else %}
+                <button class="btn btn-xs btn-default btn-solving">Start Solving</button>
+            {% endif %}
         {% endif %}
 
         <button class="btn btn-xs btn-default btn-solve"

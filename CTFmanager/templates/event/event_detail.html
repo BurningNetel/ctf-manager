@@ -99,10 +99,12 @@
                     {{ challenge.name }}
                 </a> - {{ challenge.points }}
             <div class="pull-right">
-                {% if user|is_solving:challenge %}
-                    <button class="btn btn-xs btn-info btn-solving">Stop Solving</button>
-                {% else %}
-                    <button class="btn btn-xs btn-info btn-solving">Start Solving</button>
+                {% if not user|solved:challenge %}
+                    {% if user|is_solving:challenge %}
+                        <button class="btn btn-xs btn-info btn-solving">Stop Solving</button>
+                    {% else %}
+                        <button class="btn btn-xs btn-info btn-solving">Start Solving</button>
+                    {% endif %}
                 {% endif %}
                 <button class="btn btn-xs btn-success btn-solve"
                         data-toggle="modal" data-target="#solve_modal">Solve</button>

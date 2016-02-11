@@ -2,6 +2,7 @@ import time
 from unittest import skip
 
 from django.utils.formats import date_format
+from selenium.common.exceptions import NoSuchElementException
 
 from CTFmanager.models import Event, Challenge
 from functional_tests.pages.challenge.challenge_detail_page import ChallengeDetailPage
@@ -133,6 +134,9 @@ class SolvingChallengeTest(FunctionalTest):
         challenges_table = edp.get_challenge_table()
         challenges_table.find_element_by_class_name('bg-success')
 
+        # The 'start solving' button should be hidden because the challenge is solved...
+        self.assertRaises(NoSuchElementException, edp.get_solving_button)
+
         # He goes to the challenges detail page to see that a solve time has been set.
         self.browser.get(self.server_url + chal.get_absolute_url())
         solve_dt = chal.get_solve_time(self.user)
@@ -142,6 +146,7 @@ class SolvingChallengeTest(FunctionalTest):
         solve_time = cdp.get_solve_time()
 
         self.assertEqual(chal_time, solve_time.text)
+        self.assertRaises(NoSuchElementException, cdp.get_solving_button)
 
     @skip("Test passes, but not on CI due to unknown error")
     def test_challenge_pad_solving(self):
