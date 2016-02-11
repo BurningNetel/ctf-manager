@@ -3,7 +3,7 @@ import time
 from django.contrib.auth.models import User
 
 from CTFmanager.models import Challenge, Event
-from functional_tests.pages.profile import ProfilePage
+from functional_tests.pages.profile.profile_page import ProfilePage
 from ..base import FunctionalTest
 
 
@@ -46,16 +46,6 @@ class ProfilePageTest(FunctionalTest):
         score = pp.get_total_score()
         self.assertIn('0', score.text)
 
-        # the viewed user solves a challenge
-        event_name = self.add_event()
-        event = Event.objects.first()
-        Challenge.objects.create(name='solveThis', points=94, event=event).solvers.add(viewed_user)
-
-        # Then he refreshes the page.
-        self.browser.refresh()
-        score = pp.get_total_score()
-        self.assertIn('94', score.text)
-
         # He clicks on the events tab
         pp.get_tab_events().click()
         time.sleep(0.5)
@@ -65,9 +55,16 @@ class ProfilePageTest(FunctionalTest):
         self.assertEqual("This user hasn't joined any events yet!",
                          item.text)
 
-        # The user joins an event, he goes back to his profile page.
-        Event.objects.get(pk=event_name).join(viewed_user)
+        # the viewed user solves a challenge
+        event_name = self.add_event()
+        event = Event.objects.first()
+        chal = Challenge.objects.create(name='solveThis', points=94, event=event)
+        chal.solve(viewed_user)
+
+        # Then he refreshes the page.
         self.browser.refresh()
+        score = pp.get_total_score()
+        self.assertIn('94', score.text)
 
         # Now the event_user sees the event listed!
         pp.get_tab_events().click()
