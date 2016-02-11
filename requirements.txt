@@ -7,3 +7,4 @@ invoke
 requests
 django-braces
 django-crispy-forms
+django-chartjs

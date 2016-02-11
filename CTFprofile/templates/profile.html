@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}CTFman - {{ p_user.username }} {% endblock %}
-
+{% load staticfiles %}
 {% block content %}
     <div class="page-header">
         <h1>{{ p_user.username }}'s profile</h1>
@@ -35,7 +35,31 @@
         </div>
 
         <div class="tab-pane fade" id="statistics">
-
+            <h1>Score over time</h1>
+            <script type="text/javascript" src="{% static 'js/Chart102.min.js' %}"></script>
+            <div class="row">
+                <div class="col-md-6">
+                   <canvas id="myChart" height="300" width="550"></canvas>
+                </div>
+                <div class="col-md-6">
+                   <canvas id="myChart2" height="300" width="550"></canvas>
+                </div>
+                <style scoped>
+                    canvas {
+                        width: 100% !important;
+                        max-width: 800px;
+                        height: auto !important;
+                    }
+                </style>
+            </div>
+            <script type="text/javascript">
+                $.get('{% url "line_chart_json" %}', function(data) {
+                    var ctx = $("#myChart").get(0).getContext("2d");
+                    var ctx1 = $("#myChart2").get(0).getContext("2d");
+                    new Chart(ctx).Line(data);
+                    new Chart(ctx1).Line(data);
+                });
+            </script>
         </div>
     </div>
 
