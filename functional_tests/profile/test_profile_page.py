@@ -42,7 +42,7 @@ class ProfilePageTest(FunctionalTest):
         self.assertIn(str(month), date_joined.text)
         self.assertIn(str(year), date_joined.text)
 
-        # His score is 0 because he didn't sovle any challenges yet
+        # His score is 0 because he didn't solve any challenges yet
         score = pp.get_total_score()
         self.assertIn('0', score.text)
 
@@ -54,6 +54,14 @@ class ProfilePageTest(FunctionalTest):
         item = content.find_element_by_tag_name('li')
         self.assertEqual("This user hasn't joined any events yet!",
                          item.text)
+
+        # He clicks on the statistics panel and sees a message
+        # saying viewed_user has not completed any challenges yet!
+        pp.get_tab_statistics().click()
+        time.sleep(0.5)
+        content = pp.get_tab_content()
+        self.assertInHTML('Please join an event and complete a challenge to view statistics!'
+                          , content.text)
 
         # the viewed user solves a challenge
         event_name = self.add_event()
@@ -72,11 +80,3 @@ class ProfilePageTest(FunctionalTest):
         event_list = pp.get_joined_event_list()
         result = event_list.find_element_by_tag_name('li')
         self.assertEqual(event_name, result.text)
-
-        # He clicks on the statistics panel and sees a message
-        # saying viewed_user has not completed any challenges yet!
-        #pp.get_tab_statistics().click()
-
-        #content = pp.get_tab_content()
-        #self.assertInHTML('Please complete a challenge to view statistics!'
-        #                  , content.get_attribute('innerHTML'))

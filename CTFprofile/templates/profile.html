@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}CTFman - {{ p_user.username }} {% endblock %}
 
+{% load statistics_tags %}
+
 {% block content %}
     <div class="page-header">
         <h1>{{ p_user.username }}'s profile</h1>
@@ -35,7 +37,10 @@
         </div>
 
         <div class="tab-pane fade" id="statistics">
-
+            {% if user|can_show_graph %}
+            {% else %}
+                <p class="alert alert-danger">Please join an event and complete a challenge to view statistics!</p>
+            {% endif %}
         </div>
     </div>
 
