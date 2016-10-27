@@ -1,5 +1,5 @@
 # CTFmanager
-Staging: http://ctfmanstaging.joepseuren.xyz
+Currently not in active development.
 
 Uses Etherpad to create a powerfull tool to manage and play with a CTF team
 
